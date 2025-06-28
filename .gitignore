@@ -1,9 +1,19 @@
-# Ignorar carpetas que no deben ir al repo
+# No subir estas carpetas de WordPress
 wp-content/uploads/
 wp-content/cache/
 wp-content/upgrade/
+wp-content/plugins/akismet/
+wp-content/plugins/hello.php
+
+# Ignorar todo salvo tu plugin/tema
+!wp-content/themes/
+!wp-content/plugins/
+
+# Archivos temporales y sistema
 *.log
 *.tmp
 *.zip
-.opcache/
+*.swp
 .DS_Store
+node_modules/
+vendor/
