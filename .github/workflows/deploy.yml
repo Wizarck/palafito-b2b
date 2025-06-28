@@ -1,0 +1,24 @@
+name: Deploy to IONOS
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: SSH to IONOS and deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: access-5016482035.webspace-host.com
+          username: a1559522
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /clickandbuilds/Palafito
+            ./web_update_from_repo.sh
