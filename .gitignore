@@ -1,19 +1,35 @@
-# No subir estas carpetas de WordPress
+# 🧼 Archivos que cambian con frecuencia o no deben versionarse
+
+# Archivos de subida y medios
 wp-content/uploads/
+wp-content/uploads/**
+
+# Caché, backup y upgrade
 wp-content/cache/
 wp-content/upgrade/
+wp-content/backups/
+wp-content/backup-db/
+
+# Plugins comunes que podrías querer excluir
 wp-content/plugins/akismet/
 wp-content/plugins/hello.php
 
-# Ignorar todo salvo tu plugin/tema
-!wp-content/themes/
-!wp-content/plugins/
+# Must-use plugins
+wp-content/mu-plugins/
 
-# Archivos temporales y sistema
+# Archivos temporales del sistema
 *.log
 *.tmp
 *.zip
 *.swp
+*.bak
 .DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Node/Composer si los usas
 node_modules/
 vendor/
+
+# Evitar copiar una carpeta duplicada si apareció antes
+wp-content/wp-content/
