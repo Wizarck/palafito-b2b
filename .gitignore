@@ -6,4 +6,4 @@ wp-content/upgrade/
 *.tmp
 *.zip
 .opcache/
-
+.DS_Store
