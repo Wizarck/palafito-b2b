@@ -33,3 +33,4 @@ vendor/
 
 # Evitar copiar una carpeta duplicada si apareció antes
 wp-content/wp-content/
+.DS_Store
