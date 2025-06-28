@@ -1,0 +1,1506 @@
+#
+# Alexandre Faustino <alexmigf@gmail.com>, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PDF Invoices & Packing Slips for WooCommerce - "
+"Professional\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-pdf-"
+"ips-pro\n"
+"POT-Creation-Date: 2023-10-17T15:04:28+00:00\n"
+"PO-Revision-Date: 2023-10-18 14:00+0100\n"
+"Last-Translator: WP Overnight <support@wpovernight.com>\n"
+"Language-Team: Portuguese <support@wpovernight.com>\n"
+"Language: pt_PT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.4\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#. Plugin Name of the plugin
+#: woocommerce-pdf-ips-pro.php:145
+msgid "PDF Invoices & Packing Slips for WooCommerce - Professional"
+msgstr "PDF Invoices & Packing Slips for WooCommerce - Professional"
+
+#. Plugin URI of the plugin
+msgid ""
+"https://wpovernight.com/downloads/woocommerce-pdf-invoices-packing-slips-"
+"professional/"
+msgstr ""
+"https://wpovernight.com/downloads/woocommerce-pdf-invoices-packing-slips-"
+"professional/"
+
+#. Description of the plugin
+msgid ""
+"Extended functionality for PDF Invoices & Packing Slips for WooCommerce "
+"plugin"
+msgstr ""
+"Funcionalidades estendidas para o plugin PDF Invoices & Packing Slips for "
+"WooCommerce"
+
+#. Author of the plugin
+msgid "WP Overnight"
+msgstr "WP Overnight"
+
+#. Author URI of the plugin
+msgid "https://wpovernight.com/"
+msgstr "https://wpovernight.com/"
+
+#: includes/cloud/abstract-wcpdf-cloud-api.php:76
+msgid "Dropbox"
+msgstr "Dropbox"
+
+#: includes/cloud/abstract-wcpdf-cloud-api.php:82
+msgid "FTP/SFTP"
+msgstr "FTP/SFTP"
+
+#: includes/cloud/abstract-wcpdf-cloud-api.php:88
+msgid "Google Drive"
+msgstr "Google Drive"
+
+#: includes/cloud/abstract-wcpdf-cloud-api.php:94
+msgid "OneDrive"
+msgstr "OneDrive"
+
+#. translators: cloud service
+#: includes/cloud/abstract-wcpdf-cloud-api.php:156
+msgid "Authorize %s cloud service!"
+msgstr "Autorizar o serviço cloud %s!"
+
+#. translators: 1. cloud service, 2-3. <a> tags
+#: includes/cloud/abstract-wcpdf-cloud-api.php:158
+msgid ""
+"Visit %1$s via %2$sthis link%3$s to get an access code and enter this below:"
+msgstr ""
+"Visite %1$s via %2$seste link%3$s para obter um código de acesso e introduza-"
+"o abaixo:"
+
+#: includes/cloud/abstract-wcpdf-cloud-api.php:162
+msgid "Authorize"
+msgstr "Autorizar"
+
+#. translators: 1. service name, 2. token
+#: includes/cloud/abstract-wcpdf-cloud-api.php:179
+msgid "%1$s connection established! Access token: %2$s"
+msgstr "%1$s ligação estabelecida! Token de acesso: %2$s"
+
+#: includes/cloud/abstract-wcpdf-cloud-api.php:192
+#: includes/wcpdf-pro-cloud-storage.php:154
+#: includes/wcpdf-pro-cloud-storage.php:768
+#: includes/wcpdf-pro-cloud-storage.php:1019
+msgid "View logs"
+msgstr "Ver registos"
+
+#. translators: 1. cloud service, 2. "View logs" link
+#: includes/cloud/abstract-wcpdf-cloud-api.php:194
+msgid ""
+"%1$s authentication failed. Please try again or check the logs for details: "
+"%2$s"
+msgstr ""
+"%1$s a autenticação falhou. Por favor, tente novamente ou verifique os "
+"registos para mais detalhes: %2$s"
+
+#: includes/cloud/abstract-wcpdf-cloud-api.php:210
+msgid "Activate your Professional extension license!"
+msgstr "Ativa a tua licença de extensão Professional!"
+
+#. translators: 1. cloud service, 2. "here" link
+#: includes/cloud/abstract-wcpdf-cloud-api.php:215
+msgid ""
+"To keep %1$s API limits under control, you are required to activate your "
+"Professional extension license to use this service. See how to activate your "
+"license %2$s."
+msgstr ""
+"Para manter os limites da API %1$s sob controlo, tens de ativar a tua "
+"licença da extensão Professional para utilizares este serviço. Vê como "
+"ativar a tua licença %2$s."
+
+#: includes/cloud/abstract-wcpdf-cloud-api.php:217
+#: includes/wcpdf-pro-cloud-storage.php:765
+#: includes/wcpdf-pro-cloud-storage.php:1016
+msgid "here"
+msgstr "aqui"
+
+#: includes/cloud/dropbox/dropbox-api.php:94
+msgid "Destination folder"
+msgstr "Pasta de destino"
+
+#: includes/cloud/dropbox/dropbox-api.php:101
+msgid "App folder (restricted access)"
+msgstr "Pasta da aplicação (acesso restrito)"
+
+#: includes/cloud/dropbox/dropbox-api.php:102
+msgid "Main Dropbox folder"
+msgstr "Pasta principal do Dropbox"
+
+#: includes/cloud/dropbox/dropbox-api.php:104
+msgid "Note: Reauthorization is required after changing this setting!"
+msgstr "Nota: A re-autorização é necessária após a mudança desta configuração!"
+
+#: includes/cloud/dropbox/dropbox-api.php:112
+msgid "Enter a subfolder to use (optional)"
+msgstr "Digite uma sub-pasta para usar (opcional)"
+
+#: includes/cloud/dropbox/dropbox-api.php:408
+msgid "Cloud service credentials not set"
+msgstr "Credenciais não definidas para o serviço na nuvem"
+
+#: includes/cloud/dropbox/dropbox-api.php:415
+msgid "Could not get service api client"
+msgstr "Não foi possível obter o cliente da API de serviço"
+
+#: includes/cloud/ftp/ftp.php:63
+msgid "FTP server"
+msgstr "Servidor FTP"
+
+#: includes/cloud/ftp/ftp.php:72
+msgid "Protocol"
+msgstr "Protocolo"
+
+#: includes/cloud/ftp/ftp.php:75
+msgid "FTP"
+msgstr "FTP"
+
+#: includes/cloud/ftp/ftp.php:76
+msgid "SFTP"
+msgstr "SFTP"
+
+#: includes/cloud/ftp/ftp.php:80
+msgid "Host"
+msgstr "Host"
+
+#: includes/cloud/ftp/ftp.php:85
+msgid "Port"
+msgstr "Porta"
+
+#: includes/cloud/ftp/ftp.php:91
+msgid "Username"
+msgstr "Nome de utilizador"
+
+#: includes/cloud/ftp/ftp.php:96
+msgid "Password"
+msgstr "Senha"
+
+#: includes/cloud/ftp/ftp.php:109
+msgid "remote folder (optional, relative to root)"
+msgstr "pasta remota (opcional, em relação à raiz)"
+
+#: includes/cloud/ftp/ftp.php:114
+msgid "connection root path (optional)"
+msgstr "caminho da raiz da ligação (opcional)"
+
+#: includes/cloud/ftp/ftp.php:363
+msgid "test connection"
+msgstr "ligação de teste"
+
+#: includes/cloud/ftp/ftp.php:424
+msgid "Success!"
+msgstr "Sucesso!"
+
+#. translators: error message
+#: includes/cloud/ftp/ftp.php:428
+msgid "Error: %s"
+msgstr "Erro: %s"
+
+#: includes/cloud/gdrive/gdrive-api.php:572
+msgid ""
+"A parent directory in GDrive was trashed, the file was transfered to the "
+"GDrive root directory."
+msgstr ""
+"Um directório pai no GDrive foi destruído, o arquivo foi transferido para o "
+"directório raiz do GDrive."
+
+#. translators: 1. service name
+#: includes/cloud/templates/template-bulk-export-page.php:7
+msgid "%s export"
+msgstr "Exportação para %s"
+
+#. translators: 1. service name
+#: includes/cloud/templates/template-bulk-export-process.php:6
+msgid "%s export finished"
+msgstr "Exportação para %s concluída"
+
+#. translators: document type
+#: includes/documents/class-wcpdf-credit-note.php:26
+#: includes/documents/class-wcpdf-credit-note.php:38
+#: includes/documents/class-wcpdf-credit-note.php:237
+#: includes/documents/class-wcpdf-credit-note.php:246
+#: includes/documents/class-wcpdf-credit-note.php:254
+#: includes/documents/class-wcpdf-credit-note.php:258
+#: includes/legacy/wcpdf-pro-legacy-functions.php:54
+msgid "Credit Note"
+msgstr "Nota de Crédito"
+
+#: includes/documents/class-wcpdf-credit-note.php:42
+msgid "Credit Note Number:"
+msgstr "Número da Nota de Crédito:"
+
+#: includes/documents/class-wcpdf-credit-note.php:46
+msgid "Credit Note Date:"
+msgstr "Data da Nota de Crédito:"
+
+#: includes/documents/class-wcpdf-credit-note.php:52
+#: includes/legacy/wcpdf-pro-legacy-functions.php:80
+msgid "credit-note"
+msgid_plural "credit-notes"
+msgstr[0] "nota-credito"
+msgstr[1] "notas-credito"
+
+#: includes/documents/class-wcpdf-credit-note.php:158
+msgid "Display credit note date"
+msgstr "Mostrar data da nota de crédito"
+
+#: includes/documents/class-wcpdf-credit-note.php:166
+msgid "Credit Note Date"
+msgstr "Data da Nota de Crédito"
+
+#: includes/documents/class-wcpdf-credit-note.php:167
+msgid "Refund Date"
+msgstr "Data do Reembolso"
+
+#: includes/documents/class-wcpdf-credit-note.php:174
+msgid "Display credit note number"
+msgstr "Mostrar o número da nota de crédito"
+
+#: includes/documents/class-wcpdf-credit-note.php:185
+#: includes/documents/class-wcpdf-proforma.php:213
+msgid "Number sequence"
+msgstr "Sequência numérica"
+
+#: includes/documents/class-wcpdf-credit-note.php:192
+#: includes/documents/class-wcpdf-proforma.php:220
+msgid "Main invoice numbering"
+msgstr "Numeração da factura principal"
+
+#: includes/documents/class-wcpdf-credit-note.php:193
+msgid "Separate credit note numbering"
+msgstr "Numeração separada para as notas de crédito"
+
+#: includes/documents/class-wcpdf-credit-note.php:201
+msgid "Show original invoice number"
+msgstr "Exibir número original da factura"
+
+#: includes/documents/class-wcpdf-credit-note.php:212
+msgid "Next credit note number (without prefix/suffix etc.)"
+msgstr "Próximo número da nota de crédito (sem prefixo/sufixo, etc.)"
+
+#: includes/documents/class-wcpdf-credit-note.php:264
+msgid "Reset credit note number yearly"
+msgstr "Redefinir o número da nota de crédito anualmente"
+
+#: includes/documents/class-wcpdf-credit-note.php:300
+msgid "Enable credit note number search in the orders list"
+msgstr "Ativar a pesquisa do número da nota de crédito na lista de encomendas"
+
+#: includes/documents/class-wcpdf-credit-note.php:324
+msgid "Use positive prices"
+msgstr "Usar preços positivos"
+
+#: includes/documents/class-wcpdf-credit-note.php:330
+msgid ""
+"Prices in Credit Notes are negative by default, but some countries (like "
+"Germany) require positive prices."
+msgstr ""
+"Os preços nas Notas de Crédito são negativos por padrão, mas alguns países "
+"(como a Alemanha) exigem preços positivos."
+
+#: includes/documents/class-wcpdf-credit-note.php:336
+msgid "Use products & totals fallback"
+msgstr "Usar fallback para produtos e totais"
+
+#: includes/documents/class-wcpdf-credit-note.php:342
+msgid ""
+"If orders are refunded without setting products, credit notes will not "
+"contain these details. This option provides a fallback method by using data "
+"from the original order for the credit note. This may cause issues in some "
+"setups, so testing is recommended."
+msgstr ""
+"Se as encomendas forem reembolsadas sem definir produtos, as notas de "
+"crédito não irão conter estes detalhes. Esta opção fornece um método de "
+"reembolso usando os dados da encomenda original para a nota de crédito. Isto "
+"pode causar problemas em algumas configurações, portanto, recomenda-se a "
+"realização de testes."
+
+#. translators: document type
+#: includes/documents/class-wcpdf-proforma.php:26
+#: includes/documents/class-wcpdf-proforma.php:38
+#: includes/documents/class-wcpdf-proforma.php:254
+#: includes/documents/class-wcpdf-proforma.php:263
+#: includes/documents/class-wcpdf-proforma.php:271
+#: includes/documents/class-wcpdf-proforma.php:275
+#: includes/legacy/wcpdf-pro-legacy-functions.php:51
+msgid "Proforma Invoice"
+msgstr "Factura Proforma"
+
+#: includes/documents/class-wcpdf-proforma.php:42
+msgid "Proforma Invoice Number:"
+msgstr "Número da Factura Proforma:"
+
+#: includes/documents/class-wcpdf-proforma.php:46
+msgid "Proforma Invoice Date:"
+msgstr "Data da Factura Proforma:"
+
+#: includes/documents/class-wcpdf-proforma.php:51
+#: includes/legacy/wcpdf-pro-legacy-functions.php:76
+msgid "proforma-invoice"
+msgid_plural "proforma-invoices"
+msgstr[0] "factura-proforma"
+msgstr[1] "facturas-proforma"
+
+#: includes/documents/class-wcpdf-proforma.php:186
+msgid "Display proforma invoice date"
+msgstr "Mostrar data da factura proforma"
+
+#: includes/documents/class-wcpdf-proforma.php:194
+msgid "Proforma Invoice Date"
+msgstr "Data da Factura Proforma"
+
+#: includes/documents/class-wcpdf-proforma.php:202
+msgid "Display proforma invoice number"
+msgstr "Mostrar número da factura proforma"
+
+#: includes/documents/class-wcpdf-proforma.php:221
+msgid "Separate proforma numbering"
+msgstr "Numeração separada para as facturas proforma"
+
+#: includes/documents/class-wcpdf-proforma.php:229
+msgid "Next proforma invoice number (without prefix/suffix etc.)"
+msgstr "Próximo número da factura proforma (sem prefixo/sufixo etc.)"
+
+#: includes/documents/class-wcpdf-proforma.php:281
+msgid "Reset proforma invoice number yearly"
+msgstr "Redefinir o número da factura proforma anualmente"
+
+#: includes/documents/class-wcpdf-proforma.php:292
+#: includes/wcpdf-pro-settings.php:569
+msgid "Allow My Account download"
+msgstr "Permitir o download na Minha conta"
+
+#: includes/documents/class-wcpdf-proforma.php:299
+msgid "Only when the final invoice is not available"
+msgstr "Somente quando a factura final não estiver disponível"
+
+#: includes/documents/class-wcpdf-proforma.php:300
+msgid "Only when a proforma invoice is already created/emailed"
+msgstr "Somente quando uma factura proforma já tiver sido criada/emitida"
+
+#: includes/documents/class-wcpdf-summary.php:30
+#: includes/wcpdf-pro-functions.php:1266
+msgid "Summary of Invoices"
+msgstr "Resumo das faturas"
+
+#: includes/documents/class-wcpdf-summary.php:52
+msgid "Summary date"
+msgstr "Data de resumo"
+
+#: includes/documents/class-wcpdf-summary.php:72
+msgid "to"
+msgstr "até"
+
+#: includes/documents/class-wcpdf-summary.php:139
+msgid "summary"
+msgstr "resumo"
+
+#: includes/email-customer-credit-note.php:29
+msgid "Customer Credit Note"
+msgstr "Nota de Crédito do cliente"
+
+#: includes/email-customer-credit-note.php:30
+msgid ""
+"Customer Credit Note emails can be sent to the user with the PDF Credit Note "
+"attached."
+msgstr ""
+"Os e-mails de Nota de Crédito do cliente podem ser enviados ao utilizador "
+"com a Nota de Crédito em PDF anexada."
+
+#: includes/email-customer-credit-note.php:36
+msgid "Credit Note for order {order_number} from {order_date}"
+msgstr "Nota de Crédito para a encomenda {order_number} de {order_date}"
+
+#: includes/email-customer-credit-note.php:37
+msgid "Credit Note for order {order_number}"
+msgstr "Nota de Crédito para a encomenda: {order_number}"
+
+#: includes/email-customer-credit-note.php:38
+msgid ""
+"A refund has been issued for your order, attached to this email you will "
+"find a credit note with the details."
+msgstr ""
+"Um reembolso foi emitido para a sua encomenda! Anexado a este e-mail vai "
+"encontrar uma Nota de Crédito com os detalhes."
+
+#: includes/email-customer-credit-note.php:187
+msgid "Automatically send"
+msgstr "Enviar automaticamente"
+
+#: includes/email-customer-credit-note.php:189
+msgid "Automatically send email when order status is set to refunded"
+msgstr ""
+"Enviar e-mail automaticamente quando o estado da encomenda estiver definido "
+"como reembolsado"
+
+#: includes/email-customer-credit-note.php:193
+#: includes/email-pdf-order-notification.php:228
+msgid "Email subject"
+msgstr "Assunto do e-mail"
+
+#. translators: email subject/heading/body
+#: includes/email-customer-credit-note.php:196
+#: includes/email-customer-credit-note.php:203
+#: includes/email-customer-credit-note.php:211
+#: includes/email-pdf-order-notification.php:230
+#: includes/email-pdf-order-notification.php:243
+#: includes/email-pdf-order-notification.php:252
+msgid "Defaults to <code>%s</code>"
+msgstr "Padrão para <code>%s</code>"
+
+#: includes/email-customer-credit-note.php:201
+#: includes/email-pdf-order-notification.php:241
+msgid "Email heading"
+msgstr "Cabeçalho do email"
+
+#: includes/email-customer-credit-note.php:208
+#: includes/email-pdf-order-notification.php:249
+msgid "Email body text"
+msgstr "Texto do corpo do e-mail"
+
+#: includes/email-customer-credit-note.php:216
+#: includes/email-pdf-order-notification.php:272
+msgid "Email type"
+msgstr "Tipo de e-mail"
+
+#: includes/email-customer-credit-note.php:218
+#: includes/email-pdf-order-notification.php:274
+msgid "Choose which format of email to send."
+msgstr "Escolha o formato de e-mail a ser enviado."
+
+#: includes/email-customer-credit-note.php:222
+#: includes/email-pdf-order-notification.php:278
+msgid "Plain text"
+msgstr "Texto simples"
+
+#: includes/email-customer-credit-note.php:223
+#: includes/email-pdf-order-notification.php:279
+msgid "HTML"
+msgstr "HTML"
+
+#: includes/email-customer-credit-note.php:224
+#: includes/email-pdf-order-notification.php:280
+msgid "Multipart"
+msgstr "Multi-parte"
+
+#: includes/email-pdf-order-notification.php:29
+msgid "Order Notification"
+msgstr "Notificação de Encomenda"
+
+#: includes/email-pdf-order-notification.php:30
+msgid ""
+"Order Notification emails can be sent to specified email addresses, "
+"automatically & manually."
+msgstr ""
+"Os e-mails de Notificação de Encomenda podem ser enviados para endereços de "
+"e-mail especificados, automaticamente e manualmente."
+
+#: includes/email-pdf-order-notification.php:36
+msgid "Order Notification for order {order_number} from {order_date}"
+msgstr "Notificação para a encomenda {order_number} de {order_date}"
+
+#: includes/email-pdf-order-notification.php:37
+msgid "Order Notification for order {order_number}"
+msgstr "Notificação para a encomenda {order_number}"
+
+#: includes/email-pdf-order-notification.php:38
+msgid "An order has been placed."
+msgstr "Uma encomenda foi realizada."
+
+#: includes/email-pdf-order-notification.php:206
+msgid "Trigger"
+msgstr "Gatilho"
+
+#: includes/email-pdf-order-notification.php:208
+msgid ""
+"Choose the status that should trigger this email. Note that the 'Paid' "
+"status only works for automated payment gateways (Paypal, Stripe, etc), not "
+"for BACS, COD & Cheque."
+msgstr ""
+"Escolha o estado que deve accionar este e-mail. Observe que o estado 'Pago' "
+"funciona apenas para métodos de pagamento automatizados (Paypal, Stripe, "
+"etc), não para BACS, COD ou Cheque."
+
+#: includes/email-pdf-order-notification.php:212
+msgid "Manual"
+msgstr "Manual"
+
+#: includes/email-pdf-order-notification.php:213
+msgid "Order placed"
+msgstr "Encomenda efectuada"
+
+#: includes/email-pdf-order-notification.php:214
+msgid "Order processing"
+msgstr "Processando encomenda"
+
+#: includes/email-pdf-order-notification.php:215
+msgid "Order completed"
+msgstr "Encomenda completa"
+
+#: includes/email-pdf-order-notification.php:216
+msgid "Order paid"
+msgstr "Encomenda paga"
+
+#: includes/email-pdf-order-notification.php:217
+msgid "Order refunded"
+msgstr "Encomenda reembolsada"
+
+#: includes/email-pdf-order-notification.php:221
+msgid "Recipient(s)"
+msgstr "Destinatário(s)"
+
+#: includes/email-pdf-order-notification.php:223
+msgid ""
+"Enter recipients (comma separated) for this email. Use {customer} to send "
+"this email to the customer."
+msgstr ""
+"Inserir os destinatários (separados por vírgula) para este e-mail. Usar "
+"{customer} para enviar este e-mail ao cliente."
+
+#: includes/email-pdf-order-notification.php:235
+msgid "Empty body"
+msgstr "Corpo vazio"
+
+#: includes/email-pdf-order-notification.php:237
+msgid "Don't include any text/html in the email body"
+msgstr "Não incluir nenhum texto/html no corpo do e-mail"
+
+#: includes/email-pdf-order-notification.php:258
+msgid "Order items"
+msgstr "Itens da encomenda"
+
+#: includes/email-pdf-order-notification.php:260
+msgid "Include order items table in email"
+msgstr "Incluir tabela de itens da encomenda no e-mail"
+
+#: includes/email-pdf-order-notification.php:265
+msgid "Customer details"
+msgstr "Detalhes do cliente"
+
+#: includes/email-pdf-order-notification.php:267
+msgid "Include customer details in email"
+msgstr "Incluir detalhes do cliente no e-mail"
+
+#: includes/views/bulk-export.php:12
+msgid "Document"
+msgstr "Documento"
+
+#: includes/views/bulk-export.php:30
+msgid "From"
+msgstr "De"
+
+#: includes/views/bulk-export.php:39
+msgid "optional"
+msgstr "opcional"
+
+#: includes/views/bulk-export.php:43
+msgid "To"
+msgstr "Para"
+
+#: includes/views/bulk-export.php:51
+msgid "Date type"
+msgstr "Tipo de data"
+
+#: includes/views/bulk-export.php:63
+msgid "Filter users"
+msgstr "Filtrar utilizadores"
+
+#: includes/views/bulk-export.php:65
+msgid "Select one or more users."
+msgstr "Selecciona um ou mais utilizadores."
+
+#: includes/views/bulk-export.php:70
+msgid "Filter status"
+msgstr "Filtrar estado"
+
+#: includes/views/bulk-export.php:74
+msgid "All statuses"
+msgstr "Todos os estados"
+
+#: includes/views/bulk-export.php:94
+msgid "Only existing documents"
+msgstr "Somente documentos existentes"
+
+#: includes/views/bulk-export.php:100
+msgid "Skip free orders"
+msgstr "Ignorar encomendas gratuitas"
+
+#: includes/views/bulk-export.php:115 includes/wcpdf-pro-bulk-export.php:75
+msgid "Download ZIP"
+msgstr "Download ZIP"
+
+#: includes/views/bulk-export.php:117
+msgid "ZIP export disabled"
+msgstr "Exportação ZIP desactivada"
+
+#: includes/views/bulk-export.php:117
+msgid ""
+"The PHP ZipArchive library could not found, contact your host to enable bulk "
+"downloading PDF files in a ZIP."
+msgstr ""
+"A biblioteca PHP ZipArchive não foi encontrada, entre em contacto com o seu "
+"prestador de serviço de alojamento para permitir o download de ficheiros PDF "
+"em ZIP."
+
+#. translators: cloud service name
+#: includes/views/bulk-export.php:122
+msgid "Export to %s"
+msgstr "Exportar para %s"
+
+#: includes/views/bulk-export.php:132 includes/wcpdf-pro-settings.php:508
+msgid "Warning!"
+msgstr "Atenção!"
+
+#: includes/views/bulk-export.php:132
+msgid ""
+"zlib.output_compression is enabled in PHP for this site, this may cause "
+"issues when downloading ZIP files"
+msgstr ""
+"zlib.output_compression está activado no PHP para este site, isto pode "
+"causar problemas ao descarregar ficheiros ZIP"
+
+#: includes/views/bulk-export.php:135
+msgid ""
+"Only exporting a few orders? You can also export by selecting orders in the "
+"WooCommerce order overview and then select one of the actions from the bulk "
+"dropdown!"
+msgstr ""
+"Exportando apenas algumas encomendas? Você também pode exportar selecionando "
+"as encomendas na listagem geral do WooCommerce e depois seleccionando uma "
+"das acções a partir do menu de acções em massa!"
+
+#: includes/wcpdf-pro-bulk-export.php:39
+msgid "Bulk export"
+msgstr "Exportar em massa"
+
+#: includes/wcpdf-pro-bulk-export.php:73 includes/wcpdf-pro-functions.php:1271
+#: templates/Summary/summary.php:43
+msgid "Order date"
+msgstr "Data da encomenda"
+
+#: includes/wcpdf-pro-bulk-export.php:74
+msgid "Refund date"
+msgstr "Data de reembolso"
+
+#: includes/wcpdf-pro-bulk-export.php:76
+msgid "Download PDF"
+msgstr "Descarregar PDF"
+
+#: includes/wcpdf-pro-bulk-export.php:77
+msgid "PDF document(s) saved"
+msgstr "Documento(s) PDF guardado(s)"
+
+#: includes/wcpdf-pro-bulk-export.php:78
+msgid "Uploading files to cloud service, please wait..."
+msgstr "A carregar ficheiros para o serviço de nuvem, aguarda..."
+
+#: includes/wcpdf-pro-bulk-export.php:104
+#: includes/wcpdf-pro-bulk-export.php:137
+#: includes/wcpdf-pro-bulk-export.php:152
+msgid "No orders found!"
+msgstr "Nenhuma encomenda encontrada!"
+
+#. translators: files count
+#: includes/wcpdf-pro-bulk-export.php:510
+msgid "Upload completed! %s file transferred to cloud service."
+msgid_plural "Upload completed! %s files transferred to cloud service."
+msgstr[0] ""
+"Carregamento concluído! %s ficheiro transferido para o serviço de nuvem."
+msgstr[1] ""
+"Carregamento concluído! %s ficheiros transferidos para o serviço de nuvem."
+
+#. translators: files count
+#: includes/wcpdf-pro-bulk-export.php:517
+msgid "%s file not uploaded to cloud! Please see logs."
+msgid_plural "%s files not uploaded to cloud! Please see logs."
+msgstr[0] "%s ficheiro não carregado para a nuvem! Consulta os registos."
+msgstr[1] "%s ficheiros não carregados para a nuvem! Consulta os registos."
+
+#: includes/wcpdf-pro-cloud-storage.php:79
+msgid "Cloud storage"
+msgstr "Armazenamento na nuvem"
+
+#: includes/wcpdf-pro-cloud-storage.php:97
+msgid "General settings"
+msgstr "Configurações Gerais"
+
+#: includes/wcpdf-pro-cloud-storage.php:103
+msgid "Enable"
+msgstr "Activar"
+
+#: includes/wcpdf-pro-cloud-storage.php:114
+msgid "Cloud service"
+msgstr "Serviço na nuvem"
+
+#: includes/wcpdf-pro-cloud-storage.php:126
+msgid "Upload all email attachments"
+msgstr "Carregar todos os anexos de e-mail"
+
+#: includes/wcpdf-pro-cloud-storage.php:137
+msgid "Organize uploads in folders by year/month"
+msgstr "Organizar carregamentos em pastas por ano/mês"
+
+#: includes/wcpdf-pro-cloud-storage.php:148
+msgid "Log all communication (debugging only!)"
+msgstr "Registe todas as comunicações (somente depuração!)"
+
+#: includes/wcpdf-pro-cloud-storage.php:160
+msgid "Upload by order status"
+msgstr "Carregar pelo estado da encomenda"
+
+#: includes/wcpdf-pro-cloud-storage.php:227
+msgid ""
+"If you are already emailing the documents, leave these settings empty to "
+"avoid slowing down your site (use the setting to upload all email "
+"attachments instead)"
+msgstr ""
+"Se já estiveres a enviar os documentos por e-mail, deixa estas definições "
+"vazias para evitar que o teu site fique mais lento (em vez disso, utiliza a "
+"definição para carregar todos os anexos de e-mail)"
+
+#: includes/wcpdf-pro-cloud-storage.php:250
+msgid "Connected to"
+msgstr "Ligado a"
+
+#. translators: service name
+#: includes/wcpdf-pro-cloud-storage.php:254
+msgid "Unlink %s account"
+msgstr "Desligar conta %s"
+
+#: includes/wcpdf-pro-cloud-storage.php:512
+msgid "Cloud service upload permission denied"
+msgstr "Permissão negada de carregamento para o serviço na nuvem"
+
+#: includes/wcpdf-pro-cloud-storage.php:523
+msgid "File does not exist"
+msgstr "O ficheiro não existe"
+
+#. translators: service name
+#: includes/wcpdf-pro-cloud-storage.php:676
+msgid "Please wait while your queued PDF documents are being uploaded to %s..."
+msgstr ""
+"Aguarde enquanto os seus ficheiros PDF em fila de espera vão sendo "
+"carregados para %s..."
+
+#: includes/wcpdf-pro-cloud-storage.php:678
+msgid "Please wait while the upload queue is being cleared"
+msgstr "Por favor, aguarde enquanto a fila de carregamento vai sendo libertada"
+
+#. translators: service name
+#: includes/wcpdf-pro-cloud-storage.php:701
+msgid "Please wait while your PDF documents are being uploaded to %s..."
+msgstr ""
+"Aguarde enquanto os seus documentos PDF estão a ser carregados para %s..."
+
+#. translators: cloud service name
+#: includes/wcpdf-pro-cloud-storage.php:751
+#: includes/wcpdf-pro-cloud-storage.php:1004
+msgid "There were errors when trying to upload to %s."
+msgstr "Ocorreram erros ao tentar carregar para %s."
+
+#: includes/wcpdf-pro-cloud-storage.php:757
+#: includes/wcpdf-pro-cloud-storage.php:1008
+msgid "Your Professional extension license is not valid or is inactive."
+msgstr "A tua licença da extensão profissional não é válida ou está inativa."
+
+#. translators: here link
+#: includes/wcpdf-pro-cloud-storage.php:764
+#: includes/wcpdf-pro-cloud-storage.php:1015
+msgid "Please enable the service logging %s to be able to debug the issue."
+msgstr "Ativa o registo de err %s para poderes resolver o problema."
+
+#: includes/wcpdf-pro-cloud-storage.php:769
+#: includes/wcpdf-pro-cloud-storage.php:1020
+msgid "Check the error log for details:"
+msgstr "Verifica o registo de erros para mais detalhes:"
+
+#. translators: service name
+#: includes/wcpdf-pro-cloud-storage.php:777
+msgid "PDF invoices successfully uploaded to %s!"
+msgstr "Facturas em PDF carregadas com sucesso para %s!"
+
+#. translators: service name
+#: includes/wcpdf-pro-cloud-storage.php:781
+msgid "PDF packing slips successfully uploaded to %s!"
+msgstr "Guias de Transporte enviadas com sucesso para %s!"
+
+#. translators: service name
+#: includes/wcpdf-pro-cloud-storage.php:785
+#: includes/wcpdf-pro-cloud-storage.php:1025
+msgid "PDF documents successfully uploaded to %s!"
+msgstr "Documentos PDF carregados com sucesso para %s!"
+
+#: includes/wcpdf-pro-cloud-storage.php:1028
+msgid "Upload queue successfully cleared!"
+msgstr "Fila de carregamento limpa com sucesso!"
+
+#: includes/wcpdf-pro-cloud-storage.php:1047
+msgid "Upload files"
+msgstr "Carregar ficheiros"
+
+#: includes/wcpdf-pro-cloud-storage.php:1048
+msgid "Clear queue"
+msgstr "Limpar fila"
+
+#. translators: 1. files count, service name
+#: includes/wcpdf-pro-cloud-storage.php:1054
+msgid ""
+"There are %1$s unfinished uploads in your the upload queue from PDF Invoices "
+"& Packing Slips for WooCommerce to %2$s."
+msgstr ""
+"Existem %1$s carregamentos inacabados na tua fila de upload de PDF Invoices "
+"& Packing Slips for WooCommerce para %2$s."
+
+#. translators: 1. document name, 2. cloud service name
+#: includes/wcpdf-pro-cloud-storage.php:1070
+#: includes/wcpdf-pro-cloud-storage.php:1092
+#: includes/wcpdf-pro-cloud-storage.php:1093
+msgid "PDF %1$s to %2$s"
+msgstr "PDF %1$s a %2$s"
+
+#. translators: php version
+#: includes/wcpdf-pro-dependencies.php:137
+msgid ""
+"PDF Invoices & Packing Slips for WooCommerce - Professional requires PHP %s "
+"or higher."
+msgstr ""
+"PDF Invoices & Packing Slips for WooCommerce - Professional requer PHP %s ou "
+"superior."
+
+#: includes/wcpdf-pro-dependencies.php:138
+#: includes/wcpdf-pro-dependencies.php:153
+msgid "How to update your PHP version"
+msgstr "Como atualizar a sua versão PHP"
+
+#. translators: php version
+#: includes/wcpdf-pro-dependencies.php:152
+msgid ""
+"PDF Invoices & Packing Slips for WooCommerce - Professional <strong>Cloud "
+"Storage</strong> feature requires <strong>PHP %s or higher</strong>."
+msgstr ""
+"PDF Invoices & Packing Slips for WooCommerce - Professional — a "
+"funcionalidade de <strong>Armazenamento na Nuvem</strong> requer <strong>PHP "
+"%s ou superior</strong>."
+
+#: includes/wcpdf-pro-dependencies.php:158 woocommerce-pdf-ips-pro.php:721
+msgid "Hide this message"
+msgstr "Ocultar esta mensagem"
+
+#. translators: <a> tags
+#: includes/wcpdf-pro-dependencies.php:195
+msgid ""
+"PDF Invoices & Packing Slips for WooCommerce - Professional requires "
+"%1$sWooCommerce%2$s to be installed & activated!"
+msgstr ""
+"O PDF Invoices & Packing Slips for WooCommerce - Professional requer "
+"%1$sWooCommerce%2$s para ser instalado e activado!"
+
+#. translators: 1: WooCommerce version, 2 & 3: <a> tags
+#: includes/wcpdf-pro-dependencies.php:207
+msgid ""
+"PDF Invoices & Packing Slips for WooCommerce - Professional requires at "
+"least version %1$s of WooCommerce to be installed. %2$sGet the latest "
+"version here%3$s!"
+msgstr ""
+"PDF Invoices & Packing Slips for WooCommerce - Professional requer pelo "
+"menos a versão %1$s do WooCommerce instalada. %2$sObtém a versão mais "
+"recente aqui%3$s!"
+
+#. translators: 1: base plugin version, 2 & 3: <a> tags
+#: includes/wcpdf-pro-dependencies.php:221
+msgid ""
+"PDF Invoices & Packing Slips for WooCommerce - Professional requires at "
+"least version %1$s of PDF Invoices & Packing Slips for WooCommerce -  "
+"%2$sget it here%3$s!"
+msgstr ""
+"PDF Invoices & Packing Slips for WooCommerce - Professional requer pelo "
+"menos a versão %1$s do PDF Invoices & Packing Slips for WooCommerce - "
+"%2$sobtém aqui%3$s!"
+
+#. translators: <a> tags
+#: includes/wcpdf-pro-dependencies.php:235
+msgid ""
+"PDF Invoices & Packing Slips for WooCommerce - Professional requires the "
+"free base plugin to be activated! %1$sActivate it here!%2$s"
+msgstr ""
+"PDF Invoices & Packing Slips for WooCommerce - Professional requer a "
+"ativação do plugin base gratuito! %1$sAtiva-o aqui!%2$s"
+
+#. translators: 1: base plugin version, 2 & 3: <a> tags
+#: includes/wcpdf-pro-dependencies.php:249
+msgid ""
+"PDF Invoices & Packing Slips for WooCommerce - Professional requires at "
+"least version %1$s of PDF Invoices & Packing Slips for WooCommerce. "
+"%2$sUpgrade to the latest version here%3$s!"
+msgstr ""
+"PDF Invoices & Packing Slips for WooCommerce - Professional requer pelo "
+"menos a versão %1$s do PDF Invoices & Packing Slips for WooCommerce. "
+"%2$sActualiza para a versão mais recente aqui%3$s!"
+
+#: includes/wcpdf-pro-functions.php:810
+msgid "Original Invoice Number:"
+msgstr "Número Original da Factura:"
+
+#. translators: 1. document title, 2. refund ID
+#: includes/wcpdf-pro-functions.php:1110
+msgid ""
+"%1$s (refund #%2$s) was marked as archived but not found on the server. A "
+"new version has been uploaded."
+msgstr ""
+"%1$s (reembolso #%2$s) foi marcado como arquivado mas não encontrado no "
+"servidor. Uma nova versão foi carregada."
+
+#. translators: 1. document title
+#: includes/wcpdf-pro-functions.php:1113
+msgid ""
+"%s was marked as archived but not found on the server. A new version has "
+"been uploaded."
+msgstr ""
+"%s foi marcado como arquivado, mas não foi encontrado no servidor. Uma nova "
+"versão foi carregada."
+
+#: includes/wcpdf-pro-functions.php:1272
+msgid "Document date"
+msgstr "Data do documento"
+
+#: includes/wcpdf-pro-functions.php:1307
+msgid "automatically on order status"
+msgstr "automaticamente no estado da encomenda"
+
+#: includes/wcpdf-pro-functions.php:1308
+msgid "automatically on order refund"
+msgstr "automaticamente no reembolso da encomenda"
+
+#: includes/wcpdf-pro-functions.php:1491
+msgid "Clear Professional extension license cache"
+msgstr "Limpa a cache da licença da extensão Professional"
+
+#: includes/wcpdf-pro-functions.php:1492
+msgid ""
+"If you are having issues with the Cloud Storage activation, try to clear the "
+"Professional license cache here."
+msgstr ""
+"Se estiveres a ter problemas com a ativação do Armazenamento na Nuvem, tenta "
+"limpar a cache da licença Professional aqui."
+
+#: includes/wcpdf-pro-functions.php:1496
+msgid "Clear license cache"
+msgstr "Limpa a cache da licença"
+
+#: includes/wcpdf-pro-functions.php:1506
+msgid "Professional extension license cache deleted successfully!"
+msgstr "Apaga a cache da licença da extensão Professional com sucesso!"
+
+#: includes/wcpdf-pro-functions.php:1513
+msgid "License data is cached"
+msgstr "Os dados da licença são armazenados em cache"
+
+#: includes/wcpdf-pro-functions.php:1516
+msgid "License cache is empty"
+msgstr "A cache de licenças está vazia"
+
+#: includes/wcpdf-pro-settings.php:68 includes/wcpdf-pro-settings.php:74
+msgid "Static files"
+msgstr "Ficheiros estáticos"
+
+#: includes/wcpdf-pro-settings.php:81
+msgid "Select a file to attach"
+msgstr "Seleccione um ficheiro para anexar"
+
+#: includes/wcpdf-pro-settings.php:82
+msgid "Set file"
+msgstr "Definir ficheiro"
+
+#: includes/wcpdf-pro-settings.php:83
+msgid "Remove file"
+msgstr "Remover ficheiro"
+
+#: includes/wcpdf-pro-settings.php:108
+msgid "Address customization"
+msgstr "Personalização de morada"
+
+#: includes/wcpdf-pro-settings.php:114
+msgid "Billing address"
+msgstr "Morada de faturação"
+
+#: includes/wcpdf-pro-settings.php:128
+msgid "Shipping address"
+msgstr "Morada de envio"
+
+#: includes/wcpdf-pro-settings.php:142
+msgid "Remove empty lines"
+msgstr "Remover linhas em branco"
+
+#: includes/wcpdf-pro-settings.php:148
+msgid ""
+"Enable this option if you want to remove empty lines left over from empty "
+"address/placeholder replacements"
+msgstr ""
+"Ative esta opção se você deseja remover linhas vazias que sobraram de morada "
+"vazia/substituição por placeholder"
+
+#: includes/wcpdf-pro-settings.php:154
+msgid "Allow line breaks within custom fields"
+msgstr "Permitir quebras de linha dentro dos campos personalizados"
+
+#: includes/wcpdf-pro-settings.php:184 includes/wcpdf-pro-settings.php:1180
+msgid "Active user language"
+msgstr "Linguagem activa do utilizador"
+
+#. translators: multilingual plugin name
+#: includes/wcpdf-pro-settings.php:193 includes/wcpdf-pro-settings.php:1155
+msgid "%s order language"
+msgstr "língua da encomenda de %s"
+
+#: includes/wcpdf-pro-settings.php:203
+msgid "Multilingual settings"
+msgstr "Configurações multilingue"
+
+#: includes/wcpdf-pro-settings.php:209
+msgid "Document language"
+msgstr "Idioma do documento"
+
+#: includes/wcpdf-pro-settings.php:215
+msgid "Select..."
+msgstr "Selecionar..."
+
+#: includes/wcpdf-pro-settings.php:216 includes/wcpdf-pro-settings.php:1131
+msgid "Order/customer language"
+msgstr "Idioma da encomenda/cliente"
+
+#: includes/wcpdf-pro-settings.php:217
+msgid "Site default language"
+msgstr "Idioma padrão do site"
+
+#: includes/wcpdf-pro-settings.php:244
+msgid "Document title"
+msgstr "Título do documento"
+
+#: includes/wcpdf-pro-settings.php:257
+msgid "PDF filename"
+msgstr "Nome do ficheiro PDF"
+
+#: includes/wcpdf-pro-settings.php:265
+msgid ""
+"Leave empty to use default. Placeholders like {{document_number}} and "
+"{{order_number}} can be used to include document numbers in the filename."
+msgstr ""
+"Deixe vazio para usar o padrão. Os espaços reservados como "
+"{{document_number}} e {{order_number}} podem ser usados para incluir números "
+"de documentos no nome do ficheiro."
+
+#: includes/wcpdf-pro-settings.php:274
+msgid "Document number label"
+msgstr "Etiqueta do número do documento"
+
+#: includes/wcpdf-pro-settings.php:290
+msgid "Document date label"
+msgstr "Etiqueta da data do documento"
+
+#: includes/wcpdf-pro-settings.php:308
+msgid "Keep PDF on server"
+msgstr "Mantenha o PDF no servidor"
+
+#: includes/wcpdf-pro-settings.php:314
+msgid ""
+"Stores the PDF when generated for the first time and reloads this copy each "
+"time the document is requested. Please note this can take up considerable "
+"disk space on you server."
+msgstr ""
+"Armazena o PDF quando é gerado pela primeira vez e recarrega esta cópia cada "
+"vez que o documento é solicitado. Observe que isto pode ocupar um espaço "
+"considerável de disco no seu servidor."
+
+#: includes/wcpdf-pro-settings.php:324
+msgid "Create automatically for:"
+msgstr "Criar automaticamente para:"
+
+#: includes/wcpdf-pro-settings.php:333 includes/wcpdf-pro-settings.php:383
+msgid "Select one or more statuses"
+msgstr "Selecione um ou mais estados"
+
+#: includes/wcpdf-pro-settings.php:334
+msgid ""
+"The document will be created automatically when the order reaches the "
+"status(es) selected above."
+msgstr ""
+"O documento será criado automaticamente quando a encomenda atingir o(s) "
+"estado(s) acima seleccionado(s)."
+
+#: includes/wcpdf-pro-settings.php:362
+msgid "Disable when"
+msgstr "Desativar quando"
+
+#: includes/wcpdf-pro-settings.php:368
+msgid "Any requirement is met"
+msgstr "Cumpre todos os requisitos"
+
+#: includes/wcpdf-pro-settings.php:369
+msgid "All requirements are met"
+msgstr "Todos os requisitos são cumpridos"
+
+#: includes/wcpdf-pro-settings.php:371
+msgid ""
+"Please select if the document should be disabled when any one of the below "
+"requirements are met, or only when all requirements are met."
+msgstr ""
+"Seleciona se o documento deve ser desativado quando qualquer um dos "
+"requisitos abaixo é cumprido, ou apenas quando todos os requisitos são "
+"cumpridos."
+
+#: includes/wcpdf-pro-settings.php:375
+msgid "Order status"
+msgstr "Estado do pedido"
+
+#: includes/wcpdf-pro-settings.php:395
+msgid "Select one or more payment methods"
+msgstr "Selecione um ou mais estados"
+
+#: includes/wcpdf-pro-settings.php:399
+msgid "Billing country"
+msgstr "País para faturação"
+
+#: includes/wcpdf-pro-settings.php:407
+msgid "Select one or more countries"
+msgstr "Selecciona um ou mais países"
+
+#: includes/wcpdf-pro-settings.php:427
+msgid "Create automatically after refunding"
+msgstr "Criar automaticamente após o reembolso"
+
+#: includes/wcpdf-pro-settings.php:433
+msgid ""
+"The Credit Note will be created automatically when a (partial or full) "
+"refund is created for an order."
+msgstr ""
+"A Nota de Crédito será criada automaticamente quando é criado um reembolso "
+"(parcial ou total) para uma encomenda."
+
+#: includes/wcpdf-pro-settings.php:484
+msgid "Display packing slip date"
+msgstr "Mostrar data da guia de transporte"
+
+#: includes/wcpdf-pro-settings.php:495
+msgid "Display packing slip number"
+msgstr "Mostrar o número da guia de transporte"
+
+#: includes/wcpdf-pro-settings.php:502 includes/wcpdf-pro-settings.php:1141
+#: includes/wcpdf-pro-settings.php:1169 includes/wcpdf-pro-writepanels.php:244
+msgid "No"
+msgstr "Não"
+
+#: includes/wcpdf-pro-settings.php:503
+msgid "Packing Slip Number"
+msgstr "Número da guia de remessa"
+
+#: includes/wcpdf-pro-settings.php:504
+msgid "Order Number"
+msgstr "Número da encomenda"
+
+#: includes/wcpdf-pro-settings.php:509
+msgid ""
+"Using the Order Number as packing slip number is not recommended as this may "
+"lead to gaps in the packing slip number sequence (even when order numbers "
+"are sequential)."
+msgstr ""
+"Não é recomendável utilizar o número da encomenda como número da guia de "
+"remessa, pois isso pode levar a lacunas na sequência do número da guia de "
+"remessa (mesmo quando os números de encomenda são sequenciais)."
+
+#: includes/wcpdf-pro-settings.php:510
+msgid "More information"
+msgstr "Mais informações"
+
+#: includes/wcpdf-pro-settings.php:517
+msgid "Next packing slip number (without prefix/suffix etc.)"
+msgstr "Próximo número da guia de transporte (sem prefixo/sufixo, etc.)"
+
+#: includes/wcpdf-pro-settings.php:577
+msgid "Only when a packing slip is already created/emailed"
+msgstr "Apenas quando uma guia de transporte já tiver sido criada/emitida"
+
+#: includes/wcpdf-pro-settings.php:594
+msgid "Reset packing slip number yearly"
+msgstr "Redefinir o número da guia de transporte anualmente"
+
+#: includes/wcpdf-pro-settings.php:612
+msgid "Subtract refunded item quantities from packing slip"
+msgstr "Subtrair quantidades reembolsadas de itens da guia de transporte"
+
+#: includes/wcpdf-pro-settings.php:628
+msgid "Hide virtual and downloadable products"
+msgstr "Esconder produtos virtuais e para download"
+
+#: includes/wcpdf-pro-settings.php:723
+msgid "Save translations"
+msgstr "Guardar traduções"
+
+#: includes/wcpdf-pro-settings.php:783
+msgid ""
+"Warning! Your filename does not contain a unique identifier "
+"({{order_number}}, {{document_number}}), this can lead to attachment mixups!"
+msgstr ""
+"Advertência! O seu nome de ficheiro não contém um identificador único "
+"({{order_number}}, {{document_number}}), isto pode levar a misturas de "
+"anexos!"
+
+#: includes/wcpdf-pro-settings.php:806
+msgid "Translate"
+msgstr "Traduzir"
+
+#: includes/wcpdf-pro-settings.php:840
+msgid ""
+"<b>Warning!</b> Your PDF Invoices & Packing Slips for WooCommerce template "
+"folder does not contain templates for credit notes and/or proforma invoices."
+msgstr ""
+"<b>Aviso!</b> A tua pasta de modelos PDF Invoices & Packing Slips for "
+"WooCommerce não contém modelos para notas de crédito e/ou faturas proforma."
+
+#. translators: Professional template folder
+#: includes/wcpdf-pro-settings.php:842
+msgid ""
+"If you are using WP Overnight premium templates, please update to the latest "
+"version. Otherwise copy the template files located in %s and adapt them to "
+"your own template."
+msgstr ""
+"Se você estiver a usar modelos premium da WP Overnight, por favor, atualize "
+"para a versão mais recente. Caso contrário, copie os ficheiros de modelos "
+"localizados em %s e adapte-os ao seu próprio modelo."
+
+#: includes/wcpdf-pro-settings.php:857 includes/wcpdf-pro-settings.php:1236
+msgid "Pro"
+msgstr "Pro"
+
+#: includes/wcpdf-pro-settings.php:872
+msgid "Select additional requirements"
+msgstr "Selecciona os requisitos adicionais"
+
+#: includes/wcpdf-pro-settings.php:1051
+msgid ""
+"Here you can modify the way the shipping and billing address are formatted "
+"in the PDF documents as well as add custom fields to them."
+msgstr ""
+"Aqui você pode modificar a forma como a morada de entrega e faturação são "
+"formatadas nos documentos PDF, assim como adicionar placeholders a elas."
+
+#: includes/wcpdf-pro-settings.php:1052
+msgid ""
+"You can use the following placeholders in addition to regular text and html "
+"tags (like h1, h2, b):"
+msgstr ""
+"Você pode usar os placeholders seguintes, além das tags de texto e html "
+"regulares (como h1, h2, b):"
+
+#: includes/wcpdf-pro-settings.php:1056
+msgid "Billing fields"
+msgstr "Campos de facturação"
+
+#: includes/wcpdf-pro-settings.php:1057
+msgid "Shipping fields"
+msgstr "Campos de envio"
+
+#: includes/wcpdf-pro-settings.php:1058
+msgid "Custom fields"
+msgstr "Campos personalizados"
+
+#: includes/wcpdf-pro-settings.php:1097
+msgid "Leave empty to use the default formatting."
+msgstr "Deixe vazio para usar a formatação padrão."
+
+#: includes/wcpdf-pro-settings.php:1106
+msgid ""
+"Here you can select the source for the document language, which is used to "
+"translate the PDF."
+msgstr ""
+"Aqui podes selecionar a fonte para a língua do documento, que é utilizada "
+"para traduzir o PDF."
+
+#: includes/wcpdf-pro-settings.php:1107
+msgid ""
+"We supported several multilingual plugins, two in full and the others with "
+"more limited functionality. The language source may differ, so please check "
+"the table below for the recommended option for the plugin you choose."
+msgstr ""
+"Suportamos vários plug-ins multilingues, dois na íntegra e os outros com uma "
+"funcionalidade mais limitada. A fonte linguística pode ser diferente, por "
+"isso verifica a tabela abaixo para saberes qual a opção recomendada para o "
+"plugin que escolheres."
+
+#: includes/wcpdf-pro-settings.php:1114
+msgid "Plugin"
+msgstr "Plugin"
+
+#: includes/wcpdf-pro-settings.php:1115
+msgid "Support type"
+msgstr "Tipo de suporte"
+
+#: includes/wcpdf-pro-settings.php:1116
+msgid "Recommended language source"
+msgstr "Fonte linguística recomendada"
+
+#: includes/wcpdf-pro-settings.php:1117
+msgid "Additional requirements"
+msgstr "Requisitos adicionais"
+
+#: includes/wcpdf-pro-settings.php:1118
+msgid "Activated"
+msgstr "Ativado"
+
+#: includes/wcpdf-pro-settings.php:1130
+msgid "Full"
+msgstr "Completo"
+
+#. translators: multilingual plugin name
+#: includes/wcpdf-pro-settings.php:1136
+msgid "Requires %s WooCommerce addon"
+msgstr "Requer extensão do WooCommerce de %s"
+
+#: includes/wcpdf-pro-settings.php:1141 includes/wcpdf-pro-settings.php:1169
+#: includes/wcpdf-pro-writepanels.php:244
+msgid "Yes"
+msgstr "Sim"
+
+#: includes/wcpdf-pro-settings.php:1150 includes/wcpdf-pro-settings.php:1179
+msgid "Limited"
+msgstr "Limitado"
+
+#: includes/wcpdf-pro-settings.php:1163
+msgid "Requires Pro subscription + Email Translation setting enabled"
+msgstr "Requer subscrição Pro + definição de tradução de e-mail ativada"
+
+#: includes/wcpdf-pro-settings.php:1178
+msgid "Other/No multilingual plugin"
+msgstr "Outro/Nenhum plugin multilingue"
+
+#. translators: documentation link
+#: includes/wcpdf-pro-settings.php:1190
+msgid ""
+"To understand this setting better, please read this documentation page: %s"
+msgstr ""
+"Para compreender melhor esta definição, lê esta página de documentação: %s"
+
+#: includes/wcpdf-pro-settings.php:1191
+msgid "How is the PDF language determined?"
+msgstr "Como é determinada a língua do PDF?"
+
+#. translators: document title
+#: includes/wcpdf-pro-settings.php:1220
+msgid ""
+"This filename is already in use in the %s document! Please choose a new "
+"unique filename."
+msgstr ""
+"Este nome de ficheiro já está a ser utilizado no documento %s! Por favor, "
+"escolha um novo nome de ficheiro único."
+
+#: includes/wcpdf-pro-settings.php:1225
+msgid "Filename is unique!"
+msgstr "O nome do ficheiro é único!"
+
+#: includes/wcpdf-pro-writepanels.php:243
+msgid "stored on server"
+msgstr "armazenado no servidor"
+
+#: templates/Simple/credit-note.php:127
+msgid "Reason for refund"
+msgstr "Motivo do Reembolso"
+
+#: templates/Simple/proforma.php:131
+msgid "Customer Notes"
+msgstr "Notas do Cliente"
+
+#: templates/Summary/summary.php:39
+msgid "Invoice date"
+msgstr "Data Fatura"
+
+#: templates/Summary/summary.php:41
+msgid "Invoice number"
+msgstr "Número da fatura"
+
+#: templates/Summary/summary.php:45
+msgid "Order number"
+msgstr "Número da encomenda"
+
+#: templates/Summary/summary.php:47
+msgid "Order total"
+msgstr "Encomenda paga"
+
+#. translators: currency
+#: templates/Summary/summary.php:98
+msgid "Total in %s"
+msgstr "Total em %s"
+
+#. translators: 1. plugin name, 2. click here
+#: woocommerce-pdf-ips-pro.php:144
+msgid ""
+"Your license of %1$s has not been activated on this site, %2$s to enter your "
+"license key."
+msgstr ""
+"A sua licença de %1$s não foi activada neste site, %2$s para introduzir a "
+"sua chave de licença."
+
+#: woocommerce-pdf-ips-pro.php:146
+msgid "click here"
+msgstr "clique aqui"
+
+#. translators: 1. document name(s)
+#: woocommerce-pdf-ips-pro.php:675
+msgid ""
+"A bug that got introduced in version <strong>2.13.6</strong> of <u>PDF "
+"Invoices & Packing Slips for WooCommerce - Professional</u>, caused the %1$s "
+"to start a separate number sequence, instead of following the main Invoice "
+"number sequence. This affects users that set their %1$s to follow the main "
+"Invoice number sequence."
+msgstr ""
+"Um erro introduzido na versão <strong>2.13.6</strong> do <u>PDF Invoices & "
+"Packing Slips for WooCommerce - Professional</u> fez com que o %1$s "
+"iniciasse uma sequência numérica separada, em vez de seguir a sequência "
+"numérica principal da fatura. Isto afecta os utilizadores que definiram o "
+"seu %1$s para seguir a sequência numérica principal da Fatura."
+
+#. translators: 1. document name(s)
+#: woocommerce-pdf-ips-pro.php:681
+msgid ""
+"This update fixed the bug, and the %1$s will follow the main Invoice number "
+"sequence once more. But we urge you to check the numbers created for these "
+"documents from the <u>22nd of December 2022</u> (release date of version "
+"2.13.6) <u>until now</u>, as they might not have the expected document "
+"numbers. If so, please make changes to the affected document numbers, and "
+"<strong>Next invoice number</strong> setting. If you have any further "
+"questions about this, please contact us at: <a href=\"mailto:"
+"support@wpovernight.com\">support@wpovernight.com</a>"
+msgstr ""
+"Esta atualização corrigiu o erro e o %1$s voltará a seguir a sequência do "
+"número principal da fatura. Mas pedimos-te que verifiques os números criados "
+"para estes documentos desde <u>22 de dezembro de 2022</u> (data de "
+"lançamento da versão 2.13.6) <u>até agora</u>, pois podem não ter os números "
+"de documento esperados. Se for o caso, altera os números dos documentos "
+"afectados e a definição <strong>do número da fatura seguinte</strong>. Se "
+"tiveres mais alguma questão sobre este assunto, contacta-nos em: <a "
+"href=\"mailto:support@wpovernight.com\">support@wpovernight.com</a>"
+
+#~ msgid "Ewout Fernhout"
+#~ msgstr "Ewout Fernhout"
+
+#~ msgid "Cloud storage settings"
+#~ msgstr "Configurações de armazenamento na nuvem"
+
+#~ msgid ""
+#~ "<b>Important note:</b> WooCommerce 2.2.7 or newer is required to print "
+#~ "credit notes. You are currently using WooCommerce %s"
+#~ msgstr ""
+#~ "<b>Nota Importante:</b> É necessário o WooCommerce 2.2.7 ou mais recente "
+#~ "para imprimir as notas de crédito. Você está a usar a versão %s do "
+#~ "WooCommerce"
+
+#~ msgid "Packing Slip Date:"
+#~ msgstr "Data da Guia de Transporte:"

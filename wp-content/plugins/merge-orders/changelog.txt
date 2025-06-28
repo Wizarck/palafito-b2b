@@ -1,0 +1,83 @@
+*** Merge Orders Changelog ***
+
+2024-04-24 - version 1.3.11
+* Fixed - Fix check for HPOS being enabled
+* Changed - WC 8.8 compatibility
+
+2024-02-29 - version 1.3.10
+* Fixed - Repackage release as workaround for WP core defect (#60398) installing zips
+
+2023-03-16 - version 1.3.9
+* Changed - WC 7.5 compatibility
+
+2023-03-01 - version 1.3.8
+* Added - Add filter to enable merging order notes
+
+2023-02-14 - version 1.3.7
+* Changed - WC 7.4 compatibility
+
+2023-02-02 - version 1.3.6
+* Added - Item type filter
+
+2023-01-18 - version 1.3.5
+* Fixed - Fix PHP notice for accessing non-existent property 'base'
+* Changed - WC 7.3 compatibility
+
+2022-12-13 - version 1.3.4
+* Changed - WC 7.2 compatibility
+
+2022-11-24 - version 1.3.3
+* Fixed - HPOS compatibility
+* Changed - WC 7.1 compatibility
+
+2022-10-05 - version 1.3.2
+* Changed - WC 7.0 compatibility
+
+2022-08-18 - version 1.3.1
+* Added - Add settings link on plugin list
+* Fixed - Remove options on uninstall
+* Changed - WC 6.8 compatibility
+
+2022-05-12 - version 1.3.0
+* Added - Add translation support with pot file
+* Added - Merge line item taxes individually
+* Fixed - Fix PHP notice when merging items without a matching item in target
+* Changed - WC 6.4 compatibility
+
+2022-01-14 - version 1.2.1
+* Fixed - Fix bug merging orders with coupons
+* Changed - WC 6.1 compatibility
+
+2021-12-06 - version 1.2.0
+* Added - Add settings page
+* Added - Add debug logging enabled by a setting
+* Fixed - Ensure basic compatibility with WooCommerce Subscriptions
+* Fixed - PHP 8.0 compatibility
+* Changed - WC 5.9 compatibility
+
+2021-07-12 - version 1.1.0
+* Added - Add filter to stop items being removed from source order
+* Added - Add search option using order IDs only for sites with larger order volumes
+* Fixed - Fix invalid merge statuses not being excluded from search
+* Fixed - Fix outdated jQuery event listener
+* Changed - Order search results by ID descending to bring more recent to top
+* Changed - Delay removing line items until merge completed to protect against data loss
+* Changed - WC 5.4 compatibility
+
+2021-04-08 - version 1.0.4
+* Fixed - Merge _reduced_stock meta to ensure inventory maintained correctly
+* Changed - WC 5.1 compatibility
+
+2021-04-01 - version 1.0.3
+* Fixed - Include orders in search with missing fields
+
+2021-02-26 - version 1.0.2
+* Fixed - Optimise order search to improve response time
+* Changed - WC 5.0 compatibility
+
+2021-01-21 - version 1.0.1
+* Fixed - Fix bug causing incorrect line item merging if product has been deleted
+* Changed - WC 4.9 compatibility
+
+2020-11-10 - version 1.0.0
+* First Release

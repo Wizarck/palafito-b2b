@@ -1,0 +1,9 @@
+# Ignorar carpetas que no deben ir al repo
+wp-content/uploads/
+wp-content/cache/
+wp-content/upgrade/
+*.log
+*.tmp
+*.zip
+.opcache/
+

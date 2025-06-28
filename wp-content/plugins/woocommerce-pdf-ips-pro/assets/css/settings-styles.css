@@ -1,0 +1,169 @@
+#wcpdf-pro-bulk-export input.date,
+#wcpdf-pro-bulk-export input.hour,
+#wcpdf-pro-bulk-export input.minute {
+	width: auto !important;
+}
+
+#wpo-wcpdf-settings .static-file-row input,
+#wpo-wcpdf-settings .static-file-row .button {
+	margin: 2px 4px 2px 0;
+}
+
+.setting-warning input {
+	border-color: red;
+}
+
+.filename-duplicate-warning {
+	color: red;
+}
+
+#ftp_config .ftp-details {
+	overflow: auto;
+}
+#ftp_config input + input {
+	margin-left: 10px;
+}
+#ftp_protocol {
+	margin-bottom: 5px;
+}
+#ftp_host,
+#ftp_port,
+#ftp_username,
+#ftp_password,
+#ftp_remote_folder,
+#ftp_root_path {
+	float:left;
+	margin-bottom: 5px;
+}
+
+#ftp_host {
+	width: calc(80% - 2px);
+	max-width: 400px;
+	clear:both;
+}
+#ftp_port {
+	width: calc(20% - 12px);
+	max-width: 100px;
+}
+#ftp_username {
+	clear:both;
+}
+#ftp_username,
+#ftp_password {
+	width: calc(50% - 7px);
+	max-width: 250px;
+}
+#ftp_root_path,
+#ftp_remote_folder {
+	width: calc(100% - 3px);
+	max-width: 510px;
+	clear: both;
+}
+
+div.requirements {
+	margin-top: 15px;
+	padding: 10px 0 20px 0;
+	border: 1px solid #ccc;
+	background: #f1f1f1;
+}
+
+div.requirement {
+	padding: 10px 10px 10px 20px;
+}
+
+div.requirement p {
+	padding-bottom: 5px;
+}
+
+#wpo-wcpdf-preview-wrapper .sidebar div.requirement select,
+#wpo-wcpdf-preview-wrapper .sidebar div.requirement .select2.select2-container {
+	width: 90%!important;
+}
+
+div.requirement span.remove-requirement {
+	width: 10%;
+	text-align: center;
+	line-height: 1.8em;
+	font-size: 1.5em;
+	color: #666;
+}
+
+div.requirement span.remove-requirement:hover {
+	color: #222;
+	cursor: pointer;
+}
+
+div.requirement[data-requirement_id="require_one_or_all"] select {
+	max-width: none;
+}
+
+div.requirement[data-requirement_id="require_one_or_all"] .description {
+	width: 90%;
+}
+
+#bulk_export_status_error {
+	display: none;
+	font-style: italic;
+	color: red;
+	margin-top: 1em;
+}
+
+#api-endpoints .endpoint-data {
+	border-top: 1px solid #ccc;
+	margin-top: 2em;
+}
+
+#api-endpoints .endpoint-data .request {
+	background-color: #292929;
+	color: #fff;
+	border-radius: 5px;
+	border-top: 1px solid #000;
+	border-bottom: 1px solid #404040;
+	text-shadow: 0px 1px 2px rgba(0,0,0,0.4);
+	margin: 15px 0;
+	height: 38px;
+}
+
+#api-endpoints .endpoint-data .request p {
+	display: inline-block;
+	margin: 0;
+	text-transform: lowercase;
+	font-weight: 400;
+}
+
+#api-endpoints .endpoint-data i {
+	display: inline-block;
+	margin: 5px;
+	padding: 4px 12px;
+	line-height: 20px;
+}
+
+#api-endpoints .endpoint-data .label {
+	border-radius: 2px;
+	text-transform: uppercase;
+	font-style: normal;
+	white-space: nowrap;
+}
+
+#api-endpoints .endpoint-data .label-get {
+	background: #008000;
+}
+
+#api-endpoints .endpoint-data .label-post {
+	background: #4e92d7;
+}
+
+#api-endpoints .endpoint-data .label-delete {
+	background: #ca4949;
+}
+
+#api-endpoints .endpoint-data .label-info {
+	background: #efefef;
+	float: right;
+	color: #999;
+	font-weight: 700;
+	font-size: 90%;
+	padding: 2px 4px;
+	margin: 0;
+}
+

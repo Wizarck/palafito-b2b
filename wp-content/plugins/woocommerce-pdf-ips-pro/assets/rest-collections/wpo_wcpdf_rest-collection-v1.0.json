@@ -1,0 +1,1462 @@
+{
+	"info": {
+		"_postman_id": "43707636-6526-4454-b17f-f9936aa50702",
+		"name": "WP Overnight - PDF Invoice & Packing Slip",
+		"description": "v1.0",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9716324"
+	},
+	"item": [
+		{
+			"name": "Get an order",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{api_path}}/orders/{{order_id}}",
+					"host": [
+						"{{api_path}}"
+					],
+					"path": [
+						"orders",
+						"{{order_id}}"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Get an order",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost/wpovernight/wp-json/wc/v3/orders/1",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"wpovernight",
+								"wp-json",
+								"wc",
+								"v3",
+								"orders",
+								"1"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Sat, 02 Mar 2024 13:38:41 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Apache/2.4.54 (Win64) OpenSSL/1.1.1t PHP/8.0.29"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.0.29"
+						},
+						{
+							"key": "X-Robots-Tag",
+							"value": "noindex"
+						},
+						{
+							"key": "Link",
+							"value": "<https://localhost/mohamad/wp-json/>; rel=\"https://api.w.org/\""
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Access-Control-Expose-Headers",
+							"value": "X-WP-Total, X-WP-TotalPages, Link"
+						},
+						{
+							"key": "Access-Control-Allow-Headers",
+							"value": "Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type"
+						},
+						{
+							"key": "X-QM-overview-time_taken",
+							"value": "1.9156"
+						},
+						{
+							"key": "X-QM-overview-time_usage",
+							"value": "0.0% of 36,000s limit"
+						},
+						{
+							"key": "X-QM-overview-memory",
+							"value": "136.5 MB"
+						},
+						{
+							"key": "X-QM-overview-memory_usage",
+							"value": "26.7% of 512 MB server limit"
+						},
+						{
+							"key": "Allow",
+							"value": "GET, POST, PUT, PATCH, DELETE"
+						},
+						{
+							"key": "Expires",
+							"value": "Wed, 11 Jan 1984 05:00:00 GMT"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, must-revalidate, max-age=0, no-store, private"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5, max=100"
+						},
+						{
+							"key": "Connection",
+							"value": "Keep-Alive"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=UTF-8"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 1,\n    \"parent_id\": 0,\n    \"documents\": {\n        \"invoice\": {\n            \"number\": \"1078\",\n            \"date\": \"2024-03-02T13:37:25\",\n            \"date_timestamp\": 1709386645\n        },\n        \"proforma\": {\n            \"number\": 16,\n            \"date\": \"2024-02-23T13:25:50\",\n            \"date_timestamp\": 1708694750\n        }\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "Create a document",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "number",
+							"value": "1078",
+							"description": "String (Optional) - The number of the document.",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "date",
+							"value": "2022-12-01T13:13:13Z",
+							"description": "String (Optional - ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ) - The date of the document.",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "note",
+							"value": "Some note about the invoice",
+							"description": "String (Optional) - The note for the the document.",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "{{api_path}}/orders/1078/documents?type=invoice",
+					"host": [
+						"{{api_path}}"
+					],
+					"path": [
+						"orders",
+						"1078",
+						"documents"
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "invoice",
+							"description": "String (Required) - Document types: invoice, packing-slip, proforma, credit-note, receipt"
+						},
+						{
+							"key": "regenerate",
+							"value": "true",
+							"description": "Boolean (Optional) - Regenerate if already exist.",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Create a document - Success",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "number",
+									"value": "1078",
+									"description": "String (Optional) - The number of the document.",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "2022-12-01T13:13:13Z",
+									"description": "String (Optional - ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ) - The date of the document.",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "note",
+									"value": "Some note about the invoice",
+									"description": "String (Optional) - The note for the the document.",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "https://localhost/wpovernight/wp-json/wc/v3/orders/1/documents?type=invoice",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"wpovernight",
+								"wp-json",
+								"wc",
+								"v3",
+								"orders",
+								"1",
+								"documents"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "invoice",
+									"description": "String (Required) - Document types. Example: invoice, packing-slip, proforma, credit-note, receipt"
+								},
+								{
+									"key": "regenerate",
+									"value": "true",
+									"description": "Boolean (Optional) - Regenerate if already exist.",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Sat, 02 Mar 2024 13:37:24 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Apache/2.4.54 (Win64) OpenSSL/1.1.1t PHP/8.0.29"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.0.29"
+						},
+						{
+							"key": "X-Robots-Tag",
+							"value": "noindex"
+						},
+						{
+							"key": "Link",
+							"value": "<https://localhost/mohamad/wp-json/>; rel=\"https://api.w.org/\""
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Access-Control-Expose-Headers",
+							"value": "X-WP-Total, X-WP-TotalPages, Link"
+						},
+						{
+							"key": "Access-Control-Allow-Headers",
+							"value": "Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type"
+						},
+						{
+							"key": "X-QM-overview-time_taken",
+							"value": "1.8889"
+						},
+						{
+							"key": "X-QM-overview-time_usage",
+							"value": "0.0% of 36,000s limit"
+						},
+						{
+							"key": "X-QM-overview-memory",
+							"value": "137.0 MB"
+						},
+						{
+							"key": "X-QM-overview-memory_usage",
+							"value": "26.8% of 512 MB server limit"
+						},
+						{
+							"key": "Allow",
+							"value": "POST, DELETE"
+						},
+						{
+							"key": "Expires",
+							"value": "Wed, 11 Jan 1984 05:00:00 GMT"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, must-revalidate, max-age=0, no-store, private"
+						},
+						{
+							"key": "Content-Length",
+							"value": "128"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5, max=100"
+						},
+						{
+							"key": "Connection",
+							"value": "Keep-Alive"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=UTF-8"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"number\": \"1\",\n    \"date\": \"2024-03-02T13:37:25\",\n    \"date_timestamp\": 1709386645\n}"
+				},
+				{
+					"name": "Create a document - Failure (Order Not Found)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "number",
+									"value": "1078",
+									"description": "String (Optional) - The number of the document.",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "2022-12-01T13:13:13Z",
+									"description": "String (Optional - ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ) - The date of the document.",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "note",
+									"value": "Some note about the invoice",
+									"description": "String (Optional) - The note for the the document.",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api_path}}/orders/17/documents?type=invoice",
+							"host": [
+								"{{api_path}}"
+							],
+							"path": [
+								"orders",
+								"17",
+								"documents"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "invoice",
+									"description": "String (Required) - Document types. Example: invoice, packing-slip, proforma, credit-note, receipt"
+								},
+								{
+									"key": "regenerate",
+									"value": "true",
+									"description": "Boolean (Optional) - Regenerate if already exist.",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Sat, 02 Mar 2024 13:55:48 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Apache/2.4.54 (Win64) OpenSSL/1.1.1t PHP/8.0.29"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.0.29"
+						},
+						{
+							"key": "X-Robots-Tag",
+							"value": "noindex"
+						},
+						{
+							"key": "Link",
+							"value": "<https://localhost/mohamad/wp-json/>; rel=\"https://api.w.org/\""
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Access-Control-Expose-Headers",
+							"value": "X-WP-Total, X-WP-TotalPages, Link"
+						},
+						{
+							"key": "Access-Control-Allow-Headers",
+							"value": "Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type"
+						},
+						{
+							"key": "X-QM-overview-time_taken",
+							"value": "2.7972"
+						},
+						{
+							"key": "X-QM-overview-time_usage",
+							"value": "0.0% of 36,000s limit"
+						},
+						{
+							"key": "X-QM-overview-memory",
+							"value": "136.3 MB"
+						},
+						{
+							"key": "X-QM-overview-memory_usage",
+							"value": "26.6% of 512 MB server limit"
+						},
+						{
+							"key": "Allow",
+							"value": "POST, DELETE"
+						},
+						{
+							"key": "Expires",
+							"value": "Wed, 11 Jan 1984 05:00:00 GMT"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, must-revalidate, max-age=0, no-store, private"
+						},
+						{
+							"key": "Content-Length",
+							"value": "28"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5, max=100"
+						},
+						{
+							"key": "Connection",
+							"value": "Keep-Alive"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=UTF-8"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"Order not found.\"\n}"
+				},
+				{
+					"name": "Create a document - Failure (Invalid Document Type)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "number",
+									"value": "1078",
+									"description": "String (Optional) - The number of the document.",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "2022-12-01T13:13:13Z",
+									"description": "String (Optional - ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ) - The date of the document.",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "note",
+									"value": "Some note about the invoice",
+									"description": "String (Optional) - The note for the the document.",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api_path}}/orders/1/documents?type=invoicee",
+							"host": [
+								"{{api_path}}"
+							],
+							"path": [
+								"orders",
+								"1",
+								"documents"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "invoicee",
+									"description": "String (Required) - Document types. Example: invoice, packing-slip, proforma, credit-note, receipt"
+								},
+								{
+									"key": "regenerate",
+									"value": "true",
+									"description": "Boolean (Optional) - Regenerate if already exist.",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Sat, 02 Mar 2024 13:57:39 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Apache/2.4.54 (Win64) OpenSSL/1.1.1t PHP/8.0.29"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.0.29"
+						},
+						{
+							"key": "X-Robots-Tag",
+							"value": "noindex"
+						},
+						{
+							"key": "Link",
+							"value": "<https://localhost/mohamad/wp-json/>; rel=\"https://api.w.org/\""
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Access-Control-Expose-Headers",
+							"value": "X-WP-Total, X-WP-TotalPages, Link"
+						},
+						{
+							"key": "Access-Control-Allow-Headers",
+							"value": "Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type"
+						},
+						{
+							"key": "X-QM-overview-time_taken",
+							"value": "1.7968"
+						},
+						{
+							"key": "X-QM-overview-time_usage",
+							"value": "0.0% of 36,000s limit"
+						},
+						{
+							"key": "X-QM-overview-memory",
+							"value": "136.1 MB"
+						},
+						{
+							"key": "X-QM-overview-memory_usage",
+							"value": "26.6% of 512 MB server limit"
+						},
+						{
+							"key": "Allow",
+							"value": "POST, DELETE"
+						},
+						{
+							"key": "Expires",
+							"value": "Wed, 11 Jan 1984 05:00:00 GMT"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, must-revalidate, max-age=0, no-store, private"
+						},
+						{
+							"key": "Content-Length",
+							"value": "36"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5, max=100"
+						},
+						{
+							"key": "Connection",
+							"value": "Keep-Alive"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=UTF-8"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"Document type is invalid.\"\n}"
+				},
+				{
+					"name": "Create a document - Failure (Document Type Required)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "number",
+									"value": "1078",
+									"description": "String (Optional) - The number of the document.",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "2022-12-01T13:13:13Z",
+									"description": "String (Optional - ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ) - The date of the document.",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "note",
+									"value": "Some note about the invoice",
+									"description": "String (Optional) - The note for the the document.",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api_path}}/orders/1/documents",
+							"host": [
+								"{{api_path}}"
+							],
+							"path": [
+								"orders",
+								"1",
+								"documents"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "invoice",
+									"description": "String (Required) - Document types. Example: invoice, packing-slip, proforma, credit-note, receipt",
+									"disabled": true
+								},
+								{
+									"key": "regenerate",
+									"value": "true",
+									"description": "Boolean (Optional) - Regenerate if already exist.",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Sat, 02 Mar 2024 14:09:24 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Apache/2.4.54 (Win64) OpenSSL/1.1.1t PHP/8.0.29"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.0.29"
+						},
+						{
+							"key": "X-Robots-Tag",
+							"value": "noindex"
+						},
+						{
+							"key": "Link",
+							"value": "<https://localhost/mohamad/wp-json/>; rel=\"https://api.w.org/\""
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Access-Control-Expose-Headers",
+							"value": "X-WP-Total, X-WP-TotalPages, Link"
+						},
+						{
+							"key": "Access-Control-Allow-Headers",
+							"value": "Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type"
+						},
+						{
+							"key": "X-QM-overview-time_taken",
+							"value": "1.7614"
+						},
+						{
+							"key": "X-QM-overview-time_usage",
+							"value": "0.0% of 36,000s limit"
+						},
+						{
+							"key": "X-QM-overview-memory",
+							"value": "136.2 MB"
+						},
+						{
+							"key": "X-QM-overview-memory_usage",
+							"value": "26.6% of 512 MB server limit"
+						},
+						{
+							"key": "Allow",
+							"value": "POST, DELETE"
+						},
+						{
+							"key": "Expires",
+							"value": "Wed, 11 Jan 1984 05:00:00 GMT"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, must-revalidate, max-age=0, no-store, private"
+						},
+						{
+							"key": "Content-Length",
+							"value": "38"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=UTF-8"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"Document type is required.\"\n}"
+				},
+				{
+					"name": "Create a document - Failure",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "number",
+									"value": "1078",
+									"description": "String (Optional) - The number of the document.",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "2022-12-01T13:13:13Z",
+									"description": "String (Optional - ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ) - The date of the document.",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "note",
+									"value": "Some note about the invoice",
+									"description": "String (Optional) - The note for the the document.",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api_path}}/orders/1/documents",
+							"host": [
+								"{{api_path}}"
+							],
+							"path": [
+								"orders",
+								"1",
+								"documents"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "invoice",
+									"description": "String (Required) - Document types. Example: invoice, packing-slip, proforma, credit-note, receipt",
+									"disabled": true
+								},
+								{
+									"key": "regenerate",
+									"value": "true",
+									"description": "Boolean (Optional) - Regenerate if already exist.",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"status": "Internal Server Error",
+					"code": 500,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Sat, 02 Mar 2024 14:09:24 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Apache/2.4.54 (Win64) OpenSSL/1.1.1t PHP/8.0.29"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.0.29"
+						},
+						{
+							"key": "X-Robots-Tag",
+							"value": "noindex"
+						},
+						{
+							"key": "Link",
+							"value": "<https://localhost/mohamad/wp-json/>; rel=\"https://api.w.org/\""
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Access-Control-Expose-Headers",
+							"value": "X-WP-Total, X-WP-TotalPages, Link"
+						},
+						{
+							"key": "Access-Control-Allow-Headers",
+							"value": "Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type"
+						},
+						{
+							"key": "X-QM-overview-time_taken",
+							"value": "1.7614"
+						},
+						{
+							"key": "X-QM-overview-time_usage",
+							"value": "0.0% of 36,000s limit"
+						},
+						{
+							"key": "X-QM-overview-memory",
+							"value": "136.2 MB"
+						},
+						{
+							"key": "X-QM-overview-memory_usage",
+							"value": "26.6% of 512 MB server limit"
+						},
+						{
+							"key": "Allow",
+							"value": "POST, DELETE"
+						},
+						{
+							"key": "Expires",
+							"value": "Wed, 11 Jan 1984 05:00:00 GMT"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, must-revalidate, max-age=0, no-store, private"
+						},
+						{
+							"key": "Content-Length",
+							"value": "38"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=UTF-8"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"Document creation failed.\"\n}"
+				},
+				{
+					"name": "Regenerate a document - Success",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "number",
+									"value": "1078",
+									"description": "String (Optional) - The number of the document.",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "2022-12-01T13:13:13Z",
+									"description": "String (Optional - ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ) - The date of the document.",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "note",
+									"value": "Some note about the invoice",
+									"description": "String (Optional) - The note for the the document.",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api_path}}/orders/1/documents?type=invoice&regenerate=true",
+							"host": [
+								"{{api_path}}"
+							],
+							"path": [
+								"orders",
+								"1",
+								"documents"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "invoice",
+									"description": "String (Required) - Document types. Example: invoice, packing-slip, proforma, credit-note, receipt"
+								},
+								{
+									"key": "regenerate",
+									"value": "true",
+									"description": "Boolean (Optional) - Regenerate if already exist."
+								}
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Sat, 02 Mar 2024 13:37:48 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Apache/2.4.54 (Win64) OpenSSL/1.1.1t PHP/8.0.29"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.0.29"
+						},
+						{
+							"key": "X-Robots-Tag",
+							"value": "noindex"
+						},
+						{
+							"key": "Link",
+							"value": "<https://localhost/mohamad/wp-json/>; rel=\"https://api.w.org/\""
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Access-Control-Expose-Headers",
+							"value": "X-WP-Total, X-WP-TotalPages, Link"
+						},
+						{
+							"key": "Access-Control-Allow-Headers",
+							"value": "Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type"
+						},
+						{
+							"key": "X-QM-overview-time_taken",
+							"value": "4.2076"
+						},
+						{
+							"key": "X-QM-overview-time_usage",
+							"value": "0.0% of 36,000s limit"
+						},
+						{
+							"key": "X-QM-overview-memory",
+							"value": "148.3 MB"
+						},
+						{
+							"key": "X-QM-overview-memory_usage",
+							"value": "29.0% of 512 MB server limit"
+						},
+						{
+							"key": "Allow",
+							"value": "POST, DELETE"
+						},
+						{
+							"key": "Expires",
+							"value": "Wed, 11 Jan 1984 05:00:00 GMT"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, must-revalidate, max-age=0, no-store, private"
+						},
+						{
+							"key": "Content-Length",
+							"value": "128"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5, max=100"
+						},
+						{
+							"key": "Connection",
+							"value": "Keep-Alive"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=UTF-8"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"number\": \"1\",\n    \"date\": \"2024-03-02T13:37:25\",\n    \"date_timestamp\": 1709386645\n}"
+				},
+				{
+					"name": "Regenerate a document - Failure (Document Not Found)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "number",
+									"value": "1078",
+									"description": "String (Optional) - The number of the document.",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "2022-12-01T13:13:13Z",
+									"description": "String (Optional - ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ) - The date of the document.",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "note",
+									"value": "Some note about the invoice",
+									"description": "String (Optional) - The note for the the document.",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api_path}}/orders/17/documents?type=invoice",
+							"host": [
+								"{{api_path}}"
+							],
+							"path": [
+								"orders",
+								"17",
+								"documents"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "invoice",
+									"description": "String (Required) - Document types. Example: invoice, packing-slip, proforma, credit-note, receipt"
+								},
+								{
+									"key": "regenerate",
+									"value": "true",
+									"description": "Boolean (Optional) - Regenerate if already exist.",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Sat, 02 Mar 2024 13:55:48 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Apache/2.4.54 (Win64) OpenSSL/1.1.1t PHP/8.0.29"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.0.29"
+						},
+						{
+							"key": "X-Robots-Tag",
+							"value": "noindex"
+						},
+						{
+							"key": "Link",
+							"value": "<https://localhost/mohamad/wp-json/>; rel=\"https://api.w.org/\""
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Access-Control-Expose-Headers",
+							"value": "X-WP-Total, X-WP-TotalPages, Link"
+						},
+						{
+							"key": "Access-Control-Allow-Headers",
+							"value": "Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type"
+						},
+						{
+							"key": "X-QM-overview-time_taken",
+							"value": "2.7972"
+						},
+						{
+							"key": "X-QM-overview-time_usage",
+							"value": "0.0% of 36,000s limit"
+						},
+						{
+							"key": "X-QM-overview-memory",
+							"value": "136.3 MB"
+						},
+						{
+							"key": "X-QM-overview-memory_usage",
+							"value": "26.6% of 512 MB server limit"
+						},
+						{
+							"key": "Allow",
+							"value": "POST, DELETE"
+						},
+						{
+							"key": "Expires",
+							"value": "Wed, 11 Jan 1984 05:00:00 GMT"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, must-revalidate, max-age=0, no-store, private"
+						},
+						{
+							"key": "Content-Length",
+							"value": "28"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5, max=100"
+						},
+						{
+							"key": "Connection",
+							"value": "Keep-Alive"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=UTF-8"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"Document not found to regenerate.\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Delete a document",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{api_path}}/orders/{{order_id}}/documents?type=invoice",
+					"host": [
+						"{{api_path}}"
+					],
+					"path": [
+						"orders",
+						"{{order_id}}",
+						"documents"
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "invoice",
+							"description": "String (Required) - Document types. Example: invoice, packing-slip, proforma, credit-note, receipt"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Delete a document - Success",
+					"originalRequest": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://localhost/wpovernight/wp-json/wc/v3/orders/1/documents?type=invoice",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"wpovernight",
+								"wp-json",
+								"wc",
+								"v3",
+								"orders",
+								"1",
+								"documents"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "invoice",
+									"description": "String (Required) - Document types. Example: invoice, packing-slip, proforma, credit-note, receipt"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Sat, 02 Mar 2024 14:09:57 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Apache/2.4.54 (Win64) OpenSSL/1.1.1t PHP/8.0.29"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.0.29"
+						},
+						{
+							"key": "X-Robots-Tag",
+							"value": "noindex"
+						},
+						{
+							"key": "Link",
+							"value": "<https://localhost/mohamad/wp-json/>; rel=\"https://api.w.org/\""
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Access-Control-Expose-Headers",
+							"value": "X-WP-Total, X-WP-TotalPages, Link"
+						},
+						{
+							"key": "Access-Control-Allow-Headers",
+							"value": "Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type"
+						},
+						{
+							"key": "X-QM-overview-time_taken",
+							"value": "2.8941"
+						},
+						{
+							"key": "X-QM-overview-time_usage",
+							"value": "0.0% of 36,000s limit"
+						},
+						{
+							"key": "X-QM-overview-memory",
+							"value": "137.3 MB"
+						},
+						{
+							"key": "X-QM-overview-memory_usage",
+							"value": "26.8% of 512 MB server limit"
+						},
+						{
+							"key": "Allow",
+							"value": "POST, DELETE"
+						},
+						{
+							"key": "Expires",
+							"value": "Wed, 11 Jan 1984 05:00:00 GMT"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, must-revalidate, max-age=0, no-store, private"
+						},
+						{
+							"key": "Content-Length",
+							"value": "31"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5, max=100"
+						},
+						{
+							"key": "Connection",
+							"value": "Keep-Alive"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=UTF-8"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": \"Document deleted.\"\n}"
+				},
+				{
+					"name": "Delete a document - Failure (Document Not Found)",
+					"originalRequest": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api_path}}/orders/1/documents?type=invoice",
+							"host": [
+								"{{api_path}}"
+							],
+							"path": [
+								"orders",
+								"1",
+								"documents"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "invoice",
+									"description": "String (Required) - Document types. Example: invoice, packing-slip, proforma, credit-note, receipt"
+								}
+							]
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Sat, 02 Mar 2024 14:07:31 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Apache/2.4.54 (Win64) OpenSSL/1.1.1t PHP/8.0.29"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.0.29"
+						},
+						{
+							"key": "X-Robots-Tag",
+							"value": "noindex"
+						},
+						{
+							"key": "Link",
+							"value": "<https://localhost/mohamad/wp-json/>; rel=\"https://api.w.org/\""
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Access-Control-Expose-Headers",
+							"value": "X-WP-Total, X-WP-TotalPages, Link"
+						},
+						{
+							"key": "Access-Control-Allow-Headers",
+							"value": "Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type"
+						},
+						{
+							"key": "X-QM-overview-time_taken",
+							"value": "1.8961"
+						},
+						{
+							"key": "X-QM-overview-time_usage",
+							"value": "0.0% of 36,000s limit"
+						},
+						{
+							"key": "X-QM-overview-memory",
+							"value": "136.8 MB"
+						},
+						{
+							"key": "X-QM-overview-memory_usage",
+							"value": "26.7% of 512 MB server limit"
+						},
+						{
+							"key": "Allow",
+							"value": "POST, DELETE"
+						},
+						{
+							"key": "Expires",
+							"value": "Wed, 11 Jan 1984 05:00:00 GMT"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, must-revalidate, max-age=0, no-store, private"
+						},
+						{
+							"key": "Content-Length",
+							"value": "31"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5, max=100"
+						},
+						{
+							"key": "Connection",
+							"value": "Keep-Alive"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=UTF-8"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"Document not found.\"\n}"
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "password",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "username",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "api_path",
+			"value": "https://wpovernight/wp-json/wc/v3",
+			"type": "string"
+		}
+	]
+}

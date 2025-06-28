@@ -1,0 +1,37 @@
+#merge-orders-popup {
+	overflow-y: auto;
+
+	.notice-error,
+	.notice-warning {
+		margin: 0 0 15px;
+		padding: 5px 12px;
+		font-style: italic;
+	}
+
+	tr {
+		margin-bottom: 10px;
+		padding-bottom: 15px;
+		font-size: 13px;
+
+		td {
+			border-bottom: 1px solid #ccd0d4;
+		}
+	}
+
+	.footer {
+		text-align: right;
+	}
+}
+
+@media only screen and (min-width: 768px) {
+
+	#merge-orders-popup {
+
+		.item {
+
+			.fields {
+				float: right;
+			}
+		}
+	}
+}

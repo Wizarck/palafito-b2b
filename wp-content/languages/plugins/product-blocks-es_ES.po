@@ -1,0 +1,485 @@
+# Translation of Plugins - WooCommerce Builder &amp; Gutenberg WooCommerce Blocks &#8211; WowStore - Stable (latest release) in Spanish (Spain)
+# This file is distributed under the same license as the Plugins - WooCommerce Builder &amp; Gutenberg WooCommerce Blocks &#8211; WowStore - Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2024-07-15 14:46:20+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: GlotPress/4.0.1\n"
+"Language: es\n"
+"Project-Id-Version: Plugins - WooCommerce Builder &amp; Gutenberg WooCommerce Blocks &#8211; WowStore - Stable (latest release)\n"
+
+#: addons/wishlist/Wishlist.php:529
+msgid "Wishlist Not Added."
+msgstr "Lista de deseos no añadida"
+
+#: addons/wishlist/Wishlist.php:523
+msgid "Wishlist Already Removed."
+msgstr "La lista de deseos ya fue eliminada"
+
+#: addons/wishlist/Wishlist.php:497
+msgid "Wishlist Added."
+msgstr "Lista de deseos añadida"
+
+#: addons/wishlist/init.php:86
+msgid "Redirect to Cart."
+msgstr "Redirigir al carrito"
+
+#: addons/wishlist/backend.php:61 addons/wishlist/init.php:65
+msgid "Use shortcode inside wishlist page."
+msgstr "Usar shortcode dentro de la pagina de lista de deseos"
+
+#: addons/wishlist/backend.php:59 addons/wishlist/init.php:63
+msgid "Wishlist Page"
+msgstr "Pagina de lista de deseos"
+
+#: addons/wishlist/backend.php:11 addons/wishlist/backend.php:35
+#: addons/wishlist/init.php:11 addons/wishlist/init.php:55
+msgid "Wishlist"
+msgstr "Lista de deseos"
+
+#: addons/wishlist/Wishlist.php:281
+msgid "Open Wishlist Page"
+msgstr "Abrir pagina lista de deseos"
+
+#: addons/wishlist/Wishlist.php:268 addons/wishlist/Wishlist.php:270
+msgid "Stock"
+msgstr "Inventario"
+
+#: addons/sales_notification/backend.php:69 addons/wishlist/Wishlist.php:247
+msgid "Name"
+msgstr "Nombre"
+
+#: addons/compare/backend.php:43 addons/compare/Compare.php:1183
+#: addons/quick_view/backend.php:34 addons/quick_view/Quickview.php:776
+#: addons/wishlist/Wishlist.php:246 blocks/Filter.php:317
+#: assets/js/blocks-placeholder.js:50 assets/js/wopb_dashboard_min.js:2
+msgid "Image"
+msgstr "Imagen"
+
+#: addons/wishlist/backend.php:155 addons/wishlist/init.php:96
+#: addons/wishlist/Wishlist.php:328
+msgid "Browse Wishlist"
+msgstr "Explorar la lista de deseos"
+
+#: addons/wishlist/backend.php:150 addons/wishlist/init.php:91
+#: addons/wishlist/Wishlist.php:327
+msgid "Add to Wishlist"
+msgstr "Añadir a la lista de deseos"
+
+#: addons/templates/Saved_Templates.php:96
+msgid "Not Template found in Trash"
+msgstr "No se han encontrado plantillas en la papelera"
+
+#: addons/templates/Saved_Templates.php:95
+msgid "No Template Found"
+msgstr "No se han encontrado plantillas."
+
+#: addons/templates/Saved_Templates.php:94
+msgid "Search Template"
+msgstr "Buscar plantilla"
+
+#: addons/templates/Saved_Templates.php:93
+msgid "Update Template"
+msgstr "Actualizar plantilla"
+
+#: addons/beaver_builder/beaverbuilder.php:33
+#: addons/templates/Saved_Templates.php:92
+msgid "Edit Template"
+msgstr "Editar la plantilla"
+
+#: addons/beaver_builder/beaverbuilder.php:39
+#: addons/elementor/Elementor_Widget.php:49
+#: addons/templates/Saved_Templates.php:90
+#: addons/templates/Saved_Templates.php:91
+msgid "Add New Template"
+msgstr "Añadir nueva plantilla"
+
+#: addons/templates/Saved_Templates.php:89
+msgid "View Template"
+msgstr "Ver la plantilla"
+
+#: addons/templates/Saved_Templates.php:87
+msgid "Parent Template"
+msgstr "Plantilla padre"
+
+#: addons/templates/init.php:11 addons/templates/Saved_Templates.php:86
+#: addons/templates/Saved_Templates.php:88
+msgid "Saved Templates"
+msgstr "Plantillas guardadas"
+
+#: addons/templates/Saved_Templates.php:85
+msgctxt "Templates"
+msgid "Saved Template"
+msgstr "Plantilla guardada"
+
+#: addons/templates/Saved_Templates.php:84
+msgctxt "Templates"
+msgid "Saved Templates"
+msgstr "Plantillas guardadas"
+
+#: addons/templates/Saved_Templates.php:61 assets/js/wopb_dashboard_min.js:2
+msgid "Shortcode"
+msgstr "Shortcode"
+
+#: addons/wishlist/backend.php:111 addons/wishlist/backend.php:143
+#: addons/wishlist/init.php:115
+msgid "After Cart"
+msgstr "Después del carrito"
+
+#: addons/wishlist/backend.php:110 addons/wishlist/backend.php:142
+#: addons/wishlist/init.php:114
+msgid "Before Cart"
+msgstr "Antes del carrito"
+
+#: addons/variation_swatches/backend.php:85
+#: addons/variation_swatches/init.php:111 addons/wishlist/backend.php:65
+#: addons/wishlist/backend.php:72 addons/wishlist/backend.php:79
+#: addons/wishlist/backend.php:101 addons/wishlist/backend.php:133
+#: addons/wishlist/init.php:69 addons/wishlist/init.php:76
+#: addons/wishlist/init.php:83 addons/wishlist/init.php:100
+#: addons/wishlist/init.php:106
+msgid "Enable / Disable"
+msgstr "Activar / Desactivar"
+
+#: addons/quick_view/backend.php:165 addons/wishlist/backend.php:117
+#: addons/wishlist/backend.php:149 addons/wishlist/init.php:90
+msgid "Button Text"
+msgstr "Texto del botón"
+
+#: addons/compare/backend.php:200 addons/compare/backend.php:268
+#: addons/compare/Compare.php:311 addons/compare/Compare.php:320
+msgid "Added"
+msgstr "Añadido"
+
+#: addons/compare/backend.php:62 addons/compare/Compare.php:1158
+#: addons/compare/init.php:59
+msgid "Compare"
+msgstr "Comparar"
+
+#: addons/compare/Compare.php:804 addons/wishlist/init.php:121
+#: addons/wishlist/Wishlist.php:249 assets/js/wopb_dashboard_min.js:2
+msgid "Action"
+msgstr "Acción"
+
+#: addons/compare/backend.php:58 addons/compare/Compare.php:1198
+msgid "SKU"
+msgstr "SKU"
+
+#: addons/compare/backend.php:45 addons/compare/Compare.php:1185
+#: addons/quick_view/backend.php:37 addons/quick_view/Quickview.php:779
+#: addons/wishlist/Wishlist.php:248
+msgid "Price"
+msgstr "Precio"
+
+#: addons/builder/blocks/checkout/order_review/Template.php:18
+#: blocks/woo/checkout/order_review/Template.php:18
+msgid "Product"
+msgstr "Producto"
+
+#: addons/compare/Compare.php:1192
+msgid "- Select -"
+msgstr "- Seleccionar -"
+
+#: addons/compare/Compare.php:899 blocks/Product_Slider.php:347
+#: classes/Functions.php:3006 classes/Functions.php:3008
+msgid "View Cart"
+msgstr "Ver carrito"
+
+#: classes/Functions.php:106
+msgid "Seconds"
+msgstr "Segundos"
+
+#: classes/Functions.php:102
+msgid "Minutes"
+msgstr "Minutos"
+
+#: classes/Functions.php:98
+msgid "Hours"
+msgstr "Horas"
+
+#: classes/Functions.php:94
+msgid "Days"
+msgstr "Días"
+
+#: addons/compare/backend.php:72 addons/compare/init.php:73
+#: addons/elementor/Elementor_Widget.php:26 addons/name_price/backend.php:40
+#: addons/quick_view/backend.php:61 addons/quick_view/init.php:74
+#: addons/sales_notification/backend.php:41
+#: addons/variation_swatches/backend.php:44 addons/wishlist/backend.php:41
+#: classes/Options.php:108 classes/Options.php:151
+#: assets/js/wopb_dashboard_min.js:2
+msgid "Settings"
+msgstr "Ajustes"
+
+#: classes/Options.php:58
+msgid "Support"
+msgstr "Soporte"
+
+#: classes/Options.php:57
+msgid "Tutorials"
+msgstr "Tutoriales"
+
+#: classes/Options.php:56 assets/js/wopb_dashboard_min.js:2
+msgid "Docs"
+msgstr "Documentos"
+
+#: addons/quick_view/Quickview.php:464
+msgid "Buy Now"
+msgstr "Comprar ahora"
+
+#: classes/Deactive.php:192
+msgid "Skip & Deactivate"
+msgstr "Saltar y desactivar"
+
+#: classes/Deactive.php:191
+msgid "Submit & Deactivate"
+msgstr "Enviar y desactivar"
+
+#: classes/Deactive.php:169
+msgid "Quick Feedback"
+msgstr "Comentario rápido"
+
+#: blocks/Product_Category_1.php:128 blocks/Product_Category_2.php:101
+#: blocks/Product_Category_3.php:194
+msgid "Read More"
+msgstr "Leer mas"
+
+#: addons/quick_view/backend.php:55 addons/quick_view/init.php:64
+msgid "Quick View Settings"
+msgstr "Ajustes de vista rapida"
+
+#: addons/wishlist/backend.php:45 addons/wishlist/init.php:59
+msgid "Wishlist Settings"
+msgstr "Ajustes de lista de deseos"
+
+#: addons/wishlist/Wishlist.php:287 addons/wishlist/Wishlist.php:296
+msgid "Continue Shopping"
+msgstr "Continuar comprando"
+
+#: addons/wishlist/Wishlist.php:284
+msgid "Add All To Cart"
+msgstr "Añadir todo al carrito"
+
+#: addons/compare/backend.php:66 addons/compare/init.php:63
+msgid "Compare Settings"
+msgstr "Ajustes de comparar"
+
+#: addons/flip_image/backend.php:55 addons/flip_image/init.php:77
+msgid "First Image From Gallery"
+msgstr "Primera imagen de la galería"
+
+#: addons/wishlist/backend.php:139 addons/wishlist/init.php:112
+msgid "Position on Single Page"
+msgstr "Posicion en pagina unica"
+
+#: addons/compare/backend.php:44 addons/compare/Compare.php:1184
+#: addons/quick_view/backend.php:35 addons/quick_view/init.php:177
+#: addons/quick_view/Quickview.php:777 assets/js/wopb_dashboard_min.js:2
+msgid "Title"
+msgstr "Título"
+
+#: addons/quick_view/backend.php:36 addons/quick_view/Quickview.php:778
+msgid "Rating"
+msgstr "Valoración"
+
+#: addons/wishlist/init.php:123
+msgid "Popup Wishlist"
+msgstr "Lista de deseos en mensaje emergente"
+
+#: addons/wishlist/init.php:124
+msgid "Added to Wishlist"
+msgstr "Añadido a la lista de deseos"
+
+#: addons/wishlist/backend.php:122 addons/wishlist/backend.php:154
+#: addons/wishlist/init.php:95
+msgid "Browse Wishlist Text"
+msgstr "Explorar la lista de deseos"
+
+#: addons/wishlist/backend.php:135 addons/wishlist/init.php:102
+msgid "Enable Wishlist in Single Page."
+msgstr "Activar lista de deseos en pagina unica"
+
+#: addons/compare/Compare.php:522
+msgid "Compare Added."
+msgstr "Comparar fue añadido"
+
+#: addons/compare/backend.php:101 addons/wishlist/backend.php:88
+#: addons/wishlist/init.php:132
+msgid "Popup"
+msgstr "Mensaje emergente"
+
+#: addons/wishlist/backend.php:85 addons/wishlist/init.php:130
+msgid "Action after Added"
+msgstr "Acción después de añadir"
+
+#: addons/flip_image/FlipImage.php:115
+msgid "Remove Flip Image"
+msgstr "Quitar imagen invertida"
+
+#: addons/wishlist/backend.php:68 addons/wishlist/init.php:72
+msgid "Require Login for Wishlist."
+msgstr "Es obligatorio acceder para ver la lista de deseos"
+
+#: addons/compare/Compare.php:877
+msgid "in stock"
+msgstr "hay existencias"
+
+#: addons/compare/backend.php:102 addons/wishlist/backend.php:89
+#: addons/wishlist/init.php:133
+msgid "Redirect to Page"
+msgstr "Redirigir a pagina"
+
+#: addons/flip_image/backend.php:35 addons/flip_image/FlipImage.php:99
+#: addons/flip_image/init.php:58
+msgid "Flip Image"
+msgstr "Voltear imagen"
+
+#: addons/flip_image/backend.php:39 addons/flip_image/init.php:66
+msgid "Flip Image Settings"
+msgstr "Ajustes de volteado de imagen"
+
+#: addons/compare/Compare.php:531
+msgid "Compare Removed."
+msgstr "Comparación quitada."
+
+#: addons/quick_view/backend.php:51 addons/quick_view/init.php:60
+msgid "QuickView"
+msgstr "Vista rápida"
+
+#: addons/compare/backend.php:195 addons/compare/backend.php:262
+#: addons/compare/Compare.php:310 addons/compare/Compare.php:319
+msgid "Add to Compare"
+msgstr "Añadir a comparar"
+
+#: addons/compare/Compare.php:549
+msgid "Compare Not Added"
+msgstr "Comparación no añadida"
+
+#: classes/Deactive.php:174
+msgid "If you have a moment, please let us know why you are deactivating WowStore:"
+msgstr "Si tienes un momento, por favor, dinos por qué estás desactivando WowStore:"
+
+#: classes/Deactive.php:146
+msgid "Please share the reason."
+msgstr "Por favor, comparte el motivo."
+
+#: classes/Deactive.php:145
+msgid "Other."
+msgstr "Otro."
+
+#: classes/Deactive.php:140
+msgid "It's a temporary deactivation."
+msgstr "Es una desactivación temporal."
+
+#: classes/Deactive.php:135
+msgid "I could not get the plugin to work."
+msgstr "No he podido hacer funcionar el plugin."
+
+#: classes/Deactive.php:130
+msgid "Please share more details."
+msgstr "Por favor, comparte más detalles."
+
+#: classes/Deactive.php:129
+msgid "The plugin suddenly stopped working."
+msgstr "El plugin, de repente, ha dejado de funcionar."
+
+#: classes/Deactive.php:124
+msgid "Please share which plugin."
+msgstr "Por favor, dinos qué plugin"
+
+#: classes/Deactive.php:123
+msgid "I found a better plugin."
+msgstr "He encontrado un plugin mejor."
+
+#: classes/Deactive.php:118
+msgid "I no longer need the plugin."
+msgstr "Ya no necesito el plugin."
+
+#: classes/Deactive.php:64
+msgid "No Thanks"
+msgstr "No, gracias"
+
+#: classes/Deactive.php:63
+msgid "Allow"
+msgstr "Permitir"
+
+#: classes/Notice.php:590 classes/Notice.php:616
+msgid "Dismiss"
+msgstr "Descartar"
+
+#: blocks/Product_Grid_1.php:177 blocks/Product_Grid_2.php:181
+#: blocks/Product_Grid_3.php:181 blocks/Product_Grid_4.php:192
+#: blocks/Product_Slider.php:256
+msgid " Off"
+msgstr " Desactivado"
+
+#: classes/Styles.php:406
+msgid "Data not found!!"
+msgstr "¡Datos no encontrados!"
+
+#: addons/quick_view/Quickview.php:439 addons/wishlist/Wishlist.php:268
+#: addons/wishlist/Wishlist.php:270 blocks/Product_Grid_1.php:221
+#: blocks/Product_Grid_2.php:224 blocks/Product_Grid_3.php:233
+#: blocks/Product_Grid_4.php:272 blocks/woo/Product_Stock.php:31
+msgid "In Stock"
+msgstr "Con existencias"
+
+#: addons/compare/backend.php:82 addons/quick_view/backend.php:71
+#: addons/wishlist/backend.php:55 assets/js/wopb_dashboard_min.js:2
+msgid "General Settings"
+msgstr "Ajustes generales"
+
+#: blocks/Product_Category_1.php:122 blocks/Product_Category_2.php:95
+msgid "products"
+msgstr "productos"
+
+#: addons/quick_view/backend.php:11 addons/quick_view/init.php:11
+#: addons/quick_view/Quickview.php:136
+msgid "Quick View"
+msgstr "Vista rápida"
+
+#: addons/quick_view/Quickview.php:441 blocks/Product_Grid_1.php:217
+#: blocks/Product_Grid_2.php:220 blocks/Product_Grid_3.php:229
+#: blocks/Product_Grid_4.php:268
+msgid "Out of stock"
+msgstr "Sin existencias"
+
+#: classes/Notice.php:619
+msgid "Activate WooCommerce"
+msgstr "Activar WooCommerce"
+
+#: classes/Styles.php:404
+msgid "Data retrive done"
+msgstr "Recuperación de datos realizada"
+
+#: blocks/template/review.php:7
+msgid "out of 5"
+msgstr "de 5"
+
+#: addons/quick_view/Quickview.php:565 blocks/Product_Grid_1.php:176
+#: blocks/Product_Grid_2.php:180 blocks/Product_Grid_3.php:180
+#: blocks/Product_Grid_4.php:191 blocks/Product_Slider.php:254
+msgid "Sale!"
+msgstr "¡Oferta!"
+
+#: classes/Functions.php:1234 assets/js/setup.wizard.js:2
+#: assets/js/wopb_initial_setup_min.js:2
+msgid "Next"
+msgstr "Siguiente"
+
+#: classes/Functions.php:1233 assets/js/setup.wizard.js:2
+#: assets/js/wopb_initial_setup_min.js:2
+msgid "Previous"
+msgstr "Anterior"
+
+#: classes/Styles.php:360
+msgid "CSS can not be saved due to permission!!!"
+msgstr "¡CSS no puede ser guardado debido a los permisos!"
+
+#: addons/compare/Compare.php:687 addons/quick_view/Quickview.php:344
+#: blocks/woo/Product_Rating.php:49
+msgid "customer review"
+msgstr "reseña de cliente"
