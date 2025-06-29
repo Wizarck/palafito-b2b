@@ -30,7 +30,6 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 ?>
 
 <form name="checkout" method="post" class="checkout woocommerce-checkout" action="<?php echo esc_url( wc_get_checkout_url() ); ?>" enctype="multipart/form-data" aria-label="<?php echo esc_attr__( 'Checkout', 'woocommerce' ); ?>">
-<p style="background: #ffffcc; padding: 10px; border: 1px solid #ccc;">✔️ Tema hijo activo – Personalización en checkout funcionando</p>
 	<?php if ( $checkout->get_checkout_fields() ) : ?>
 
 		<?php do_action( 'woocommerce_checkout_before_customer_details' ); ?>
