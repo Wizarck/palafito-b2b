@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<ruleset name="PalafitoWPCS">
+  <description>Reglas para WordPress en Palafito</description>
+
+  <!-- WordPress Coding Standards sin la regla obsoleta -->
+  <rule ref="WordPress">
+    <exclude name="Generic.Functions.CallTimePassByReference"/>
+  </rule>
+
+  <exclude-pattern>*/node_modules/*</exclude-pattern>
+  <exclude-pattern>*/vendor/*</exclude-pattern>
+  <exclude-pattern>*/wp-content/cache/*</exclude-pattern>
+
+  <arg name="colors"/>
+  <arg name="report" value="full"/>
+</ruleset>

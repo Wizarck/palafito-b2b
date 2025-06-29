@@ -1,0 +1,20 @@
+{
+    "name": "wizarck/palafito-b2b",
+    "description": "Custom WordPress setup for Palafito B2B with WooCommerce extensions.",
+    "license": "proprietary",
+    "require-dev": {
+        "wp-coding-standards/wpcs": "^3.1",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.1"
+    },
+    "config": {
+        "allow-plugins": {
+        "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "scripts": {
+    "lint": "vendor/bin/phpcs --standard=phpcs.xml wp-content/plugins/palafito-wc-extensions",
+    "fix": "vendor/bin/phpcbf --standard=phpcs.xml wp-content/plugins/palafito-wc-extensions",
+    "lint:all": "vendor/bin/phpcs --standard=phpcs.xml wp-content",
+    "fix:all": "vendor/bin/phpcbf --standard=phpcs.xml wp-content"
+    }
+}
