@@ -23,7 +23,6 @@ wp-content/mu-plugins/
 *.zip
 *.swp
 *.bak
-.DS_Store
 Thumbs.db
 ehthumbs.db
 
@@ -34,3 +33,4 @@ vendor/
 # Evitar copiar una carpeta duplicada si apareció antes
 wp-content/wp-content/
 .DS_Store
+**/.DS_Store
