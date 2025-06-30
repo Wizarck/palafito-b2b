@@ -327,15 +327,7 @@ function palafito_child_enqueue_styles() {
 }
 add_action( 'wp_enqueue_scripts', 'palafito_child_enqueue_styles' );
 
-// Modify address format for Spain to show postcode + city - country
-function palafito_custom_address_format_spain( $formats ) {
-    // Keep the original Spanish format but modify the country line
-    $formats['ES'] = "{name}\n{company}\n{address_1}\n{address_2}\n{postcode} {city}\n{state}\n{postcode} {city} - {country}";
-    return $formats;
-}
-add_filter( 'woocommerce_localisation_address_formats', 'palafito_custom_address_format_spain' );
-
-// Alternative approach: Modify the formatted address after it's generated
+// Modify formatted addresses to show postcode + city - country format
 function palafito_modify_formatted_address( $formatted_address, $args ) {
     // Only modify Spanish addresses
     if ( isset( $args['country'] ) && $args['country'] === 'ES' ) {
