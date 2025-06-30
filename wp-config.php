@@ -17,6 +17,8 @@
  *
  * @package WordPress
  */
+@ini_set('log_errors', 1);
+@ini_set('error_log', dirname(__FILE__) . '/php_error.log');
 
 // ** Database settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
@@ -87,7 +89,8 @@ $table_prefix = 'pnsc_';
  */
 define( 'WP_DEBUG', true );
 define( 'WP_DEBUG_LOG', true );
-define( 'WP_DEBUG_DISPLAY', false );
+define( 'WP_DEBUG_DISPLAY', true );
+@ini_set('display_errors', 1);
 /* Add any custom values between this line and the "stop editing" line. */
 
 
