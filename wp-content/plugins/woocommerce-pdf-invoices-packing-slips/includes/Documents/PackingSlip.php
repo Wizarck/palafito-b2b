@@ -184,18 +184,26 @@ class PackingSlip extends OrderDocumentMethods {
 				'callback'		=> 'multiple_checkboxes',
 				'section'		=> 'packing_slip',
 				'args'			=> array(
-					'option_name'	=> $option_name,
-					'id'			=> 'attach_to_email_ids',
-					'fields'		=> array(
-						'customer_completed_order'	=> __( 'Customer completed order email', 'woocommerce-pdf-invoices-packing-slips' ),
-						'customer_processing_order'	=> __( 'Customer processing order email', 'woocommerce-pdf-invoices-packing-slips' ),
-						'customer_on_hold_order'		=> __( 'Customer on-hold order email', 'woocommerce-pdf-invoices-packing-slips' ),
-						'new_order'					=> __( 'New order email (to admin)', 'woocommerce-pdf-invoices-packing-slips' ),
-						'customer_invoice'			=> __( 'Customer invoice email', 'woocommerce-pdf-invoices-packing-slips' ),
-						'customer_refunded_order'	=> __( 'Customer refunded order email', 'woocommerce-pdf-invoices-packing-slips' ),
-						'customer_partially_refunded_order' => __( 'Customer partially refunded order email', 'woocommerce-pdf-invoices-packing-slips' ),
-					),
-					'description'	=> __( 'Select which emails should have the packing slip attached.', 'woocommerce-pdf-invoices-packing-slips' ),
+					'option_name'	  => $option_name,
+					'id'			  => 'attach_to_email_ids',
+					'fields_callback' => array( $this, 'get_wc_emails' ),
+					/* translators: directory path */
+					'description'	  => ! WPO_WCPDF()->file_system->is_writable( WPO_WCPDF()->main->get_tmp_path( 'attachments' ) ) ? '<span class="wpo-warning">' . sprintf( __( 'It looks like the temp folder (<code>%s</code>) is not writable, check the permissions for this folder! Without having write access to this folder, the plugin will not be able to email packing slips.', 'woocommerce-pdf-invoices-packing-slips' ), WPO_WCPDF()->main->get_tmp_path( 'attachments' ) ).'</span>':'',
+				)
+			),
+			array(
+				'type'			=> 'setting',
+				'id'			=> 'disable_for_statuses',
+				'title'			=> __( 'Disable for:', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback'		=> 'select',
+				'section'		=> 'packing_slip',
+				'args'			=> array(
+					'option_name'      => $option_name,
+					'id'               => 'disable_for_statuses',
+					'options_callback' => 'wc_get_order_statuses',
+					'multiple'         => true,
+					'enhanced_select'  => true,
+					'placeholder'      => __( 'Select one or more statuses', 'woocommerce-pdf-invoices-packing-slips' ),
 				)
 			),
 		);
