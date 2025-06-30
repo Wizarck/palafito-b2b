@@ -40,8 +40,6 @@ final class Palafito_WC_Extensions {
 		add_filter( 'bulk_actions-edit-shop_order', array( __CLASS__, 'add_custom_order_statuses_to_bulk_actions' ) );
 		// Manejar acciones masivas de estados personalizados.
 		add_filter( 'handle_bulk_actions-edit-shop_order', array( __CLASS__, 'handle_bulk_order_status_actions' ), 10, 3 );
-		// Añadir botones individuales en la tabla de pedidos.
-		add_filter( 'woocommerce_admin_order_actions', array( __CLASS__, 'add_custom_order_actions' ), 10, 2 );
 		// Registrar post status personalizados en el hook init.
 		add_action( 'init', array( __CLASS__, 'register_custom_post_statuses' ), 1 );
 	}
@@ -183,33 +181,6 @@ final class Palafito_WC_Extensions {
 			$redirect_to = add_query_arg( 'bulk_facturado', $processed_count, $redirect_to );
 		}
 		return $redirect_to;
-	}
-
-	/**
-	 * Añadir botones individuales en la tabla de pedidos.
-	 *
-	 * @param array    $actions Acciones disponibles.
-	 * @param WC_Order $order Objeto del pedido.
-	 * @return array
-	 */
-	public static function add_custom_order_actions( $actions, $order ) {
-		// Solo mostrar botón "Entregado" si el pedido está en "procesando".
-		if ( 'processing' === $order->get_status() ) {
-			$actions['entregado'] = array(
-				'url'    => wp_nonce_url( admin_url( 'admin-ajax.php?action=woocommerce_mark_order_status&status=entregado&order_id=' . $order->get_id() ), 'woocommerce-mark-order-status' ),
-				'name'   => __( 'Entregado', 'palafito-wc-extensions' ),
-				'action' => 'entregado',
-			);
-		}
-		// Solo mostrar botón "Facturado" si el pedido está en "entregado".
-		if ( 'entregado' === $order->get_status() ) {
-			$actions['facturado'] = array(
-				'url'    => wp_nonce_url( admin_url( 'admin-ajax.php?action=woocommerce_mark_order_status&status=facturado&order_id=' . $order->get_id() ), 'woocommerce-mark-order-status' ),
-				'name'   => __( 'Facturado', 'palafito-wc-extensions' ),
-				'action' => 'facturado',
-			);
-		}
-		return $actions;
 	}
 
 	/**
