@@ -30,15 +30,16 @@ class Palafito_Checkout_Customizations {
 	 * @return array Modified checkout fields.
 	 */
 	public function customize_checkout_fields( $fields ) {
-		// Make last name fields optional for B2B.
-		if ( isset( $fields['billing']['billing_last_name'] ) ) {
-			$fields['billing']['billing_last_name']['required'] = false;
+		// Hacer todos los campos de facturación opcionales en el checkout.
+		if ( isset( $fields['billing'] ) ) {
+			foreach ( $fields['billing'] as $key => &$field ) {
+				$field['required'] = false;
+			}
 		}
-
+		// Make last name fields optional for B2B (ya cubierto arriba, pero se mantiene por claridad)
 		if ( isset( $fields['shipping']['shipping_last_name'] ) ) {
 			$fields['shipping']['shipping_last_name']['required'] = false;
 		}
-
 		return $fields;
 	}
 

@@ -55,6 +55,13 @@
 - [x] Restaurar dinámica de métodos de pago (Stripe, Apple Pay, Google Pay, etc.)
 - [x] Teléfono de envío obligatorio
 - [x] Unificar bloque de pedido y métodos de pago
+- [x] Automatización de transición de estado tras checkout:
+    - Si el método de pago es "Pago mensual" (`cod`), el pedido pasa automáticamente a "on-hold".
+    - Si es cualquier otro método de pago, el pedido pasa automáticamente a "processing".
+- [ ] Implementar transiciones manuales desde el admin:
+    - De "procesando" a "entregado" (con registro de fecha y envío de albarán).
+    - De "entregado" a "facturado" (con generación de factura).
+    - De "facturado" a "completado".
 - [ ] Quitar método de pago Trustly
 - [ ] Quitar "& Free Shipping" y "Añadir a la lista de deseos" en producto
 - [ ] Quitar PayPal como método de pago
