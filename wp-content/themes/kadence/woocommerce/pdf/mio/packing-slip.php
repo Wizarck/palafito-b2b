@@ -36,31 +36,46 @@
 
 <table class="order-data-addresses">
 	<tr>
-		<td class="address shipping-address">
-			<?php do_action( 'wpo_wcpdf_before_shipping_address', $this->get_type(), $this->order ); ?>
-			<p><?php $this->shipping_address(); ?></p>
-			<?php do_action( 'wpo_wcpdf_after_shipping_address', $this->get_type(), $this->order ); ?>
+		<td class="address billing-address">
+			<?php do_action( 'wpo_wcpdf_before_billing_address', $this->get_type(), $this->order ); ?>
+			<?php $this->billing_address(); ?>
+			<?php do_action( 'wpo_wcpdf_after_billing_address', $this->get_type(), $this->order ); ?>
 			<?php if ( isset( $this->settings['display_email'] ) ) : ?>
 				<div class="billing-email"><?php $this->billing_email(); ?></div>
 			<?php endif; ?>
 			<?php if ( isset( $this->settings['display_phone'] ) ) : ?>
-				<div class="shipping-phone"><?php $this->shipping_phone( ! $this->show_billing_address() ); ?></div>
+				<div class="billing-phone"><?php $this->billing_phone(); ?></div>
 			<?php endif; ?>
+			<div>
+			<?php 
+				//Incluyo el usuario = NIF
+				$user_id = $this->order->get_user_id();
+				$user_info = get_userdata($user_id);
+				$username = $user_info->user_login;
+				
+				echo "NIF: $username";
+			?>
+			</div>
 		</td>
-		<td class="address billing-address">
-			<?php if ( $this->show_billing_address() ) : ?>
-				<h3><?php $this->billing_address_title(); ?></h3>
-				<?php do_action( 'wpo_wcpdf_before_billing_address', $this->get_type(), $this->order ); ?>
-				<p><?php $this->billing_address(); ?></p>
-				<?php do_action( 'wpo_wcpdf_after_billing_address', $this->get_type(), $this->order ); ?>
-				<?php if ( isset( $this->settings['display_phone'] ) && ! empty( $this->get_billing_phone() ) ) : ?>
-					<div class="billing-phone"><?php $this->billing_phone(); ?></div>
+		<td class="address shipping-address">
+			<?php if ( $this->show_shipping_address() ) : ?>
+				<h3><?php $this->shipping_address_title(); ?></h3>
+				<?php do_action( 'wpo_wcpdf_before_shipping_address', $this->get_type(), $this->order ); ?>
+				<p><?php $this->shipping_address();?></p>
+				
+				<?php if ( isset( $this->settings['display_phone'] ) ) : ?>
+					<div class="shipping-phone"><?php $this->shipping_phone(); ?>
+			</div>
 				<?php endif; ?>
-			<?php endif; ?>
+			<?php endif; ?>					
 		</td>
 		<td class="order-data">
 			<table>
 				<?php do_action( 'wpo_wcpdf_before_order_data', $this->get_type(), $this->order ); ?>
+				<tr class="delivery-note-number">
+					<th>Número de Albarán</th>
+					<td>A-<?php echo $this->order->get_order_number(); ?></td>
+				</tr>
 				<tr class="order-number">
 					<th><?php $this->order_number_title(); ?></th>
 					<td><?php $this->order_number(); ?></td>
@@ -125,18 +140,48 @@
 	</tbody>
 </table>
 
-<div class="bottom-spacer"></div>
+<table class="notes-totals">
+	<tbody>
+		<tr class="no-borders">
+			<td class="no-borders notes-cell">
+				<?php do_action( 'wpo_wcpdf_before_document_notes', $this->get_type(), $this->order ); ?>
+				<?php if ( $this->get_document_notes() ) : ?>
+					<div class="document-notes">
+						<h3><?php $this->notes_title(); ?></h3>
+						<?php $this->document_notes(); ?>
+					</div>
+				<?php endif; ?>
+				<?php do_action( 'wpo_wcpdf_after_document_notes', $this->get_type(), $this->order ); ?>
+				<?php do_action( 'wpo_wcpdf_before_customer_notes', $this->get_type(), $this->order ); ?>
+				<?php if ( $this->get_shipping_notes() ) : ?>
+					<div class="customer-notes">
+						<h3><?php $this->customer_notes_title(); ?></h3>
+						<?php $this->shipping_notes(); ?>
+					</div>
+				<?php endif; ?>
+				<?php do_action( 'wpo_wcpdf_after_customer_notes', $this->get_type(), $this->order ); ?>
+			</td>
+			<td class="no-borders totals-cell">
+				<table class="totals">
+					<tfoot>
+						<?php foreach ( $this->get_woocommerce_totals() as $key => $total ) : ?>
+							<tr class="<?php echo esc_attr( $key ); ?>">
+								<th class="description"><?php echo $total['label']; ?></th>
+								<td class="price"><span class="totals-price"><?php echo $total['value']; ?></span></td>
+							</tr>
+						<?php endforeach; ?>
+					</tfoot>
+				</table>
+			</td>
+		</tr>
+	</tbody>
+</table>
 
 <?php do_action( 'wpo_wcpdf_after_order_details', $this->get_type(), $this->order ); ?>
-
-<?php do_action( 'wpo_wcpdf_before_customer_notes', $this->get_type(), $this->order ); ?>
-<?php if ( $this->get_shipping_notes() ) : ?>
-	<div class="customer-notes">
-		<h3><?php $this->customer_notes_title() ?></h3>
-		<?php $this->shipping_notes(); ?>
-	</div>
-<?php endif; ?>
-<?php do_action( 'wpo_wcpdf_after_customer_notes', $this->get_type(), $this->order ); ?>
+		<div id="footer">
+			Inscrita en el Registre Mercantil de Barcelona, Hoja B-524363 Tomo 46577 Folio 26
+		</div>
+<div class="bottom-spacer"></div>
 
 <?php if ( $this->get_footer() ) : ?>
 	<htmlpagefooter name="docFooter"><!-- required for mPDF engine -->
