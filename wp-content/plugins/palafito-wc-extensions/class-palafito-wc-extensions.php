@@ -222,6 +222,7 @@ final class Palafito_WC_Extensions {
 		// Load PDF actions if PDF plugin is available.
 		if ( class_exists( 'WPO_WCPDF' ) ) {
 			require_once plugin_dir_path( __FILE__ ) . 'includes/class-palafito-admin-pdf-actions.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/class-palafito-email-attachments.php';
 		}
 	}
 
@@ -231,6 +232,11 @@ final class Palafito_WC_Extensions {
 	private function init_components() {
 		// Initialize checkout customizations.
 		new Palafito_Checkout_Customizations();
+
+		// Initialize email attachments if PDF plugin is available.
+		if ( class_exists( 'WPO_WCPDF' ) ) {
+			new Palafito_Email_Attachments();
+		}
 	}
 
 	/**

@@ -40,7 +40,8 @@ require_once PALAFITO_WC_EXTENSIONS_PLUGIN_DIR . 'class-palafito-wc-extensions.p
 function palafito_wc_extensions_init() {
 	// Only initialize if WooCommerce is active.
 	if ( class_exists( 'WooCommerce' ) ) {
-		new Palafito_WC_Extensions();
+		global $palafito_wc_extensions;
+		$palafito_wc_extensions = new Palafito_WC_Extensions();
 	}
 }
 
