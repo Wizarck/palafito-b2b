@@ -58,6 +58,9 @@ final class Palafito_WC_Extensions {
 
 	/**
 	 * Registrar los nuevos estados personalizados de pedido.
+	 *
+	 * @param array $order_statuses Array de estados de pedido registrados.
+	 * @return array
 	 */
 	public function register_custom_order_statuses( $order_statuses ) {
 		$order_statuses['wc-entregado'] = array(
@@ -66,6 +69,7 @@ final class Palafito_WC_Extensions {
 			'exclude_from_search'       => false,
 			'show_in_admin_all_list'    => true,
 			'show_in_admin_status_list' => true,
+			// translators: %s: número de pedidos con estado Entregado.
 			'label_count'               => _n_noop( 'Entregado <span class="count">(%s)</span>', 'Entregados <span class="count">(%s)</span>', 'palafito-wc-extensions' ),
 		);
 		$order_statuses['wc-facturado'] = array(
@@ -74,6 +78,7 @@ final class Palafito_WC_Extensions {
 			'exclude_from_search'       => false,
 			'show_in_admin_all_list'    => true,
 			'show_in_admin_status_list' => true,
+			// translators: %s: número de pedidos con estado Facturado.
 			'label_count'               => _n_noop( 'Facturado <span class="count">(%s)</span>', 'Facturados <span class="count">(%s)</span>', 'palafito-wc-extensions' ),
 		);
 		return $order_statuses;
@@ -81,9 +86,12 @@ final class Palafito_WC_Extensions {
 
 	/**
 	 * Añadir los nuevos estados personalizados a la lista de estados de WooCommerce.
+	 *
+	 * @param array $order_statuses Array de estados de pedido.
+	 * @return array
 	 */
 	public function add_custom_order_statuses_to_list( $order_statuses ) {
-		// Insertar 'entregado' después de 'processing'
+		// Insertar 'entregado' después de 'processing'.
 		$new_order_statuses = array();
 		foreach ( $order_statuses as $key => $label ) {
 			$new_order_statuses[ $key ] = $label;
@@ -99,6 +107,9 @@ final class Palafito_WC_Extensions {
 
 	/**
 	 * Añadir los nuevos estados personalizados a las acciones masivas del admin.
+	 *
+	 * @param array $bulk_actions Acciones masivas disponibles.
+	 * @return array
 	 */
 	public function add_custom_order_statuses_to_bulk_actions( $bulk_actions ) {
 		$bulk_actions['mark_entregado'] = __( 'Cambiar a Entregado', 'palafito-wc-extensions' );
