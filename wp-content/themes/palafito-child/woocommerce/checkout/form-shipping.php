@@ -9,6 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<?php
 		$fields = $checkout->get_checkout_fields( 'shipping' );
 		foreach ( $fields as $key => $field ) {
+			// Aseguramos que las clases estándar estén presentes
+			if (empty($field['class'])) {
+				$field['class'] = array('form-row-wide');
+			}
 			woocommerce_form_field( $key, $field, $checkout->get_value( $key ) );
 		}
 		?>

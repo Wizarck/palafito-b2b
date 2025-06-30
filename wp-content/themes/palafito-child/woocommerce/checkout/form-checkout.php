@@ -29,19 +29,21 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 	return;
 }
 ?>
-<div class="palafito-checkout-grid" style="display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap;">
-    <div class="palafito-checkout-left" style="flex: 1 1 350px; min-width: 320px;">
-        <h3><?php esc_html_e( 'Dirección de envío', 'woocommerce' ); ?></h3>
-        <?php
-        // Solo mostramos los campos de envío, sin checkbox ni facturación.
-        do_action( 'woocommerce_checkout_shipping' );
-        ?>
-    </div>
-    <div class="palafito-checkout-right" style="flex: 1 1 350px; min-width: 320px; max-width: 500px;">
-        <h3 id="order_review_heading"><?php esc_html_e( 'Tu pedido', 'woocommerce' ); ?></h3>
-        <div id="order_review" class="woocommerce-checkout-review-order">
-            <?php do_action( 'woocommerce_checkout_order_review' ); ?>
+<form name="checkout" method="post" class="checkout woocommerce-checkout" action="<?php echo esc_url( wc_get_checkout_url() ); ?>" enctype="multipart/form-data">
+    <div class="palafito-checkout-grid" style="display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap;">
+        <div class="palafito-checkout-left" style="flex: 1 1 350px; min-width: 320px;">
+            <h3><?php esc_html_e( 'Dirección de envío', 'woocommerce' ); ?></h3>
+            <?php
+            // Solo mostramos los campos de envío, sin checkbox ni facturación.
+            do_action( 'woocommerce_checkout_shipping' );
+            ?>
+        </div>
+        <div class="palafito-checkout-right" style="flex: 1 1 350px; min-width: 320px; max-width: 500px;">
+            <h3 id="order_review_heading"><?php esc_html_e( 'Tu pedido', 'woocommerce' ); ?></h3>
+            <div id="order_review" class="woocommerce-checkout-review-order">
+                <?php do_action( 'woocommerce_checkout_order_review' ); ?>
+            </div>
         </div>
     </div>
-</div>
+</form>
 <?php do_action( 'woocommerce_after_checkout_form', $checkout ); ?> 
