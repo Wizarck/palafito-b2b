@@ -327,73 +327,45 @@ function palafito_child_enqueue_styles() {
 }
 add_action( 'wp_enqueue_scripts', 'palafito_child_enqueue_styles' );
 
-// Custom address formatting for PDF templates
-function palafito_custom_address_format( $address, $document ) {
-    // Only apply to our custom templates
-    if ( ! in_array( $document->get_type(), array( 'invoice', 'packing-slip' ) ) ) {
-        return $address;
-    }
-    
-    // Get address components
-    $postcode = '';
-    $city = '';
-    $country = '';
-    
-    if ( strpos( $address, 'shop' ) !== false ) {
-        // Shop address
-        $postcode = $document->get_shop_address_postcode();
-        $city = $document->get_shop_address_city();
-        $country = $document->get_shop_address_country();
-    } else {
-        // Customer address - we need to extract from the formatted address
-        // This is a simplified approach - in a real scenario you'd need to parse the address more carefully
-        $lines = explode( "\n", $address );
-        foreach ( $lines as $line ) {
-            if ( preg_match( '/(\d{5})\s+(.+)/', trim( $line ), $matches ) ) {
-                $postcode = $matches[1];
-                $city = trim( $matches[2] );
+// Modify address format for Spain to show postcode + city - country
+function palafito_custom_address_format_spain( $formats ) {
+    // Keep the original Spanish format but modify the country line
+    $formats['ES'] = "{name}\n{company}\n{address_1}\n{address_2}\n{postcode} {city}\n{state}\n{postcode} {city} - {country}";
+    return $formats;
+}
+add_filter( 'woocommerce_localisation_address_formats', 'palafito_custom_address_format_spain' );
+
+// Alternative approach: Modify the formatted address after it's generated
+function palafito_modify_formatted_address( $formatted_address, $args ) {
+    // Only modify Spanish addresses
+    if ( isset( $args['country'] ) && $args['country'] === 'ES' ) {
+        // Split the address into lines
+        $lines = explode( "\n", $formatted_address );
+        
+        // Find the line with postcode and city (usually the 5th line for Spanish addresses)
+        foreach ( $lines as $index => $line ) {
+            if ( preg_match( '/^\d{5}\s+\w+/', trim( $line ) ) ) {
+                // This is the postcode + city line, add country to it
+                $lines[$index] = trim( $line ) . ' - España';
                 break;
             }
         }
-        // For customer addresses, we'll need to get country from order data
-        if ( $document->order ) {
-            $country = WC()->countries->get_countries()[ $document->order->get_billing_country() ] ?? '';
-        }
+        
+        $formatted_address = implode( "\n", $lines );
     }
     
-    // Format: "08028 Barcelona - España"
-    if ( $postcode && $city && $country ) {
-        $formatted_location = sprintf( '%s %s - %s', $postcode, $city, $country );
-        
-        // Replace the last line (postcode + city) with our formatted version
-        $lines = explode( "\n", $address );
-        $last_line = end( $lines );
-        
-        // Remove the last line if it contains postcode and city
-        if ( preg_match( '/\d{5}/', $last_line ) ) {
-            array_pop( $lines );
-        }
-        
-        // Add our formatted location
-        $lines[] = $formatted_location;
-        
-        $address = implode( "\n", $lines );
-    }
-    
-    return $address;
+    return $formatted_address;
 }
-add_filter( 'wpo_wcpdf_shop_address', 'palafito_custom_address_format', 10, 2 );
-add_filter( 'wpo_wcpdf_billing_address', 'palafito_custom_address_format', 10, 2 );
-add_filter( 'wpo_wcpdf_shipping_address', 'palafito_custom_address_format', 10, 2 );
+add_filter( 'woocommerce_formatted_address', 'palafito_modify_formatted_address', 10, 2 );
 
-// Add email to shop address
+// Add email to shop address in PDF templates
 function palafito_add_email_to_shop_address( $address, $document ) {
     // Only apply to our custom templates
     if ( ! in_array( $document->get_type(), array( 'invoice', 'packing-slip' ) ) ) {
         return $address;
     }
     
-    // Add email at the end of shop address
+    // Add email on a new line at the end of shop address
     $email = 'hola@palafitofood.com';
     $address .= "\n" . $email;
     
