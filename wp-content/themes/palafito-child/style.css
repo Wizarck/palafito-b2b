@@ -9,46 +9,6 @@
 /* Import parent theme styles */
 @import url('../kadence/style.css');
 
-/* Essential CSS variables that Kadence needs */
-:root {
-    /* Color palette - Kadence defaults */
-    --global-palette1: #2ea3f2;
-    --global-palette2: #1e73be;
-    --global-palette3: #0a4b78;
-    --global-palette4: #f6f7f9;
-    --global-palette5: #ffffff;
-    --global-palette6: #f8f9fa;
-    --global-palette7: #e9ecef;
-    --global-palette8: #dee2e6;
-    --global-palette9: #212529;
-    
-    /* Button colors */
-    --global-palette-btn: #ffffff;
-    --global-palette-btn-bg: #2ea3f2;
-    --global-palette-btn-hover: #ffffff;
-    --global-palette-btn-bg-hover: #1e73be;
-    
-    /* Link colors */
-    --global-palette-highlight: #2ea3f2;
-    --global-palette-highlight-alt: #1e73be;
-    --global-palette-highlight-alt2: #0a4b78;
-    
-    /* Gray colors */
-    --global-gray-400: #CBD5E0;
-    --global-gray-500: #A0AEC0;
-    
-    /* Spacing */
-    --global-xs-spacing: 1em;
-    --global-sm-spacing: 1.5rem;
-    --global-md-spacing: 2rem;
-    --global-lg-spacing: 2.5em;
-    --global-xl-spacing: 3.5em;
-    --global-xxl-spacing: 5rem;
-    --global-edge-spacing: 1.5rem;
-    --global-boxed-spacing: 2rem;
-    --global-content-edge-padding: 1.5rem;
-}
-
 /* Custom B2B Styles - minimal and non-conflicting */
 .b2b-pricing {
     background-color: #f6f7f9;
