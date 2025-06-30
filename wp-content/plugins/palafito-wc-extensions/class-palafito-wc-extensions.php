@@ -1,18 +1,5 @@
 <?php
 /**
- * Plugin Name: Palafito WC Extensions
- * Plugin URI: https://palafito.com
- * Description: Extensiones personalizadas para WooCommerce en Palafito B2B
- * Version: 1.0.0
- * Author: Palafito Team
- * License: GPL v2 or later
- * Text Domain: palafito-wc-extensions
- * Domain Path: /languages
- * Requires at least: 5.0
- * Tested up to: 6.4
- * WC requires at least: 5.0
- * WC tested up to: 8.0
- *
  * @package Palafito_WC_Extensions
  */
 
