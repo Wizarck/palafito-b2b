@@ -307,6 +307,31 @@ class PackingSlip extends OrderDocumentMethods {
 					'id'			=> 'reset_number_yearly',
 				)
 			),
+			array(
+				'type'			=> 'setting',
+				'id'			=> 'my_account_buttons',
+				'title'			=> __( 'Allow My Account download', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback'		=> 'select',
+				'section'		=> 'packing_slip',
+				'args'			=> array(
+					'option_name'	=> $option_name,
+					'id'			=> 'my_account_buttons',
+					'options' 		=> array(
+						'never'		=> __( 'Never' , 'woocommerce-pdf-invoices-packing-slips' ),
+						'available'	=> __( 'Only when a packing slip is already created/emailed' , 'woocommerce-pdf-invoices-packing-slips' ),
+						'custom'	=> __( 'Only for specific order statuses (define below)' , 'woocommerce-pdf-invoices-packing-slips' ),
+						'always'	=> __( 'Always' , 'woocommerce-pdf-invoices-packing-slips' ),
+					),
+					'custom'		=> array(
+						'type' => 'multiple_checkboxes',
+						'args' => array(
+							'option_name'		=> $option_name,
+							'id'				=> 'my_account_restrict',
+							'fields_callback'	=> array( $this, 'get_wc_order_status_list' ),
+						),
+					),
+				)
+			),
 		);
 		$settings_fields = WPO_WCPDF()->settings->move_setting_after_id( $settings_fields, $additional_settings, 'display_customer_notes' );
 

@@ -34,6 +34,9 @@ class Palafito_Email_Attachments {
 		// Hook into order status change actions to send custom emails.
 		add_action( 'woocommerce_order_status_entregado', array( $this, 'send_entregado_email' ), 10, 2 );
 		add_action( 'woocommerce_order_status_facturado', array( $this, 'send_facturado_email' ), 10, 2 );
+
+		// Customize the list of available emails for PDF attachments.
+		add_filter( 'wpo_wcpdf_wc_emails', array( $this, 'customize_wc_emails_list' ), 10, 1 );
 	}
 
 	/**
@@ -116,6 +119,26 @@ class Palafito_Email_Attachments {
 		$email_actions[] = 'woocommerce_order_status_facturado';
 
 		return $email_actions;
+	}
+
+	/**
+	 * Customize the list of available emails for PDF attachments.
+	 * Adds custom email for "Pedido entregado" and removes duplicates.
+	 *
+	 * @param array $emails Current list of emails.
+	 * @return array
+	 */
+	public function customize_wc_emails_list( $emails ) {
+		// Add custom email for "Pedido entregado" (Entregado status).
+		$emails['custom_entregado_email'] = __( 'Pedido entregado', 'woocommerce-pdf-invoices-packing-slips' );
+
+		// Remove duplicates by ensuring unique values.
+		$emails = array_unique( $emails, SORT_STRING );
+
+		// Sort alphabetically for better UX.
+		asort( $emails );
+
+		return $emails;
 	}
 
 	/**
