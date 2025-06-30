@@ -319,3 +319,121 @@ function palafito_comprehensive_https_fix() {
 }
 
 add_action('init', 'palafito_comprehensive_https_fix');
+
+// Enqueue parent and child theme styles
+function palafito_child_enqueue_styles() {
+    wp_enqueue_style( 'kadence-style', get_template_directory_uri() . '/style.css' );
+    wp_enqueue_style( 'palafito-child-style', get_stylesheet_directory_uri() . '/style.css', array( 'kadence-style' ), wp_get_theme()->get('Version') );
+}
+add_action( 'wp_enqueue_scripts', 'palafito_child_enqueue_styles' );
+
+// Custom address formatting for PDF templates
+function palafito_custom_address_format( $address, $document ) {
+    // Only apply to our custom templates
+    if ( ! in_array( $document->get_type(), array( 'invoice', 'packing-slip' ) ) ) {
+        return $address;
+    }
+    
+    // Get address components
+    $postcode = '';
+    $city = '';
+    $country = '';
+    
+    if ( strpos( $address, 'shop' ) !== false ) {
+        // Shop address
+        $postcode = $document->get_shop_address_postcode();
+        $city = $document->get_shop_address_city();
+        $country = $document->get_shop_address_country();
+    } else {
+        // Customer address - we need to extract from the formatted address
+        // This is a simplified approach - in a real scenario you'd need to parse the address more carefully
+        $lines = explode( "\n", $address );
+        foreach ( $lines as $line ) {
+            if ( preg_match( '/(\d{5})\s+(.+)/', trim( $line ), $matches ) ) {
+                $postcode = $matches[1];
+                $city = trim( $matches[2] );
+                break;
+            }
+        }
+        // For customer addresses, we'll need to get country from order data
+        if ( $document->order ) {
+            $country = WC()->countries->get_countries()[ $document->order->get_billing_country() ] ?? '';
+        }
+    }
+    
+    // Format: "08028 Barcelona - España"
+    if ( $postcode && $city && $country ) {
+        $formatted_location = sprintf( '%s %s - %s', $postcode, $city, $country );
+        
+        // Replace the last line (postcode + city) with our formatted version
+        $lines = explode( "\n", $address );
+        $last_line = end( $lines );
+        
+        // Remove the last line if it contains postcode and city
+        if ( preg_match( '/\d{5}/', $last_line ) ) {
+            array_pop( $lines );
+        }
+        
+        // Add our formatted location
+        $lines[] = $formatted_location;
+        
+        $address = implode( "\n", $lines );
+    }
+    
+    return $address;
+}
+add_filter( 'wpo_wcpdf_shop_address', 'palafito_custom_address_format', 10, 2 );
+add_filter( 'wpo_wcpdf_billing_address', 'palafito_custom_address_format', 10, 2 );
+add_filter( 'wpo_wcpdf_shipping_address', 'palafito_custom_address_format', 10, 2 );
+
+// Add email to shop address
+function palafito_add_email_to_shop_address( $address, $document ) {
+    // Only apply to our custom templates
+    if ( ! in_array( $document->get_type(), array( 'invoice', 'packing-slip' ) ) ) {
+        return $address;
+    }
+    
+    // Add email at the end of shop address
+    $email = 'hola@palafitofood.com';
+    $address .= "\n" . $email;
+    
+    return $address;
+}
+add_filter( 'wpo_wcpdf_shop_address', 'palafito_add_email_to_shop_address', 20, 2 );
+
+// Convert HTTP URLs to HTTPS
+function palafito_convert_http_to_https( $content ) {
+    if ( is_ssl() ) {
+        $content = str_replace( 'http://', 'https://', $content );
+    }
+    return $content;
+}
+add_filter( 'the_content', 'palafito_convert_http_to_https' );
+add_filter( 'widget_text', 'palafito_convert_http_to_https' );
+
+// Convert attachment URLs to HTTPS
+function palafito_convert_attachment_urls_to_https( $url ) {
+    if ( is_ssl() && strpos( $url, 'http://' ) === 0 ) {
+        $url = str_replace( 'http://', 'https://', $url );
+    }
+    return $url;
+}
+add_filter( 'wp_get_attachment_url', 'palafito_convert_attachment_urls_to_https' );
+add_filter( 'wp_get_attachment_image_src', function( $image ) {
+    if ( is_array( $image ) && isset( $image[0] ) ) {
+        $image[0] = palafito_convert_attachment_urls_to_https( $image[0] );
+    }
+    return $image;
+} );
+
+// Disable Kadence dynamic CSS generation to avoid CSP issues
+function palafito_disable_kadence_dynamic_css( $css ) {
+    // Log that the filter is being called
+    error_log( 'Palafito: Kadence dynamic CSS filter called - CSS length: ' . strlen( $css ) );
+    
+    // Return empty CSS to disable dynamic generation
+    return '';
+}
+add_filter( 'kadence_dynamic_css', 'palafito_disable_kadence_dynamic_css', 999 );
+add_filter( 'kadence_blocks_dynamic_css', 'palafito_disable_kadence_dynamic_css', 999 );
+add_filter( 'kadence_theme_dynamic_css', 'palafito_disable_kadence_dynamic_css', 999 );

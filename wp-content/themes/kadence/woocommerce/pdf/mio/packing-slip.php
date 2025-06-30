@@ -73,7 +73,7 @@
 			<table>
 				<?php do_action( 'wpo_wcpdf_before_order_data', $this->get_type(), $this->order ); ?>
 				<tr class="delivery-note-number">
-					<th>Número de Albarán</th>
+					<th>Número de albarán:</th>
 					<td>A-<?php echo $this->order->get_order_number(); ?></td>
 				</tr>
 				<tr class="order-number">
@@ -85,7 +85,7 @@
 					<td><?php $this->order_date(); ?></td>
 				</tr>
 				<tr class="delivery-date">
-					<th>Fecha de entrega</th>
+					<th>Fecha de entrega:</th>
 					<td><?php echo date_i18n( get_option( 'date_format' ), current_time( 'timestamp' ) ); ?></td>
 				</tr>
 				<?php if ( $this->get_shipping_method() ) : ?>
