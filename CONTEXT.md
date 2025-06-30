@@ -96,6 +96,15 @@ Palafito-b2b/
 - **Solución**: Removida inicialización duplicada, movido al hook `init`
 - **Estado**: ✅ Resuelto
 
+### 6. Problema de Carga de CSS del Tema Padre
+- **Problema**: Archivos CSS de Kadence no accesibles públicamente (error 405)
+- **Archivos afectados**: 
+  - `wp-content/themes/kadence/style.css` (no accesible)
+  - `wp-content/themes/kadence/assets/css/all.min.css` (no accesible)
+- **Diagnóstico**: Hosting bloquea acceso directo a archivos CSS
+- **Solución**: Usar sistema nativo de WordPress child themes con `@import`
+- **Estado**: ✅ Resuelto
+
 ---
 
 ## 🔧 Configuraciones Importantes
@@ -111,7 +120,8 @@ Palafito-b2b/
 - **Tema Padre**: Kadence
 - **Funcionalidades**: Estilos personalizados, scripts, hooks WooCommerce
 - **Dependencias**: Removidas dependencias del plugin custom
-- **CSS**: Carga correctamente desde Kadence
+- **CSS**: Carga correctamente desde Kadence via `@import`
+- **Sistema de carga**: WordPress nativo para child themes
 
 ### Plugin `wholesalex`
 - **Propósito**: Gestión de precios B2B
@@ -246,6 +256,35 @@ wp theme list --status=active
 4. **PHP 4.4.9 es antigua pero funciona** - NO es prioridad actualizar
 5. **El usuario quiere funcionalidades B2B escalables** - Enfocarse en eso
 6. **El TO-DO list está en archivo separado** - NO en este archivo de contexto
+
+---
+
+## 🚨 INFORMACIÓN CRÍTICA DE TROUBLESHOOTING
+
+### Archivos CSS No Accesibles
+- **Problema**: Hosting 1&1 IONOS bloquea acceso directo a archivos CSS
+- **Archivos afectados**: 
+  - `wp-content/themes/kadence/style.css` → Error 405
+  - `wp-content/themes/kadence/assets/css/all.min.css` → Error 405
+- **Solución aplicada**: Usar sistema nativo de WordPress child themes con `@import`
+- **Comando de verificación**: `curl -I https://palafito.com/wp-content/themes/kadence/style.css`
+
+### Plugin Inicialización
+- **Problema**: Plugin se inicializa múltiples veces por carga de página
+- **Logs típicos**: `Palafito WC Extensions: Plugin initialized` (múltiples veces)
+- **Solución**: Hook `init` con verificación de WooCommerce
+- **Verificación**: Revisar `wp-content/debug.log`
+
+### Traducciones Tempranas
+- **Problema**: `woocommerce-payments` carga traducciones muy temprano
+- **Logs típicos**: `Function _load_textdomain_just_in_time was called incorrectly`
+- **Impacto**: Solo warnings, no crítico
+- **Solución**: Plugin se inicializa en hook `init`
+
+### Estructura de Archivos Kadence
+- **CSS principal**: `wp-content/themes/kadence/style.css` (no accesible públicamente)
+- **CSS compilado**: `wp-content/themes/kadence/assets/css/all.min.css` (no accesible públicamente)
+- **Solución**: Usar `@import` en child theme + sistema nativo WordPress
 
 ---
 
