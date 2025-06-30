@@ -10,8 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 		$fields = $checkout->get_checkout_fields( 'shipping' );
 		if ( isset( $fields['shipping_phone'] ) ) {
 			$fields['shipping_phone']['required'] = true;
-			$fields['shipping_phone']['label'] = __( 'Teléfono de envío', 'woocommerce' ) . ' <span class="required">*</span>';
+			$fields['shipping_phone']['label'] = __( 'Teléfono de envío', 'woocommerce' );
 			$fields['shipping_phone']['custom_attributes']['required'] = 'required';
+		}
+		if ( isset( $fields['shipping_country'] ) ) {
+			$fields['shipping_country']['label'] = __( 'País', 'woocommerce' );
 		}
 		foreach ( $fields as $key => $field ) {
 			// Aseguramos que las clases estándar estén presentes
