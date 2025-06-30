@@ -22,8 +22,7 @@
 			<?php do_action( 'wpo_wcpdf_before_shop_address', $this->get_type(), $this->order ); ?>
 			<div class="shop-address">
 			<?php
-				// Dirección de empresa personalizada
-				$shop_name = get_bloginfo('name');
+				// Dirección de empresa personalizada (sin nombre de empresa)
 				$shop_nif = get_option('palafito_shop_nif', 'B87654321');
 				$shop_address = get_option('woocommerce_store_address');
 				$shop_address2 = get_option('woocommerce_store_address_2');
@@ -33,7 +32,6 @@
 				$shop_country = WC()->countries->countries[substr($shop_country_code, 3)] ?? $shop_country_code;
 				$shop_email = 'hola@palafitofood.com';
 				$lines = [];
-				$lines[] = $shop_name;
 				$lines[] = 'NIF: ' . $shop_nif;
 				$lines[] = $shop_address . ($shop_address2 ? ', ' . $shop_address2 : '');
 				$lines[] = trim($shop_postcode . ' ' . $shop_city . ' - ' . $shop_country);
@@ -60,14 +58,9 @@
 			<?php do_action( 'wpo_wcpdf_before_billing_address', $this->get_type(), $this->order ); ?>
 			<?php
 				// Dirección de facturación personalizada
-				$company = $this->order->get_billing_company();
-				$name = trim($this->order->get_billing_first_name() . ' ' . $this->order->get_billing_last_name());
+				$first_name = $this->order->get_billing_first_name();
+				$last_name = $this->order->get_billing_last_name();
 				$nif = get_post_meta($this->order->get_id(), '_billing_rfc', true);
-				if (!$nif) { // fallback: username como NIF
-					$user_id = $this->order->get_user_id();
-					$user_info = get_userdata($user_id);
-					$nif = $user_info ? $user_info->user_login : '';
-				}
 				$address = $this->order->get_billing_address_1();
 				$address2 = $this->order->get_billing_address_2();
 				$cp = $this->order->get_billing_postcode();
@@ -75,13 +68,11 @@
 				$country = $this->order->get_billing_country();
 				$country_name = WC()->countries->countries[$country] ?? $country;
 				$phone = $this->order->get_billing_phone();
-
 				$lines = [];
-				if ($company) $lines[] = $company;
+				if (trim($first_name . $last_name)) $lines[] = trim($first_name . ' ' . $last_name);
 				if ($nif) $lines[] = 'NIF: ' . $nif;
 				if ($address) $lines[] = $address . ($address2 ? ', ' . $address2 : '');
-				$line_cp_city = trim($cp . ' ' . $city . ' - ' . $country_name);
-				$lines[] = $line_cp_city;
+				$lines[] = trim($cp . ' ' . $city . ' - ' . $country_name);
 				if ($phone) $lines[] = 'Teléfono: ' . $phone;
 				echo implode("<br>", array_filter($lines));
 			?>
@@ -100,15 +91,21 @@
 				<p>
 				<?php
 					// Dirección de envío personalizada
-					$shipping_address = wp_strip_all_tags( $this->order->get_formatted_shipping_address() );
-					$shipping_country = $this->order->get_shipping_country();
-					if ( $shipping_country === 'ES' || stripos($shipping_address, 'España') !== false ) {
-						$shipping_address = preg_replace('/\n?España$/i', '', $shipping_address);
-						$shipping_address .= ' - España';
-					}
-					// Evitar ciudad duplicada
-					$shipping_address = preg_replace('/\n([^\n]+)\n\1/', "\n$1", $shipping_address);
-					echo nl2br( esc_html( $shipping_address ) );
+					$first_name = $this->order->get_shipping_first_name();
+					$last_name = $this->order->get_shipping_last_name();
+					$address = $this->order->get_shipping_address_1();
+					$address2 = $this->order->get_shipping_address_2();
+					$cp = $this->order->get_shipping_postcode();
+					$city = $this->order->get_shipping_city();
+					$country = $this->order->get_shipping_country();
+					$country_name = WC()->countries->countries[$country] ?? $country;
+					$phone = $this->order->get_billing_phone();
+					$lines = [];
+					if (trim($first_name . $last_name)) $lines[] = trim($first_name . ' ' . $last_name);
+					if ($address) $lines[] = $address . ($address2 ? ', ' . $address2 : '');
+					$lines[] = trim($cp . ' ' . $city . ' - ' . $country_name);
+					if ($phone) $lines[] = 'Teléfono: ' . $phone;
+					echo implode("<br>", array_filter($lines));
 				?>
 				</p>
 				
