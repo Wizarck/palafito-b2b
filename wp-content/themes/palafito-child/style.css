@@ -6,7 +6,7 @@
  Version:      1.0
 */
 
-/* Import parent theme styles */
+/* Import parent theme styles - let Kadence handle everything */
 @import url('../kadence/style.css');
 
 /* Custom B2B Styles - minimal and non-conflicting */
@@ -20,6 +20,11 @@
 .b2b-pricing h4 {
     color: #1e73be;
     margin-bottom: 0.5rem;
+}
+
+/* Only add B2B-specific styles, don't override Kadence defaults */
+.b2b-specific-content {
+    /* Add any B2B-specific styles here */
 }
 
 /* Ensure basic styling works */
