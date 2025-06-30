@@ -41,3 +41,8 @@ function palafito_wc_extensions_deactivate() {
 // Registrar hooks de activación/desactivación.
 register_activation_hook( PALAFITO_WC_EXTENSIONS_PLUGIN_FILE, 'palafito_wc_extensions_activate' );
 register_deactivation_hook( PALAFITO_WC_EXTENSIONS_PLUGIN_FILE, 'palafito_wc_extensions_deactivate' );
+
+// Cargar configuración de PDF si el plugin está disponible.
+if ( class_exists( 'WPO_WCPDF' ) ) {
+	require_once PALAFITO_WC_EXTENSIONS_PLUGIN_DIR . 'includes/pdf-configuration.php';
+}
