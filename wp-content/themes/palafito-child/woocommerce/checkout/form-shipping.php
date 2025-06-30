@@ -3,6 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
+<div style="color:red;">TEST OVERRIDE SHIPPING</div>
 <div class="woocommerce-shipping-fields">
 	<?php do_action( 'woocommerce_before_checkout_shipping_form', $checkout ); ?>
 	<div class="woocommerce-shipping-fields__field-wrapper">
