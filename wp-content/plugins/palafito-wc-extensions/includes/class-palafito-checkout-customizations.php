@@ -36,7 +36,7 @@ class Palafito_Checkout_Customizations {
 				$field['required'] = false;
 			}
 		}
-		// Make last name fields optional for B2B (ya cubierto arriba, pero se mantiene por claridad)
+		// Make last name fields optional for B2B.
 		if ( isset( $fields['shipping']['shipping_last_name'] ) ) {
 			$fields['shipping']['shipping_last_name']['required'] = false;
 		}
@@ -53,17 +53,16 @@ class Palafito_Checkout_Customizations {
 		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['woocommerce-process-checkout-nonce'] ?? '' ) ), 'woocommerce-process_checkout' ) ) {
 			return;
 		}
-
 		// Save any custom fields here if needed in the future.
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			error_log( "Palafito WC Extensions: Custom fields saved for order {$order_id}" );
+		if ( defined( 'WP_DEBUG' ) && true === WP_DEBUG ) {
+			error_log( 'Palafito WC Extensions: Custom fields saved for order ' . $order_id );
 		}
 	}
 
 	/**
 	 * Automatiza la transición de estado tras el checkout.
 	 *
-	 * @param int $order_id
+	 * @param int $order_id Order ID.
 	 */
 	public function auto_update_order_status( $order_id ) {
 		if ( ! $order_id ) {
@@ -74,14 +73,12 @@ class Palafito_Checkout_Customizations {
 			return;
 		}
 		$payment_method = $order->get_payment_method();
-		if ( $payment_method === 'cod' ) {
-			if ( $order->get_status() !== 'on-hold' ) {
+		if ( 'cod' === $payment_method ) {
+			if ( 'on-hold' !== $order->get_status() ) {
 				$order->update_status( 'on-hold', __( 'Transición automática: Pago mensual.', 'palafito-wc-extensions' ) );
 			}
-		} else {
-			if ( $order->get_status() === 'pending' ) {
-				$order->update_status( 'processing', __( 'Transición automática: Pago por tarjeta.', 'palafito-wc-extensions' ) );
-			}
+		} elseif ( 'pending' === $order->get_status() ) {
+			$order->update_status( 'processing', __( 'Transición automática: Pago por tarjeta.', 'palafito-wc-extensions' ) );
 		}
 	}
 }
