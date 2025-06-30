@@ -40,6 +40,14 @@ class Palafito_Child_Theme {
      * Enqueue de estilos
      */
     public function enqueue_styles() {
+        // Cargar el estilo del tema padre (Kadence) primero
+        wp_enqueue_style(
+            'kadence-style',
+            get_template_directory_uri() . '/style.css',
+            [],
+            wp_get_theme('kadence')->get('Version')
+        );
+
         // Estilo principal del tema hijo
         wp_enqueue_style(
             'palafito-child-style',
