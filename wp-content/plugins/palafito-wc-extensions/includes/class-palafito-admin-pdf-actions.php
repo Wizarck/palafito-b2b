@@ -19,15 +19,18 @@ class Palafito_Admin_PDF_Actions {
 	 * Constructor.
 	 */
 	public function __construct() {
-		// Filtrar las acciones de PDF según el estado del pedido.
-		add_filter( 'woocommerce_admin_order_actions', array( $this, 'filter_pdf_actions' ), 20, 2 );
+		// Filtrar las acciones de PDF según el estado del pedido (prioridad alta para ejecutar después del plugin PDF).
+		add_filter( 'woocommerce_admin_order_actions', array( $this, 'filter_pdf_actions' ), 100, 2 );
 
 		// Agregar acciones personalizadas de PDF.
-		add_filter( 'woocommerce_admin_order_actions', array( $this, 'add_custom_pdf_actions' ), 30, 2 );
+		add_filter( 'woocommerce_admin_order_actions', array( $this, 'add_custom_pdf_actions' ), 110, 2 );
 
 		// Manejar las acciones AJAX personalizadas.
 		add_action( 'wp_ajax_palafito_download_packing_slip', array( $this, 'handle_download_packing_slip' ) );
 		add_action( 'wp_ajax_palafito_download_invoice', array( $this, 'handle_download_invoice' ) );
+
+		// Filtro adicional para asegurar que se ejecute después de que el plugin PDF agregue sus acciones.
+		add_filter( 'woocommerce_admin_order_actions', array( $this, 'final_filter_pdf_actions' ), 999, 2 );
 	}
 
 	/**
@@ -43,12 +46,12 @@ class Palafito_Admin_PDF_Actions {
 		// Remover acciones de PDF que no deberían aparecer según el estado.
 		foreach ( $actions as $key => $action ) {
 			// Remover acción de Packing Slip si el pedido no está en estado "Entregado" o "Facturado".
-			if ( 'wpo_wcpdf_packing-slip' === $key && ! in_array( $order_status, array( 'entregado', 'facturado' ), true ) ) {
+			if ( ( 'wpo_wcpdf_packing-slip' === $key || 'wcpdf-packing-slip' === $key ) && ! in_array( $order_status, array( 'entregado', 'facturado' ), true ) ) {
 				unset( $actions[ $key ] );
 			}
 
 			// Remover acción de Invoice si el pedido no está en estado "Facturado".
-			if ( 'wpo_wcpdf_invoice' === $key && 'facturado' !== $order_status ) {
+			if ( ( 'wpo_wcpdf_invoice' === $key || 'wcpdf-invoice' === $key ) && 'facturado' !== $order_status ) {
 				unset( $actions[ $key ] );
 			}
 		}
@@ -166,6 +169,47 @@ class Palafito_Admin_PDF_Actions {
 		}
 
 		wp_die( esc_html__( 'Error al generar la factura.', 'palafito-wc-extensions' ) );
+	}
+
+	/**
+	 * Filtro final para asegurar que las acciones de PDF se filtren correctamente.
+	 * Se ejecuta con prioridad muy alta para asegurar que se ejecute después del plugin PDF.
+	 *
+	 * @param array    $actions Acciones disponibles.
+	 * @param WC_Order $order Objeto del pedido.
+	 * @return array
+	 */
+	public function final_filter_pdf_actions( $actions, $order ) {
+		$order_status = $order->get_status();
+
+		// Lista de claves de acciones de PDF que debemos filtrar.
+		$pdf_action_keys = array(
+			'wpo_wcpdf_packing-slip',
+			'wcpdf-packing-slip',
+			'wpo_wcpdf_invoice',
+			'wcpdf-invoice',
+			'wpo_wcpdf_packing_slip',
+			'wpo_wcpdf_invoice',
+		);
+
+		// Remover acciones de PDF según el estado del pedido.
+		foreach ( $actions as $key => $action ) {
+			// Si es una acción de PDF de packing slip y el pedido no está en estado correcto.
+			if ( in_array( $key, array( 'wpo_wcpdf_packing-slip', 'wcpdf-packing-slip', 'wpo_wcpdf_packing_slip' ), true ) ) {
+				if ( ! in_array( $order_status, array( 'entregado', 'facturado' ), true ) ) {
+					unset( $actions[ $key ] );
+				}
+			}
+
+			// Si es una acción de PDF de invoice y el pedido no está en estado correcto.
+			if ( in_array( $key, array( 'wpo_wcpdf_invoice', 'wcpdf-invoice', 'wpo_wcpdf_invoice' ), true ) ) {
+				if ( 'facturado' !== $order_status ) {
+					unset( $actions[ $key ] );
+				}
+			}
+		}
+
+		return $actions;
 	}
 }
 
