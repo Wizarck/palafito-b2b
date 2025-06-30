@@ -57,4 +57,4 @@ class Palafito_Checkout_Customizations {
 			error_log( "Palafito WC Extensions: Custom fields saved for order {$order_id}" );
 		}
 	}
-} 
+}
