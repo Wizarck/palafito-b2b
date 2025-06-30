@@ -82,6 +82,3 @@ final class Palafito_WC_Extensions {
 		}
 	}
 }
-
-// Initialize the plugin.
-new Palafito_WC_Extensions();

@@ -34,5 +34,15 @@ require_once PALAFITO_WC_EXTENSIONS_PLUGIN_DIR . 'includes/plugin-hooks.php';
 // Load the main plugin class.
 require_once PALAFITO_WC_EXTENSIONS_PLUGIN_DIR . 'class-palafito-wc-extensions.php';
 
-// Initialize the plugin.
-new Palafito_WC_Extensions();
+/**
+ * Initialize the plugin on the 'init' hook to avoid early loading issues.
+ */
+function palafito_wc_extensions_init() {
+	// Only initialize if WooCommerce is active.
+	if ( class_exists( 'WooCommerce' ) ) {
+		new Palafito_WC_Extensions();
+	}
+}
+
+// Initialize the plugin on init hook.
+add_action( 'init', 'palafito_wc_extensions_init' );
