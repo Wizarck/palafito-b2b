@@ -16,7 +16,14 @@ defined('ABSPATH') || exit;
 function palafito_filter_kadence_dynamic_css($css) {
     // Debug: log that this filter is being called
     if (defined('WP_DEBUG') && WP_DEBUG) {
-        error_log('Palafito: kadence_dynamic_css filter called - filtering inline styles');
+        error_log('Palafito: kadence_dynamic_css filter called with length: ' . strlen($css));
+        error_log('Palafito: CSS content preview: ' . substr($css, 0, 200));
+    }
+    
+    // If CSS is empty, don't filter it
+    if (empty($css)) {
+        error_log('Palafito: CSS is empty, returning as is');
+        return $css;
     }
     
     // Remove any style tags or inline styles that might cause CSP issues
