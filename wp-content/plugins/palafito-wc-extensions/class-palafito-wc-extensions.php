@@ -167,7 +167,7 @@ final class Palafito_WC_Extensions {
 				$order = wc_get_order( $post_id );
 				if ( $order ) {
 					$order->update_status( 'entregado', __( 'Cambio masivo a Entregado.', 'palafito-wc-extensions' ) );
-					$processed_count++;
+					++$processed_count;
 				}
 			}
 			$redirect_to = add_query_arg( 'bulk_entregado', $processed_count, $redirect_to );
@@ -177,7 +177,7 @@ final class Palafito_WC_Extensions {
 				$order = wc_get_order( $post_id );
 				if ( $order ) {
 					$order->update_status( 'facturado', __( 'Cambio masivo a Facturado.', 'palafito-wc-extensions' ) );
-					$processed_count++;
+					++$processed_count;
 				}
 			}
 			$redirect_to = add_query_arg( 'bulk_facturado', $processed_count, $redirect_to );
