@@ -355,10 +355,5 @@ Este proyecto es privado y propietario. Todos los derechos reservados.
 **Palafito B2B** - Tu plataforma de confianza para comercio mayorista 🚀
 
 ### [2024-xx-xx] Cambios recientes
-- Se usa el campo 'Mostrar este nombre públicamente' (display_name) como primera línea en las direcciones de cliente en factura y albarán.
-- En el albarán, el bloque de datos de pedido (derecha) muestra los campos en este orden:
-  1. Número de albarán
-  2. Fecha de entrega
-  3. Método de envío
-  4. Número de pedido
-  5. Fecha de pedido
+- El nombre del PDF generado para el albarán es: [A-numero de pedido] - [display_name].pdf
+- El nombre del PDF generado para la factura es: [numero de factura] - [display_name].pdf

@@ -450,6 +450,10 @@ wp theme list --status=active
   4. Número de pedido
   5. Fecha de pedido
 
+## [2024-xx-xx] Nombre de PDF personalizado para albarán y factura
+- El nombre del PDF generado para el albarán es: [A-numero de pedido] - [display_name].pdf
+- El nombre del PDF generado para la factura es: [numero de factura] - [display_name].pdf
+
 ---
 
 *Este archivo es MI MEMORIA EXTERNA. Debo actualizarlo al final de cada sesión cuando el usuario diga "buenas noches".* 
