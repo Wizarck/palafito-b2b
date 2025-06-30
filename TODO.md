@@ -62,9 +62,9 @@
     - [x] De "procesando" a "entregado" (con registro de fecha y envío de albarán).
     - [x] De "entregado" a "facturado" (con generación de factura).
     - [x] De "facturado" a "completado".
-- [ ] Quitar método de pago Trustly
-- [ ] Quitar "& Free Shipping" y "Añadir a la lista de deseos" en producto
-- [ ] Quitar PayPal como método de pago
+- [x] Quitar método de pago Trustly
+- [x] Quitar "& Free Shipping" y "Añadir a la lista de deseos" en producto
+- [x] Quitar PayPal como método de pago
 - [ ] Forzar que el icono del carrito lleve siempre a /carrito/
 - [ ] Personalizar color del hero/banner en Tienda, Mi cuenta, Carrito y Checkout, incluyendo el fondo, el título y el breadcrumb para mantener coherencia visual
 
