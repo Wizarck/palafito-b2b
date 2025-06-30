@@ -99,7 +99,7 @@ class Palafito_Admin_PDF_Actions {
 		}
 
 		// Verificar permisos.
-		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+		if ( ! current_user_can( 'edit_posts' ) ) {
 			wp_die( esc_html__( 'No tienes permisos para realizar esta acción.', 'palafito-wc-extensions' ) );
 		}
 
@@ -139,7 +139,7 @@ class Palafito_Admin_PDF_Actions {
 		}
 
 		// Verificar permisos.
-		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+		if ( ! current_user_can( 'edit_posts' ) ) {
 			wp_die( esc_html__( 'No tienes permisos para realizar esta acción.', 'palafito-wc-extensions' ) );
 		}
 

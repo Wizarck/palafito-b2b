@@ -52,6 +52,13 @@
   <include-pattern>*/wp-content/plugins/palafito-wc-extensions/*</include-pattern>
   <include-pattern>*/wp-content/themes/palafito-child/*</include-pattern>
 
+  <!-- Configurar capabilities conocidos -->
+  <rule ref="WordPress.WP.Capabilities">
+    <properties>
+      <property name="custom_capabilities" value="manage_woocommerce,edit_shop_orders"/>
+    </properties>
+  </rule>
+
   <arg name="colors"/>
   <arg name="report" value="full"/>
 </ruleset>
