@@ -8,21 +8,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="woocommerce-shipping-fields__field-wrapper">
 		<?php
 		$fields = $checkout->get_checkout_fields( 'shipping' );
-		if ( isset( $fields['shipping_phone'] ) ) {
-			$fields['shipping_phone']['required'] = true;
-			$fields['shipping_phone']['label'] = __( 'Teléfono', 'woocommerce' );
-			$fields['shipping_phone']['custom_attributes']['required'] = 'required';
-		}
-		if ( isset( $fields['shipping_country'] ) ) {
-			$fields['shipping_country']['label'] = __( 'País', 'woocommerce' );
-		}
-		foreach ( $fields as $key => $field ) {
+		// Hacer todos los campos de envío opcionales.
+		foreach ( $fields as $key => &$field ) {
+			$field['required'] = false;
 			// Aseguramos que las clases estándar estén presentes
 			if (empty($field['class'])) {
 				$field['class'] = array('form-row-wide');
 			}
 			woocommerce_form_field( $key, $field, $checkout->get_value( $key ) );
 		}
+		unset($field);
 		?>
 	</div>
 	<?php do_action( 'woocommerce_after_checkout_shipping_form', $checkout ); ?>

@@ -492,3 +492,14 @@ wp theme list --status=active
 - Nunca debe haber más de un archivo con cabecera de plugin (Plugin Name, etc.) en la misma carpeta de plugin. Si hay dos, WordPress mostrará el plugin duplicado en el admin. La estructura profesional de clases se mantiene, pero solo el archivo principal debe tener la cabecera de plugin. 
 
 - No usar tildes, eñes ni símbolos especiales en los mensajes de commit. Usar solo caracteres ASCII para asegurar compatibilidad en terminal, git y GitHub Actions. Ejemplo: 'anadir', 'funcion', 'correccion'. 
+
+## Estándares PHPCS obligatorios para cambios PHP
+
+Siempre que se realicen cambios en archivos PHP del proyecto, es obligatorio cumplir los estándares de PHPCS (WordPress/WooCommerce):
+
+- Los comentarios inline deben terminar en punto, exclamación o interrogación.
+- Usar Yoda conditions en comparaciones.
+- Todas las funciones públicas deben tener comentarios de parámetros y retorno.
+- Usar elseif en vez de else con un solo if dentro.
+
+Esto es imprescindible para evitar errores en los checks automáticos y mantener la calidad y coherencia del código.
