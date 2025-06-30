@@ -20,6 +20,7 @@ class Palafito_Checkout_Customizations {
 	public function __construct() {
 		add_filter( 'woocommerce_checkout_fields', array( $this, 'customize_checkout_fields' ) );
 		add_action( 'woocommerce_checkout_update_order_meta', array( $this, 'save_custom_fields' ) );
+		add_action( 'woocommerce_thankyou', array( $this, 'auto_update_order_status' ), 10, 1 );
 	}
 
 	/**
@@ -55,6 +56,31 @@ class Palafito_Checkout_Customizations {
 		// Save any custom fields here if needed in the future.
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 			error_log( "Palafito WC Extensions: Custom fields saved for order {$order_id}" );
+		}
+	}
+
+	/**
+	 * Automatiza la transición de estado tras el checkout.
+	 *
+	 * @param int $order_id
+	 */
+	public function auto_update_order_status( $order_id ) {
+		if ( ! $order_id ) {
+			return;
+		}
+		$order = wc_get_order( $order_id );
+		if ( ! $order ) {
+			return;
+		}
+		$payment_method = $order->get_payment_method();
+		if ( $payment_method === 'cod' ) {
+			if ( $order->get_status() !== 'on-hold' ) {
+				$order->update_status( 'on-hold', __( 'Transición automática: Pago mensual.', 'palafito-wc-extensions' ) );
+			}
+		} else {
+			if ( $order->get_status() === 'pending' ) {
+				$order->update_status( 'processing', __( 'Transición automática: Pago por tarjeta.', 'palafito-wc-extensions' ) );
+			}
 		}
 	}
 }

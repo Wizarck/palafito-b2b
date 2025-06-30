@@ -50,6 +50,17 @@
 - [ ] **5.7. Documentación**
   - [ ] Documentar el flujo y las transiciones en el README/CONTEXT.md.
 
+### 6. Checkout y experiencia de usuario
+- [x] Checkout minimalista B2B (solo dirección de envío y métodos de pago en dos columnas)
+- [x] Restaurar dinámica de métodos de pago (Stripe, Apple Pay, Google Pay, etc.)
+- [x] Teléfono de envío obligatorio
+- [x] Unificar bloque de pedido y métodos de pago
+- [ ] Quitar método de pago Trustly
+- [ ] Quitar "& Free Shipping" y "Añadir a la lista de deseos" en producto
+- [ ] Quitar PayPal como método de pago
+- [ ] Forzar que el icono del carrito lleve siempre a /carrito/
+- [ ] Personalizar color del hero/banner en Tienda, Mi cuenta, Carrito y Checkout, incluyendo el fondo, el título y el breadcrumb para mantener coherencia visual
+
 ## ✅ Completado
 - [x] Estructura base del plugin
 - [x] Checkout customizations básicas
