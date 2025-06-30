@@ -120,18 +120,10 @@ final class Palafito_WC_Extensions {
 	 * @return array
 	 */
 	public static function add_custom_order_statuses_to_list( $order_statuses ) {
-		// Insertar 'entregado' después de 'processing'.
-		$new_order_statuses = array();
-		foreach ( $order_statuses as $key => $label ) {
-			$new_order_statuses[ $key ] = $label;
-			if ( 'wc-processing' === $key ) {
-				$new_order_statuses['wc-entregado'] = _x( 'Entregado', 'Order status', 'palafito-wc-extensions' );
-			}
-			if ( 'wc-entregado' === $key ) {
-				$new_order_statuses['wc-facturado'] = _x( 'Facturado', 'Order status', 'palafito-wc-extensions' );
-			}
-		}
-		return $new_order_statuses;
+		error_log( 'Filtro add_custom_order_statuses_to_list ejecutado' );
+		$order_statuses['wc-entregado'] = _x( 'Entregado', 'Order status', 'palafito-wc-extensions' );
+		$order_statuses['wc-facturado'] = _x( 'Facturado', 'Order status', 'palafito-wc-extensions' );
+		return $order_statuses;
 	}
 
 	/**
