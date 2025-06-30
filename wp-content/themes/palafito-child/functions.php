@@ -10,6 +10,12 @@
 defined('ABSPATH') || exit;
 
 /**
+ * Disable Kadence dynamic CSS generation to avoid CSP issues
+ * This prevents inline styles that are blocked by Content Security Policy
+ */
+add_filter( 'kadence_dynamic_css', '__return_false' );
+
+/**
  * Clase principal del tema hijo
  */
 class Palafito_Child_Theme {
@@ -40,15 +46,20 @@ class Palafito_Child_Theme {
      * Enqueue de estilos
      */
     public function enqueue_styles() {
-        // Kadence maneja automáticamente sus propios estilos y fuentes
-        // Solo cargamos los estilos específicos del child theme
+        // Enqueue parent theme style
+        wp_enqueue_style( 
+            'kadence-style', 
+            get_template_directory_uri() . '/style.css',
+            array(),
+            wp_get_theme( get_template() )->get( 'Version' )
+        );
         
-        // Estilo principal del tema hijo
-        wp_enqueue_style(
-            'palafito-child-style',
-            get_stylesheet_uri(),
-            [], // Sin dependencias, Kadence se encarga de todo
-            filemtime(get_stylesheet_directory() . '/style.css')
+        // Enqueue child theme style
+        wp_enqueue_style( 
+            'palafito-child-style', 
+            get_stylesheet_directory_uri() . '/style.css',
+            array( 'kadence-style' ),
+            wp_get_theme( get_stylesheet() )->get( 'Version' )
         );
 
         // Estilos personalizados para WooCommerce
@@ -213,3 +224,11 @@ function palafito_format_b2b_price($price, $currency = 'MXN') {
     
     return wc_price($price, ['currency' => $currency]);
 }
+
+/**
+ * Add custom functionality for B2B features
+ */
+function palafito_child_b2b_features() {
+    // B2B specific customizations can be added here
+}
+add_action( 'init', 'palafito_child_b2b_features' );

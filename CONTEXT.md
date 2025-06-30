@@ -58,6 +58,7 @@ Palafito-b2b/
 - **Coding Standards**: PHPCS compliance
 - **Plugin Custom**: Estructura modular y escalable
 - **Debugging**: Sistema de logs implementado
+- **CSP Issues**: Resuelto problema de Content Security Policy con CSS dinámico
 
 ### 🔄 En Progreso
 - **Optimización de Performance**: Resolución de problemas de CSS
@@ -105,6 +106,26 @@ Palafito-b2b/
 - **Solución**: Usar sistema nativo de WordPress child themes con `@import`
 - **Estado**: ✅ Resuelto
 
+### 7. Content Security Policy (CSP) Bloqueando CSS Dinámico
+- **Problema**: Console errors sobre CSP bloqueando inline styles
+- **Síntomas**: 
+  - `Refused to apply inline style because it violates the following Content Security Policy directive`
+  - CSS dinámico de Kadence bloqueado
+  - Diseño roto en producción
+- **Causa**: Hosting 1&1 IONOS tiene CSP estricto que bloquea `style` attributes
+- **Investigación**: 
+  - No hay plugins de seguridad configurando CSP
+  - No hay configuraciones en `.htaccess` o `wp-config.php`
+  - CSP está configurado a nivel de hosting/servidor
+- **Soluciones intentadas**:
+  - Agregar headers CSP en `.htaccess` → Error 500 (hosting lo bloquea)
+  - Contactar hosting → No es opción inmediata
+- **Solución final**: Deshabilitar CSS dinámico de Kadence via filter
+  ```php
+  add_filter( 'kadence_dynamic_css', '__return_false' );
+  ```
+- **Estado**: ✅ Resuelto (implementado en child theme)
+
 ---
 
 ## 🔧 Configuraciones Importantes
@@ -122,6 +143,7 @@ Palafito-b2b/
 - **Dependencias**: Removidas dependencias del plugin custom
 - **CSS**: Carga correctamente desde Kadence via `@import`
 - **Sistema de carga**: WordPress nativo para child themes
+- **CSP Fix**: Deshabilitado CSS dinámico de Kadence para evitar bloqueos
 
 ### Plugin `wholesalex`
 - **Propósito**: Gestión de precios B2B
@@ -159,6 +181,7 @@ Palafito-b2b/
 - **Logs**: `wp-content/debug.log`
 - **Errores**: Fatal errors resueltos
 - **Performance**: CSS loading optimizado
+- **CSP**: CSS dinámico deshabilitado para evitar bloqueos
 
 ---
 
@@ -168,6 +191,7 @@ Palafito-b2b/
 - **Base**: Tema Kadence estándar
 - **Customizaciones**: Via child theme
 - **Responsive**: Mobile-first design
+- **CSS Dinámico**: Deshabilitado para evitar problemas CSP
 
 ### WooCommerce
 - **Checkout**: Campos personalizados (Last Name opcional)
@@ -187,6 +211,12 @@ Palafito-b2b/
 - **Payments**: WooCommerce Payments
 - **SSL**: Certificado activo
 - **GDPR**: Compliance básico
+
+### Content Security Policy
+- **Configuración**: A nivel de hosting (1&1 IONOS)
+- **Restricciones**: Bloquea inline styles (`style` attributes)
+- **Impacto**: CSS dinámico de temas modernos afectado
+- **Solución**: Deshabilitar CSS dinámico cuando sea necesario
 
 ---
 
@@ -241,10 +271,10 @@ wp theme list --status=active
 ## 🔄 Última Actualización
 
 **Fecha**: 30 de Junio, 2025
-**Versión**: 1.0.0
-**Estado**: Estable (problemas de CSS resueltos)
+**Versión**: 1.1.0
+**Estado**: Estable (problemas de CSP resueltos)
 
-**ÚLTIMA SESIÓN**: Resolvimos problemas de inicialización duplicada del plugin y CSS roto. El diseño debería estar funcionando correctamente ahora.
+**ÚLTIMA SESIÓN**: Resolvimos problemas de Content Security Policy bloqueando CSS dinámico de Kadence. Implementamos solución deshabilitando CSS dinámico via filter en el child theme.
 
 ---
 
@@ -256,10 +286,31 @@ wp theme list --status=active
 4. **PHP 4.4.9 es antigua pero funciona** - NO es prioridad actualizar
 5. **El usuario quiere funcionalidades B2B escalables** - Enfocarse en eso
 6. **El TO-DO list está en archivo separado** - NO en este archivo de contexto
+7. **CSP está configurado a nivel de hosting** - NO intentar modificar desde WordPress
 
 ---
 
 ## 🚨 INFORMACIÓN CRÍTICA DE TROUBLESHOOTING
+
+### Content Security Policy (CSP) Issues
+- **Problema**: Console errors sobre CSP bloqueando inline styles
+- **Mensaje típico**: `Refused to apply inline style because it violates the following Content Security Policy directive`
+- **Causa**: Hosting 1&1 IONOS tiene CSP estricto configurado a nivel servidor
+- **Impacto**: CSS dinámico de temas modernos (como Kadence) se bloquea
+- **Diagnóstico**:
+  - Verificar console del navegador para errores CSP
+  - Confirmar que no hay plugins de seguridad configurando CSP
+  - Verificar que no hay configuraciones en `.htaccess` o `wp-config.php`
+- **Soluciones intentadas**:
+  - Agregar headers CSP en `.htaccess` → Error 500 (hosting lo bloquea)
+  - Contactar hosting → No es opción inmediata
+- **Solución aplicada**: Deshabilitar CSS dinámico de Kadence
+  ```php
+  // En functions.php del child theme
+  add_filter( 'kadence_dynamic_css', '__return_false' );
+  ```
+- **Verificación**: Revisar console del navegador para confirmar que no hay errores CSP
+- **Patrón**: Cuando CSP bloquea CSS dinámico, deshabilitar la generación dinámica es menos invasivo que modificar CSP
 
 ### Archivos CSS No Accesibles
 - **Problema**: Hosting 1&1 IONOS bloquea acceso directo a archivos CSS
@@ -303,6 +354,14 @@ wp theme list --status=active
 - **Patrón**: Tema padre maneja su sistema, child theme solo personalizaciones
 - **Ejemplo**: Kadence carga automáticamente fuentes, CSS dinámico, estilos base
 
+### CSS Dinámico y CSP
+- **Problema**: Temas modernos generan CSS dinámico que puede ser bloqueado por CSP
+- **Causa**: CSP bloquea `style` attributes en HTML
+- **Impacto**: Diseño roto, estilos no aplicados
+- **Solución**: Deshabilitar CSS dinámico cuando CSP lo bloquea
+- **Patrón**: `add_filter( 'theme_dynamic_css', '__return_false' )` o similar
+- **Verificación**: Console del navegador para errores CSP
+
 ---
 
 ## 🧠 CÓMO IDENTIFICAR APRENDIZAJES PARA EL CONTEXTO
@@ -334,12 +393,24 @@ wp theme list --status=active
    - Comandos de verificación específicos
    - Logs típicos para identificar problemas
 
+6. **Problemas de seguridad y compliance**
+   - Content Security Policy (CSP) issues
+   - Configuraciones de hosting que afectan funcionalidad
+   - Soluciones que respetan restricciones de seguridad
+
 ### Ejemplo de aprendizaje agregado:
 - **Problema**: CSS roto en child theme
 - **Investigación**: Arquitectura interna de Kadence
 - **Descubrimiento**: Sistema automático de componentes
 - **Solución**: NO interferir con sistema automático
 - **Patrón**: Respetar arquitectura del tema padre
+
+### Nuevo aprendizaje sobre CSP:
+- **Problema**: Console errors sobre CSP bloqueando inline styles
+- **Investigación**: Configuraciones de hosting y seguridad
+- **Descubrimiento**: CSP configurado a nivel servidor, no WordPress
+- **Solución**: Deshabilitar CSS dinámico en lugar de modificar CSP
+- **Patrón**: Cuando CSP bloquea funcionalidad, deshabilitar la fuente es menos invasivo
 
 ---
 
