@@ -29,7 +29,9 @@
 				$shop_postcode = get_option('woocommerce_store_postcode');
 				$shop_city = get_option('woocommerce_store_city');
 				$shop_country_code = get_option('woocommerce_default_country');
-				$shop_country = WC()->countries->countries[substr($shop_country_code, 3)] ?? $shop_country_code;
+				$shop_country_parts = explode(':', $shop_country_code);
+				$shop_country_key = $shop_country_parts[0];
+				$shop_country = WC()->countries->countries[$shop_country_key] ?? $shop_country_key;
 				$shop_email = 'hola@palafitofood.com';
 				$lines = [];
 				$lines[] = 'NIF: ' . $shop_nif;
@@ -79,9 +81,6 @@
 			<?php do_action( 'wpo_wcpdf_after_billing_address', $this->get_type(), $this->order ); ?>
 			<?php if ( isset( $this->settings['display_email'] ) ) : ?>
 				<div class="billing-email"><?php $this->billing_email(); ?></div>
-			<?php endif; ?>
-			<?php if ( isset( $this->settings['display_phone'] ) ) : ?>
-				<div class="billing-phone"><?php $this->billing_phone(); ?></div>
 			<?php endif; ?>
 		</td>
 		<td class="address shipping-address">
