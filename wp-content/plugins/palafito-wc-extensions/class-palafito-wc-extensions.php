@@ -25,7 +25,6 @@ final class Palafito_WC_Extensions {
 	 * Constructor.
 	 */
 	public function __construct() {
-		error_log( 'Constructor Palafito_WC_Extensions ejecutado' );
 		$this->init_hooks();
 		$this->load_classes();
 		$this->init_components();
@@ -35,12 +34,6 @@ final class Palafito_WC_Extensions {
 	 * Initialize plugin hooks.
 	 */
 	private function init_hooks() {
-		error_log( 'init_hooks ejecutado' );
-		// Log initialization for debugging.
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			error_log( 'Palafito WC Extensions: Plugin initialized' );
-		}
-
 		// Registrar nuevos estados personalizados de pedido.
 		add_filter( 'woocommerce_register_shop_order_post_statuses', array( __CLASS__, 'register_custom_order_statuses' ) );
 		add_filter( 'wc_order_statuses', array( __CLASS__, 'add_custom_order_statuses_to_list' ) );
@@ -53,7 +46,6 @@ final class Palafito_WC_Extensions {
 	 * Registrar los post status personalizados de pedido en WordPress.
 	 */
 	public static function register_custom_post_statuses() {
-		error_log( 'register_custom_post_statuses ejecutado' );
 		register_post_status(
 			'wc-entregado',
 			array(
@@ -117,16 +109,31 @@ final class Palafito_WC_Extensions {
 	}
 
 	/**
-	 * Añadir los nuevos estados personalizados a la lista de estados de WooCommerce.
+	 * Añadir los nuevos estados personalizados a la lista de estados de WooCommerce en el orden correcto.
 	 *
 	 * @param array $order_statuses Array de estados de pedido.
 	 * @return array
 	 */
 	public static function add_custom_order_statuses_to_list( $order_statuses ) {
-		error_log( 'Filtro add_custom_order_statuses_to_list ejecutado' );
-		$order_statuses['wc-entregado'] = _x( 'Entregado', 'Order status', 'palafito-wc-extensions' );
-		$order_statuses['wc-facturado'] = _x( 'Facturado', 'Order status', 'palafito-wc-extensions' );
-		return $order_statuses;
+		$new_order_statuses = array();
+		foreach ( $order_statuses as $key => $label ) {
+			if ( 'wc-pending' === $key ) {
+				$new_order_statuses[ $key ] = $label;
+			} elseif ( 'wc-processing' === $key ) {
+				$new_order_statuses[ $key ]         = $label;
+				$new_order_statuses['wc-entregado'] = _x( 'Entregado', 'Order status', 'palafito-wc-extensions' );
+				$new_order_statuses['wc-facturado'] = _x( 'Facturado', 'Order status', 'palafito-wc-extensions' );
+			} elseif ( 'wc-completed' === $key ) {
+				$new_order_statuses[ $key ] = $label;
+			} else {
+				$new_order_statuses[ $key ] = $label;
+			}
+		}
+		// Si por alguna razón 'wc-completed' no está, lo agregamos al final.
+		if ( ! isset( $new_order_statuses['wc-completed'] ) && isset( $order_statuses['wc-completed'] ) ) {
+			$new_order_statuses['wc-completed'] = $order_statuses['wc-completed'];
+		}
+		return $new_order_statuses;
 	}
 
 	/**
