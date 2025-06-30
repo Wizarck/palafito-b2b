@@ -77,31 +77,3 @@ jobs:
         script: |
           cd /clickandbuilds/Palafito
           ./web_update_from_repo.sh
-
-  # Job de notificación
-  notify:
-    needs: [deploy-production]
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-    
-    steps:
-    - name: Send email notification
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: ${{ secrets.SMTP_SERVER }}
-        server_port: ${{ secrets.SMTP_PORT }}
-        username: ${{ secrets.SMTP_USERNAME }}
-        password: ${{ secrets.SMTP_PASSWORD }}
-        subject: "Palafito B2B - Deployment Exitoso"
-        to: ${{ secrets.NOTIFICATION_EMAIL }}
-        from: "deploy@palafito-b2b.com"
-        body: |
-          El proyecto Palafito B2B ha sido desplegado exitosamente a producción.
-          
-          Detalles del deployment:
-          - Commit: ${{ github.sha }}
-          - Autor: ${{ github.actor }}
-          - Rama: ${{ github.ref }}
-          - Fecha: ${{ github.event.head_commit.timestamp }}
-          
-          Puedes verificar el sitio en: ${{ secrets.PRODUCTION_URL }}
