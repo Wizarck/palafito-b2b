@@ -62,22 +62,38 @@ final class Palafito_WC_Extensions {
 	 * Registrar los post status personalizados de pedido en WordPress.
 	 */
 	public function register_custom_post_statuses() {
-		register_post_status( 'wc-entregado', array(
-			'label'                     => _x( 'Entregado', 'Order status', 'palafito-wc-extensions' ),
-			'public'                    => true,
-			'exclude_from_search'       => false,
-			'show_in_admin_all_list'    => true,
-			'show_in_admin_status_list' => true,
-			'label_count'               => _n_noop( 'Entregado <span class="count">(%s)</span>', 'Entregados <span class="count">(%s)</span>', 'palafito-wc-extensions' ),
-		) );
-		register_post_status( 'wc-facturado', array(
-			'label'                     => _x( 'Facturado', 'Order status', 'palafito-wc-extensions' ),
-			'public'                    => true,
-			'exclude_from_search'       => false,
-			'show_in_admin_all_list'    => true,
-			'show_in_admin_status_list' => true,
-			'label_count'               => _n_noop( 'Facturado <span class="count">(%s)</span>', 'Facturados <span class="count">(%s)</span>', 'palafito-wc-extensions' ),
-		) );
+		register_post_status(
+			'wc-entregado',
+			array(
+				'label'                     => _x( 'Entregado', 'Order status', 'palafito-wc-extensions' ),
+				'public'                    => true,
+				'exclude_from_search'       => false,
+				'show_in_admin_all_list'    => true,
+				'show_in_admin_status_list' => true,
+				// translators: %s: número de pedidos con estado Entregado.
+				'label_count'               => _n_noop(
+					'Entregado <span class="count">(%s)</span>',
+					'Entregados <span class="count">(%s)</span>',
+					'palafito-wc-extensions'
+				),
+			)
+		);
+		register_post_status(
+			'wc-facturado',
+			array(
+				'label'                     => _x( 'Facturado', 'Order status', 'palafito-wc-extensions' ),
+				'public'                    => true,
+				'exclude_from_search'       => false,
+				'show_in_admin_all_list'    => true,
+				'show_in_admin_status_list' => true,
+				// translators: %s: número de pedidos con estado Facturado.
+				'label_count'               => _n_noop(
+					'Facturado <span class="count">(%s)</span>',
+					'Facturados <span class="count">(%s)</span>',
+					'palafito-wc-extensions'
+				),
+			)
+		);
 	}
 
 	/**
