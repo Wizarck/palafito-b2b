@@ -15,10 +15,8 @@ defined('ABSPATH') || exit;
  */
 function palafito_filter_kadence_dynamic_css($css) {
     // Debug: log that this filter is being called
-    if (defined('WP_DEBUG') && WP_DEBUG) {
-        error_log('Palafito: kadence_dynamic_css filter called with length: ' . strlen($css));
-        error_log('Palafito: CSS content preview: ' . substr($css, 0, 200));
-    }
+    error_log('Palafito: kadence_dynamic_css filter called with length: ' . strlen($css));
+    error_log('Palafito: CSS content preview: ' . substr($css, 0, 200));
     
     // If CSS is empty, don't filter it
     if (empty($css)) {
@@ -35,6 +33,14 @@ function palafito_filter_kadence_dynamic_css($css) {
 
 // Use a lower priority to allow Kadence to generate CSS first, then filter
 add_filter('kadence_dynamic_css', 'palafito_filter_kadence_dynamic_css', 20);
+
+/**
+ * Debug: Catch CSS output to see what's happening
+ */
+function palafito_debug_css_output() {
+    error_log('Palafito: Debug CSS output function called');
+}
+add_action('wp_head', 'palafito_debug_css_output', 1);
 
 /**
  * Remove inline styles from wp_head that cause CSP issues
