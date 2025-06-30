@@ -46,3 +46,10 @@ function palafito_wc_extensions_init() {
 
 // Initialize the plugin on init hook.
 add_action( 'init', 'palafito_wc_extensions_init' );
+
+// Declarar compatibilidad con HPOS (High Performance Order Storage) de WooCommerce.
+add_action( 'before_woocommerce_init', function() {
+	if ( class_exists( '\\Automattic\\WooCommerce\\Utilities\\FeaturesUtil' ) ) {
+		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+	}
+} );
