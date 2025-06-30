@@ -88,14 +88,19 @@ class Palafito_Child_Theme {
      * Enqueue de estilos
      */
     public function enqueue_styles() {
-        // Let Kadence handle its own styles automatically
-        // We only need to enqueue our child theme styles
+        // Explicitly load parent theme CSS first
+        wp_enqueue_style( 
+            'kadence-parent-style', 
+            get_template_directory_uri() . '/style.css',
+            array(),
+            wp_get_theme( get_template() )->get( 'Version' )
+        );
         
-        // Enqueue child theme style with dependency on Kadence
+        // Then load child theme style
         wp_enqueue_style( 
             'palafito-child-style', 
             get_stylesheet_directory_uri() . '/style.css',
-            array(), // Let WordPress handle dependencies automatically
+            array('kadence-parent-style'),
             wp_get_theme( get_stylesheet() )->get( 'Version' )
         );
 
