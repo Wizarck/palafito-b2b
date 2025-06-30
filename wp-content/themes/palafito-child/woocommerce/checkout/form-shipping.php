@@ -9,11 +9,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="woocommerce-shipping-fields__field-wrapper">
 		<?php
 		$fields = $checkout->get_checkout_fields( 'shipping' );
-		// Hacer todos los campos de envío opcionales y ajustar el label de teléfono.
 		foreach ( $fields as $key => &$field ) {
-			$field['required'] = false;
 			if ( $key === 'shipping_phone' ) {
+				$field['required'] = true;
 				$field['label'] = __( 'Teléfono', 'woocommerce' );
+			} elseif ( $key === 'shipping_country' ) {
+				$field['required'] = true;
+				$field['label'] = __( 'País', 'woocommerce' );
+			} else {
+				$field['required'] = false;
 			}
 			if (empty($field['class'])) {
 				$field['class'] = array('form-row-wide');
