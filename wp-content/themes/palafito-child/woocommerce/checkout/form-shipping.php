@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		$fields = $checkout->get_checkout_fields( 'shipping' );
 		if ( isset( $fields['shipping_phone'] ) ) {
 			$fields['shipping_phone']['required'] = true;
-			$fields['shipping_phone']['label'] = __( 'Teléfono de envío', 'woocommerce' );
+			$fields['shipping_phone']['label'] = __( 'Teléfono', 'woocommerce' );
 			$fields['shipping_phone']['custom_attributes']['required'] = 'required';
 		}
 		if ( isset( $fields['shipping_country'] ) ) {
