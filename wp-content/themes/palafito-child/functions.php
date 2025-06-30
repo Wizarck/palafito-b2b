@@ -269,3 +269,53 @@ function palafito_child_b2b_features() {
     // B2B specific customizations can be added here
 }
 add_action( 'init', 'palafito_child_b2b_features' );
+
+/**
+ * Comprehensive fix for Mixed Content warnings
+ * Runs on init to ensure all URLs are properly converted
+ */
+function palafito_comprehensive_https_fix() {
+    // Only run on frontend
+    if (is_admin()) {
+        return;
+    }
+    
+    // Fix various URL scenarios
+    add_filter('wp_get_attachment_url', function($url) {
+        return str_replace('http://palafitofood.com/', 'https://palafitofood.com/', $url);
+    });
+    
+    add_filter('wp_get_attachment_image_src', function($image) {
+        if (is_array($image) && isset($image[0])) {
+            $image[0] = str_replace('http://palafitofood.com/', 'https://palafitofood.com/', $image[0]);
+        }
+        return $image;
+    });
+    
+    add_filter('wp_get_attachment_image_attributes', function($attr) {
+        if (isset($attr['src'])) {
+            $attr['src'] = str_replace('http://palafitofood.com/', 'https://palafitofood.com/', $attr['src']);
+        }
+        if (isset($attr['srcset'])) {
+            $attr['srcset'] = str_replace('http://palafitofood.com/', 'https://palafitofood.com/', $attr['srcset']);
+        }
+        return $attr;
+    });
+    
+    // Fix content URLs
+    add_filter('the_content', function($content) {
+        return str_replace('http://palafitofood.com/', 'https://palafitofood.com/', $content);
+    });
+    
+    // Fix widget content
+    add_filter('widget_text', function($text) {
+        return str_replace('http://palafitofood.com/', 'https://palafitofood.com/', $text);
+    });
+    
+    // Fix shortcode content
+    add_filter('do_shortcode_tag', function($output, $tag, $attr, $m) {
+        return str_replace('http://palafitofood.com/', 'https://palafitofood.com/', $output);
+    }, 10, 4);
+}
+
+add_action('init', 'palafito_comprehensive_https_fix');
