@@ -69,6 +69,10 @@
 					<th><?php $this->order_date_title(); ?></th>
 					<td><?php $this->order_date(); ?></td>
 				</tr>
+				<tr class="delivery-date">
+					<th>Fecha de entrega</th>
+					<td><?php echo date_i18n( get_option( 'date_format' ), current_time( 'timestamp' ) ); ?></td>
+				</tr>
 				<?php if ( $this->get_shipping_method() ) : ?>
 					<tr class="shipping-method">
 						<th><?php $this->shipping_method_title(); ?></th>
@@ -84,21 +88,19 @@
 <?php do_action( 'wpo_wcpdf_before_order_details', $this->get_type(), $this->order ); ?>
 
 <table class="order-details">
-	<?php $headers = wpo_wcpdf_get_simple_template_default_table_headers( $this ); ?>
 	<thead>
 		<tr>
-			<?php
-				foreach ( $headers as $column_class => $column_title ) {
-					printf( '<th class="%s">%s</th>', esc_attr( $column_class ), esc_html( $column_title ) );
-				}
-			?>
+			<th class="product" style="white-space: nowrap;">Producto</th>
+			<th class="unit-price" style="white-space: nowrap;">Precio unit.</th>
+			<th class="quantity" style="white-space: nowrap;">Cantidad</th>
+			<th class="price" style="white-space: nowrap;">Total</th>
 		</tr>
 	</thead>
 	<tbody>
 		<?php foreach ( $this->get_order_items() as $item_id => $item ) : ?>
 			<tr class="<?php echo esc_html( $item['row_class'] ); ?>">
 				<td class="product">
-					<p class="item-name"><?php echo esc_html( $item['name'] ); ?></p>
+					<p class="item-name" style="white-space: nowrap;"><?php echo esc_html( $item['name'] ); ?></p>
 					<?php do_action( 'wpo_wcpdf_before_item_meta', $this->get_type(), $item, $this->order ); ?>
 					<div class="item-meta">
 						<?php if ( ! empty( $item['sku'] ) ) : ?>
@@ -115,7 +117,9 @@
 					</div>
 					<?php do_action( 'wpo_wcpdf_after_item_meta', $this->get_type(), $item, $this->order ); ?>
 				</td>
+				<td class="unit-price" style="width: auto;"><?php echo $item['single_line_total']; ?></td>
 				<td class="quantity"><?php echo esc_html( $item['quantity'] ); ?></td>
+				<td class="price"><?php echo $item['order_price']; ?></td>
 			</tr>
 		<?php endforeach; ?>
 	</tbody>
