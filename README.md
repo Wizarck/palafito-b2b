@@ -357,3 +357,8 @@ Este proyecto es privado y propietario. Todos los derechos reservados.
 ### [2024-xx-xx] Cambios recientes
 - El nombre del PDF generado para el albarán es: [A-numero de pedido] - [display_name].pdf
 - El nombre del PDF generado para la factura es: [numero de factura] - [display_name].pdf
+
+### [2024-xx-xx] Lessons learned: Child theme y personalizador
+- Si el child theme no se ve igual que el parent, revisa primero la configuración del personalizador.
+- Exporta las personalizaciones desde el parent e impórtalas en el child usando Apariencia > Personalizar > Import/Export.
+- Así el child hereda exactamente el mismo diseño, fuentes y colores que el parent.

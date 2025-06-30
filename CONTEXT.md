@@ -441,6 +441,14 @@ wp theme list --status=active
 
 ---
 
+## [2024-xx-xx] Lessons learned: Child theme y personalizador
+- Si el child theme está limpio y bien configurado, debe comportarse igual que el parent.
+- Las diferencias visuales suelen deberse a que el personalizador de WordPress guarda los settings por theme activo.
+- Para que el child herede el diseño del parent, es necesario exportar las personalizaciones desde el parent e importarlas en el child (Apariencia > Personalizar > Import/Export).
+- No es necesario ningún CSS, JS ni plantilla personalizada para que el child herede el diseño base de Kadence.
+
+---
+
 ## [2024-xx-xx] display_name en direcciones y nuevo orden en albarán
 - Ahora se usa el campo 'Mostrar este nombre públicamente' (display_name) como primera línea en las direcciones de cliente en factura y albarán.
 - En el albarán, el bloque de datos de pedido (derecha) muestra los campos en este orden:
