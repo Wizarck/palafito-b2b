@@ -39,9 +39,9 @@ function _manually_load_plugin() {
 	if ( file_exists( $plugin_path ) ) {
 		require $plugin_path;
 		// Load plugin classes directly for tests.
-		$plugin_dir   = dirname( __DIR__ );
-		$class_files  = array(
-			$plugin_dir . '/includes/class-checkout-customizations.php',
+		$plugin_dir  = dirname( __DIR__ );
+		$class_files = array(
+			$plugin_dir . '/includes/class-palafito-checkout-customizations.php',
 		);
 		foreach ( $class_files as $file ) {
 			if ( file_exists( $file ) ) {

@@ -59,11 +59,13 @@ final class Palafito_WC_Extensions {
 	}
 
 	/**
-	 * Inicializar hooks del plugin.
+	 * Initialize plugin hooks.
 	 */
 	private function init_hooks() {
-		add_action( 'plugins_loaded', array( $this, 'init' ) );
-		add_action( 'init', array( $this, 'load_textdomain' ) );
+		// Log initialization for debugging.
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			error_log( 'Palafito WC Extensions: Plugin initialized' );
+		}
 	}
 
 	/**
@@ -136,6 +138,11 @@ final class Palafito_WC_Extensions {
 				}
 			}
 		}
+
+		// Load plugin classes.
+		require_once plugin_dir_path( __FILE__ ) . 'includes/class-palafito-checkout-customizations.php';
+		require_once plugin_dir_path( __FILE__ ) . 'includes/class-palafito-b2b-pricing.php';
+		require_once plugin_dir_path( __FILE__ ) . 'includes/plugin-hooks.php';
 	}
 
 	/**
@@ -181,27 +188,16 @@ final class Palafito_WC_Extensions {
 	}
 
 	/**
-	 * Manejar cambios de estado de pedidos.
+	 * Handle order status changes.
 	 *
-	 * @param int      $order_id ID del pedido.
-	 * @param string   $old_status Estado anterior.
-	 * @param string   $new_status Nuevo estado.
-	 * @param WC_Order $order Objeto del pedido.
+	 * @param int    $order_id Order ID.
+	 * @param string $old_status Old status.
+	 * @param string $new_status New status.
 	 */
-	public function handle_order_status_change( $order_id, $old_status, $new_status, $order ) {
-		// Aquí puedes implementar lógica personalizada cuando cambia el estado.
-		// Por ejemplo, enviar emails personalizados, actualizar inventario, etc.
-
-		// Log solo en desarrollo.
+	public function handle_order_status_change( $order_id, $old_status, $new_status ) {
+		// Log status change for debugging.
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			error_log(
-				sprintf(
-					'[Palafito WC Extensions] Pedido %d cambió de %s a %s',
-					$order_id,
-					$old_status,
-					$new_status
-				)
-			);
+			error_log( "Palafito WC Extensions: Order {$order_id} status changed from {$old_status} to {$new_status}" );
 		}
 	}
 }

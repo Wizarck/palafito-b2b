@@ -322,4 +322,67 @@ class Palafito_B2B_Pricing {
 
 		return $max_discount;
 	}
+
+	/**
+	 * Apply quantity discounts to cart items.
+	 *
+	 * @param string $cart_item_key Cart item key.
+	 * @param int    $product_id    Product ID.
+	 * @param int    $quantity      Quantity.
+	 * @param float  $price         Price.
+	 */
+	public function apply_quantity_discounts( $cart_item_key, $product_id, $quantity, $price ) {
+		// Get quantity discount rules for this product.
+		$discount_rules = get_post_meta( $product_id, '_quantity_discounts', true );
+		
+		if ( ! empty( $discount_rules ) && is_array( $discount_rules ) ) {
+			foreach ( $discount_rules as $rule ) {
+				if ( $quantity >= $rule['min_quantity'] ) {
+					$discount_percentage = $rule['discount_percentage'];
+					$new_price = $price * ( 1 - ( $discount_percentage / 100 ) );
+					return $new_price;
+				}
+			}
+		}
+		
+		return $price;
+	}
+
+	/**
+	 * Save quantity discount rules.
+	 *
+	 * @param int $product_id Product ID.
+	 */
+	public function save_quantity_discounts( $product_id ) {
+		if ( ! isset( $_POST['quantity_discounts'] ) ) {
+			return;
+		}
+
+		// Sanitize the input data.
+		$discounts = array();
+		$raw_discounts = wp_kses_post_deep( $_POST['quantity_discounts'] );
+		
+		if ( is_array( $raw_discounts ) ) {
+			foreach ( $raw_discounts as $discount ) {
+				if ( isset( $discount['min_quantity'] ) && isset( $discount['discount_percentage'] ) ) {
+					$discounts[] = array(
+						'min_quantity'        => absint( $discount['min_quantity'] ),
+						'discount_percentage' => floatval( $discount['discount_percentage'] ),
+					);
+				}
+			}
+		}
+		
+		update_post_meta( $product_id, '_quantity_discounts', $discounts );
+	}
+
+	/**
+	 * Get quantity discount rules for a product.
+	 *
+	 * @param int $product_id Product ID.
+	 * @return array Discount rules.
+	 */
+	public function get_quantity_discounts( $product_id ) {
+		return get_post_meta( $product_id, '_quantity_discounts', true );
+	}
 }

@@ -19,9 +19,9 @@ function palafito_wc_extensions_activate() {
 	// Configurar opciones por defecto.
 	// Limpiar cachés.
 
-	// Log solo en desarrollo.
+	// Log the hook execution for debugging.
 	if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-		error_log( '[Palafito WC Extensions] Plugin activado' );
+		error_log( 'Palafito WC Extensions: Hook executed - palafito_wc_extensions_activate' );
 	}
 }
 
@@ -32,9 +32,9 @@ function palafito_wc_extensions_deactivate() {
 	// Limpiar datos temporales.
 	// No eliminar datos permanentes aquí.
 
-	// Log solo en desarrollo.
+	// Log the hook execution for debugging.
 	if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-		error_log( '[Palafito WC Extensions] Plugin desactivado' );
+		error_log( 'Palafito WC Extensions: Hook executed - palafito_wc_extensions_deactivate' );
 	}
 }
 
