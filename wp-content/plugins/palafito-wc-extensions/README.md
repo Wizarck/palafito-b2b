@@ -58,6 +58,16 @@ vendor/bin/phpcs --standard=WordPress .
 - Custom field management
 - PHPUnit test suite
 
+### [2024-xx-xx] Nuevos estados personalizados de pedido
+- Añadidos los estados 'Entregado' y 'Facturado' a WooCommerce.
+- Flujos de pedido:
+  - **B2B:** Pendiente de pago → Procesando → Entregado → Facturado → Completado
+  - **B2C:** Pendiente de pago → Procesando → Entregado → Completado
+- Finalidad:
+  - **Entregado:** Pedido entregado físicamente, pendiente de facturación/cobro.
+  - **Facturado:** Pedido incluido en factura consolidada, pendiente de pago.
+- Los estados aparecen en el admin, filtros y acciones masivas, y se comportan como los nativos.
+
 ## License
 
 GPL v2 or later 

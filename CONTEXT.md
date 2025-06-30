@@ -464,4 +464,16 @@ wp theme list --status=active
 
 ---
 
+## [2024-xx-xx] Nuevos estados personalizados de pedido en WooCommerce
+- Se han añadido los estados personalizados 'Entregado' y 'Facturado' a WooCommerce mediante el plugin palafito-wc-extensions.
+- Flujos de pedido:
+  - **B2B:** Pendiente de pago → Procesando → Entregado → Facturado → Completado
+  - **B2C:** Pendiente de pago → Procesando → Entregado → Completado
+- Finalidad de los nuevos estados:
+  - **Entregado:** El pedido ha sido entregado físicamente, pero aún no facturado o cobrado (típico en B2B).
+  - **Facturado:** El pedido ha sido incluido en una factura consolidada del mes, y está pendiente de pago.
+- Los estados se muestran en el admin, en los filtros y en las acciones masivas, y se comportan como los nativos.
+
+---
+
 *Este archivo es MI MEMORIA EXTERNA. Debo actualizarlo al final de cada sesión cuando el usuario diga "buenas noches".* 
