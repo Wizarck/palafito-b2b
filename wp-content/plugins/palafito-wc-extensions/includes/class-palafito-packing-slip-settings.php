@@ -20,19 +20,16 @@ class Palafito_Packing_Slip_Settings {
 	 */
 	public function __construct() {
 		// Hook para reorganizar las opciones del packing slip.
-		add_filter( 'wpo_wcpdf_settings_fields_documents_packing_slip', array( $this, 'reorganize_packing_slip_settings' ), 20, 4 );
+		add_filter( 'wpo_wcpdf_settings_fields_documents_packing_slip', array( $this, 'reorganize_packing_slip_settings' ), 20, 1 );
 	}
 
 	/**
 	 * Reorganiza las opciones del packing slip para que coincidan con la estructura de la factura.
 	 *
-	 * @param array  $settings_fields Campos de configuración actuales.
-	 * @param string $page Página de configuración.
-	 * @param string $option_group Grupo de opciones.
-	 * @param string $option_name Nombre de la opción.
+	 * @param array $settings_fields Campos de configuración actuales.
 	 * @return array
 	 */
-	public function reorganize_packing_slip_settings( $settings_fields, $page, $option_group, $option_name ) {
+	public function reorganize_packing_slip_settings( $settings_fields ) {
 		// Solo reorganizar si el plugin PDF está disponible.
 		if ( ! class_exists( 'WPO_WCPDF' ) ) {
 			return $settings_fields;
@@ -49,22 +46,22 @@ class Palafito_Packing_Slip_Settings {
 				continue;
 			}
 
-			// Orden deseado (como en factura):
-			// 1. enabled
-			// 2. attach_to_email_ids
-			// 3. disable_for_statuses
-			// 4. display_billing_address (equivalente a display_shipping_address en factura)
-			// 5. display_email
-			// 6. display_phone
-			// 7. display_customer_notes
-			// 8. display_date
-			// 9. display_number
-			// 10. next_packing_slip_number
-			// 11. number_format
-			// 12. my_account_buttons
-			// 13. reset_number_yearly
-			// 14. subtract_refunded_qty
-			// 15. hide_virtual_downloadable_products
+					// Orden deseado (como en factura).
+			// 1. enabled.
+			// 2. attach_to_email_ids.
+			// 3. disable_for_statuses.
+			// 4. display_billing_address (equivalente a display_shipping_address en factura).
+			// 5. display_email.
+			// 6. display_phone.
+			// 7. display_customer_notes.
+			// 8. display_date.
+			// 9. display_number.
+			// 10. next_packing_slip_number.
+			// 11. number_format.
+			// 12. my_account_buttons.
+			// 13. reset_number_yearly.
+			// 14. subtract_refunded_qty.
+			// 15. hide_virtual_downloadable_products.
 
 			switch ( $field['id'] ) {
 				case 'enabled':

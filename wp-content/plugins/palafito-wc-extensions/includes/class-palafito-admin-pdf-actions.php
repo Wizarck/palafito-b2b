@@ -61,7 +61,7 @@ class Palafito_Admin_PDF_Actions {
 	 * Handler AJAX para cambiar el estado del pedido a entregado o facturado.
 	 */
 	public function handle_mark_order_status() {
-		if ( ! current_user_can( 'edit_shop_orders' ) ) {
+		if ( ! current_user_can( 'edit_posts' ) ) {
 			wp_send_json_error( array( 'message' => __( 'No tienes permisos para cambiar el estado del pedido.', 'palafito-wc-extensions' ) ) );
 		}
 
@@ -71,7 +71,7 @@ class Palafito_Admin_PDF_Actions {
 		}
 
 		$order_id = isset( $_REQUEST['order_id'] ) ? absint( $_REQUEST['order_id'] ) : 0;
-		$status   = isset( $_REQUEST['status'] ) ? sanitize_text_field( $_REQUEST['status'] ) : '';
+		$status   = isset( $_REQUEST['status'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['status'] ) ) : '';
 
 		if ( ! $order_id || ! in_array( $status, array( 'entregado', 'facturado' ), true ) ) {
 			wp_send_json_error( array( 'message' => __( 'Datos inválidos.', 'palafito-wc-extensions' ) ) );
