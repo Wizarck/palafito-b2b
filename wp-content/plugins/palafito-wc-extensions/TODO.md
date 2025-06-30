@@ -27,6 +27,29 @@
 - [ ] Hacer rollback automático en caso de error en el deploy
 - [ ] Deploy automatizado a staging y producción (con aprobación manual)
 
+### 5. 🚦 Flujo de estados y pagos en pedidos WooCommerce
+- [ ] **5.1. Crear/ajustar estados personalizados necesarios**
+  - [ ] Registrar los estados "Entregado" y "Facturado" solo si son imprescindibles.
+  - [ ] Asegurar el orden correcto de los estados en el admin.
+- [ ] **5.2. Lógica de transición automática tras checkout**
+  - [ ] Todos los pedidos nuevos se crean en "Pendiente de pago" (`pending`).
+  - [ ] Si el cliente elige "Pago por tarjeta" y el cobro es exitoso, pasar a "Procesando" (`processing`).
+  - [ ] Si el cliente elige "Pago mensual", pasar a "En espera" (`on-hold`).
+  - [ ] Si el pago por tarjeta falla, pasar a "Fallido" (`failed`).
+- [ ] **5.3. Flujo manual del administrador**
+  - [ ] Permitir al admin pasar manualmente de "En espera" a "Procesando" tras validar la orden y el stock.
+- [ ] **5.4. Albarán**
+  - [ ] Permitir descarga del albarán solo en "Procesando" (solo admin).
+  - [ ] Al pasar a "Entregado", enviar el albarán al cliente por email y permitir su descarga en el portal.
+  - [ ] Guardar la fecha de entrega del albarán al cambiar a "Entregado".
+- [ ] **5.5. Facturación**
+  - [ ] Al pasar a "Facturado", generar la factura.
+  - [ ] Permitir descarga de la factura tanto al admin como al cliente.
+- [ ] **5.6. Estado final**
+  - [ ] El pedido pasa a "Completado" (`completed`) como estado final.
+- [ ] **5.7. Documentación**
+  - [ ] Documentar el flujo y las transiciones en el README/CONTEXT.md.
+
 ## ✅ Completado
 - [x] Estructura base del plugin
 - [x] Checkout customizations básicas
