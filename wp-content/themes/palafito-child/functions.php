@@ -356,11 +356,35 @@ function palafito_add_email_to_shop_address( $address, $document ) {
     if ( ! in_array( $document->get_type(), array( 'invoice', 'packing-slip' ) ) ) {
         return $address;
     }
-    
-    // Add email on a new line at the end of shop address
+
+    // Añadir '- España' solo si el país es España y no está ya
+    $country = $document->order->get_billing_country();
+    if ( $country === 'ES' && strpos($address, 'España') === false ) {
+        // Añadir al final de la última línea de dirección
+        $lines = explode("\n", $address);
+        // Evitar duplicados de ciudad
+        $lines = array_unique($lines);
+        // Añadir '- España' a la última línea de dirección (antes del email si existe)
+        $last = array_pop($lines);
+        if (filter_var($last, FILTER_VALIDATE_EMAIL)) {
+            $email = $last;
+            $last = array_pop($lines);
+            $last .= ' - España';
+            $lines[] = $last;
+            $lines[] = $email;
+        } else {
+            $last .= ' - España';
+            $lines[] = $last;
+        }
+        $address = implode("\n", $lines);
+    }
+
+    // Add email on a new line at the end of shop address (si no está ya)
     $email = 'hola@palafitofood.com';
-    $address .= "\n" . $email;
-    
+    if (strpos($address, $email) === false) {
+        $address .= "\n" . $email;
+    }
+
     return $address;
 }
 add_filter( 'wpo_wcpdf_shop_address', 'palafito_add_email_to_shop_address', 20, 2 );
