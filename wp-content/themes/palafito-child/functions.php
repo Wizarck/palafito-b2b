@@ -80,19 +80,19 @@ class Palafito_Child_Theme {
      */
     public function enqueue_scripts() {
         // Script principal del tema hijo
-        wp_enqueue_script(
-            'palafito-child-script',
-            get_stylesheet_directory_uri() . '/js/palafito-child.js',
-            ['jquery'],
-            filemtime(get_stylesheet_directory() . '/js/palafito-child.js'),
-            true
-        );
+        // wp_enqueue_script(
+        //     'palafito-child-script',
+        //     get_stylesheet_directory_uri() . '/js/palafito-child.js',
+        //     ['jquery'],
+        //     filemtime(get_stylesheet_directory() . '/js/palafito-child.js'),
+        //     true
+        // );
 
         // Localizar script para AJAX
-        wp_localize_script('palafito-child-script', 'palafito_ajax', [
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('palafito_nonce'),
-        ]);
+        // wp_localize_script('palafito-child-script', 'palafito_ajax', [
+        //     'ajax_url' => admin_url('admin-ajax.php'),
+        //     'nonce' => wp_create_nonce('palafito_nonce'),
+        // ]);
     }
 
     /**
