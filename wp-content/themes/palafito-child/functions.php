@@ -66,12 +66,12 @@ class Palafito_Child_Theme {
 
         // Estilos personalizados para WooCommerce
         if (class_exists('WooCommerce')) {
-            wp_enqueue_style(
-                'palafito-woocommerce-style',
-                get_stylesheet_directory_uri() . '/woocommerce.css',
-                ['palafito-child-style'],
-                filemtime(get_stylesheet_directory() . '/woocommerce.css')
-            );
+            // wp_enqueue_style(
+            //     'palafito-woocommerce-style',
+            //     get_stylesheet_directory_uri() . '/woocommerce.css',
+            //     ['palafito-child-style'],
+            //     filemtime(get_stylesheet_directory() . '/woocommerce.css')
+            // );
         }
     }
 
