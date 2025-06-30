@@ -14,6 +14,10 @@
 **REGLA DE FLUJO DE PUSH:**
 Siempre que se realice un push, primero se debe actualizar la documentación relevante (`README.md`, `CONTEXT.md`, etc.) y luego hacer el commit y push de código y documentación juntos. Así, la documentación en el repositorio reflejará siempre el estado real del código y se evitan confusiones.
 
+## 📅 Última Actualización
+**Fecha**: 19 de Diciembre, 2024  
+**Sesión**: Implementación completa de funcionalidades Pro en plugin PDF gratuito
+
 ## 🚨 PROTOCOLO DE DESPEDIDA - OBLIGATORIO
 
 **CUANDO EL USUARIO DIGA "BUENAS NOCHES":**
@@ -76,6 +80,14 @@ Palafito-b2b/
 - **HTTPS Fix**: URLs de imágenes y recursos convertidas a HTTPS
 - **Dirección de tienda en PDFs**: Restaurada la llamada estándar `$this->shop_address()` en los templates de factura y albarán. Ahora, mediante filtro en `functions.php`, se añade '- España' solo si el país es España y el email siempre en línea aparte. Esto evita errores de parser y asegura formato correcto.
 - **Formato de direcciones en PDFs**: Ahora el formato es: Cliente ([Nombre] [Apellido], NIF solo en facturación, dirección, CP ciudad - país, teléfono), Tienda (NIF, dirección, CP ciudad - país, email, sin nombre de empresa en la dirección). Sin repeticiones ni mezclas, y con los prefijos correctos.
+- **Estados de Pedido Personalizados**: Implementados estados "Entregado" y "Facturado" para workflow B2B
+- **Automatización de Estados**: Transiciones automáticas basadas en método de pago
+- **Plugin PDF Gratuito Mejorado**: Replicadas todas las funcionalidades de la versión Pro
+- **Adjuntos Automáticos de Email**: Albarán se adjunta automáticamente en estado "Entregado", factura en "Facturado"
+- **Numeración de Packing Slip**: Sistema completo de numeración con prefix, suffix, padding y reset yearly
+- **Configuración de Emails**: Lista dinámica de emails de WooCommerce para adjuntar documentos
+- **Botones de Descarga**: Acceso directo a PDFs desde lista de pedidos según estado
+- **Eliminación de Avisos Pro**: Plugin gratuito funciona sin restricciones ni mensajes de upgrade
 
 ### 🔄 En Progreso
 - **Optimización de Performance**: Resolución de problemas de diseño (fuentes, botones)
@@ -180,6 +192,22 @@ Palafito-b2b/
 - **Integración**: Funciona independientemente del plugin custom
 - **Configuración**: Requiere configuración manual en admin
 - **Estado**: YA FUNCIONANDO - NO TOCAR
+
+### Plugin PDF Invoices & Packing Slips (Mejorado)
+- **Propósito**: Generación de facturas y albaranes con funcionalidades Pro
+- **Funcionalidades Pro Replicadas**:
+  - ✅ **Adjuntos a Emails**: Configuración dinámica para todos los emails de WooCommerce
+  - ✅ **Numeración de Packing Slip**: Sistema completo con prefix, suffix, padding
+  - ✅ **Reset Yearly**: Reinicio anual de numeración
+  - ✅ **Display Date**: Mostrar fecha del packing slip
+  - ✅ **Disable for Statuses**: Deshabilitar en estados específicos
+- **Funcionalidades Automáticas**:
+  - ✅ **Albarán Automático**: Se adjunta cuando pedido cambia a "Entregado"
+  - ✅ **Factura Automática**: Se adjunta cuando pedido cambia a "Facturado"
+  - ✅ **Emails Automáticos**: Envío automático con PDFs adjuntos
+  - ✅ **Botones de Descarga**: En lista de pedidos según estado
+- **Sin Restricciones**: Eliminados todos los avisos de upgrade a Pro
+- **Estado**: FUNCIONANDO - Todas las funcionalidades Pro disponibles
 
 ---
 
