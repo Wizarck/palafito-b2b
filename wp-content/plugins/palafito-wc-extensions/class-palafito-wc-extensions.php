@@ -49,6 +49,61 @@ final class Palafito_WC_Extensions {
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 			error_log( 'Palafito WC Extensions: Plugin initialized' );
 		}
+
+		// Registrar nuevos estados personalizados de pedido
+		add_filter( 'woocommerce_register_shop_order_post_statuses', [ $this, 'register_custom_order_statuses' ] );
+		add_filter( 'wc_order_statuses', [ $this, 'add_custom_order_statuses_to_list' ] );
+		add_filter( 'bulk_actions-edit-shop_order', [ $this, 'add_custom_order_statuses_to_bulk_actions' ] );
+	}
+
+	/**
+	 * Registrar los nuevos estados personalizados de pedido.
+	 */
+	public function register_custom_order_statuses( $order_statuses ) {
+		$order_statuses['wc-entregado'] = array(
+			'label'                     => _x( 'Entregado', 'Order status', 'palafito-wc-extensions' ),
+			'public'                    => true,
+			'exclude_from_search'       => false,
+			'show_in_admin_all_list'    => true,
+			'show_in_admin_status_list' => true,
+			'label_count'               => _n_noop( 'Entregado <span class="count">(%s)</span>', 'Entregados <span class="count">(%s)</span>', 'palafito-wc-extensions' ),
+		);
+		$order_statuses['wc-facturado'] = array(
+			'label'                     => _x( 'Facturado', 'Order status', 'palafito-wc-extensions' ),
+			'public'                    => true,
+			'exclude_from_search'       => false,
+			'show_in_admin_all_list'    => true,
+			'show_in_admin_status_list' => true,
+			'label_count'               => _n_noop( 'Facturado <span class="count">(%s)</span>', 'Facturados <span class="count">(%s)</span>', 'palafito-wc-extensions' ),
+		);
+		return $order_statuses;
+	}
+
+	/**
+	 * Añadir los nuevos estados personalizados a la lista de estados de WooCommerce.
+	 */
+	public function add_custom_order_statuses_to_list( $order_statuses ) {
+		// Insertar 'entregado' después de 'processing'
+		$new_order_statuses = array();
+		foreach ( $order_statuses as $key => $label ) {
+			$new_order_statuses[ $key ] = $label;
+			if ( 'wc-processing' === $key ) {
+				$new_order_statuses['wc-entregado'] = _x( 'Entregado', 'Order status', 'palafito-wc-extensions' );
+			}
+			if ( 'wc-entregado' === $key ) {
+				$new_order_statuses['wc-facturado'] = _x( 'Facturado', 'Order status', 'palafito-wc-extensions' );
+			}
+		}
+		return $new_order_statuses;
+	}
+
+	/**
+	 * Añadir los nuevos estados personalizados a las acciones masivas del admin.
+	 */
+	public function add_custom_order_statuses_to_bulk_actions( $bulk_actions ) {
+		$bulk_actions['mark_entregado'] = __( 'Cambiar a Entregado', 'palafito-wc-extensions' );
+		$bulk_actions['mark_facturado'] = __( 'Cambiar a Facturado', 'palafito-wc-extensions' );
+		return $bulk_actions;
 	}
 
 	/**
