@@ -2,23 +2,30 @@
 
 ## 🚀 Próximas Implementaciones
 
-### Entorno Local con Contenedores y CI/CD
-- [ ] **Configurar entorno local con Docker/Docker Compose**
-  - [ ] Crear Dockerfile para WordPress + WooCommerce
-  - [ ] Configurar base de datos MySQL/MariaDB
-  - [ ] Configurar Nginx/Apache como servidor web
-  - [ ] Crear docker-compose.yml para desarrollo local
+### 1. Hardening / Seguridad básica
+- [ ] Restringir edición de archivos vía wp-admin (`DISALLOW_FILE_EDIT`)
+- [ ] Desactivar XML-RPC si no se necesita
+- [ ] Asegurar claves y secrets (mover a `.env` o variables de entorno)
+- [ ] Revisar permisos de archivos y carpetas sensibles
 
-- [ ] **Implementar Pipeline CI/CD**
-  - [ ] Configurar GitHub Actions para tests automáticos
-  - [ ] Pipeline de staging para pruebas
-  - [ ] Pipeline de producción con aprobación manual
-  - [ ] Tests automáticos antes del deploy
+### 2. 🧪 Testing y control de calidad
+- [x] Configurar PHPUnit (tests unitarios para tu plugin o funciones)
+- [ ] Automatizar tests con GitHub Actions
+- [ ] Validar calidad de código continuo (PHPCS, PHPStan, etc.)
+- [ ] Cobertura de tests (coverage report)
+- [ ] Tests de integración/end-to-end (opcional)
 
-- [ ] **Flujo de Desarrollo**
-  - [ ] Desarrollo local → Tests → Staging → Producción
-  - [ ] Visualización de cambios en entorno local
-  - [ ] Aprobación manual antes de push a producción
+### 3. 🔁 Flujo completo de desarrollo
+- [ ] Definir branch strategy (main, develop, feature/*, release/*, hotfix/*)
+- [ ] Configurar pre-commit hooks (lint automático, tests)
+- [ ] Versionado semántico (git tag, CHANGELOG.md, releases)
+- [ ] Documentar el flujo de trabajo en el README o en CONTRIBUTING.md
+
+### 4. 🤖 Mejorar el deploy
+- [ ] Añadir logs detallados a los scripts de deploy
+- [ ] Notificar vía email o Slack en cada deploy (éxito/fallo)
+- [ ] Hacer rollback automático en caso de error en el deploy
+- [ ] Deploy automatizado a staging y producción (con aprobación manual)
 
 ## ✅ Completado
 - [x] Estructura base del plugin
