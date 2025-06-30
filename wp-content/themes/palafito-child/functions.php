@@ -40,14 +40,14 @@ class Palafito_Child_Theme {
      * Enqueue de estilos
      */
     public function enqueue_styles() {
-        // WordPress automáticamente carga los estilos del tema padre
-        // Solo necesitamos cargar los estilos del child theme
+        // Kadence maneja automáticamente sus propios estilos y fuentes
+        // Solo cargamos los estilos específicos del child theme
         
         // Estilo principal del tema hijo
         wp_enqueue_style(
             'palafito-child-style',
             get_stylesheet_uri(),
-            [], // Sin dependencias, WordPress se encarga del tema padre
+            [], // Sin dependencias, Kadence se encarga de todo
             filemtime(get_stylesheet_directory() . '/style.css')
         );
 
@@ -60,14 +60,6 @@ class Palafito_Child_Theme {
                 filemtime(get_stylesheet_directory() . '/woocommerce.css')
             );
         }
-
-        // Google Fonts
-        wp_enqueue_style(
-            'palafito-google-fonts',
-            'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap',
-            [],
-            null
-        );
     }
 
     /**
