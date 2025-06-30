@@ -44,9 +44,9 @@ class Palafito_Checkout_Customizations {
 				'priority'    => 25,
 				'type'        => 'select',
 				'options'     => array(
-					''           => __( 'Select...', 'palafito-wc-extensions' ),
-					'wholesale'  => __( 'Wholesale', 'palafito-wc-extensions' ),
-					'retail'     => __( 'Retail', 'palafito-wc-extensions' ),
+					''            => __( 'Select...', 'palafito-wc-extensions' ),
+					'wholesale'   => __( 'Wholesale', 'palafito-wc-extensions' ),
+					'retail'      => __( 'Retail', 'palafito-wc-extensions' ),
 					'distributor' => __( 'Distributor', 'palafito-wc-extensions' ),
 				),
 			);
@@ -82,6 +82,11 @@ class Palafito_Checkout_Customizations {
 	 * @param int $order_id Order ID.
 	 */
 	public function save_custom_fields( $order_id ) {
+		// Verify nonce for security.
+		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['woocommerce-process-checkout-nonce'] ?? '' ) ), 'woocommerce-process_checkout' ) ) {
+			return;
+		}
+
 		if ( ! empty( $_POST['billing_company_type'] ) ) {
 			update_post_meta( $order_id, '_billing_company_type', sanitize_text_field( wp_unslash( $_POST['billing_company_type'] ) ) );
 		}
@@ -110,4 +115,4 @@ class Palafito_Checkout_Customizations {
 
 		return $fields;
 	}
-} 
+}

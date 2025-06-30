@@ -74,14 +74,14 @@ class Test_Palafito_Checkout_Customizations extends WP_UnitTestCase {
 	public function test_save_custom_fields() {
 		// Create a simple mock order.
 		$order_id = 123;
-		
+
 		// Mock POST data.
-		$_POST['billing_company_type'] = 'wholesale';
+		$_POST['billing_company_type']  = 'wholesale';
 		$_POST['billing_business_name'] = 'Test Company';
 
 		// Test that the method can be called without errors.
 		$this->checkout_customizations->save_custom_fields( $order_id );
-		
+
 		// Verify the data was saved.
 		$this->assertEquals( 'wholesale', get_post_meta( $order_id, '_billing_company_type', true ) );
 		$this->assertEquals( 'Test Company', get_post_meta( $order_id, '_billing_business_name', true ) );
@@ -92,7 +92,7 @@ class Test_Palafito_Checkout_Customizations extends WP_UnitTestCase {
 	 */
 	public function test_make_last_name_optional() {
 		$fields = array(
-			'billing' => array(
+			'billing'  => array(
 				'billing_last_name' => array(
 					'required' => true,
 				),

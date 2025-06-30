@@ -17,7 +17,7 @@ if ( ! $_tests_dir ) {
 }
 
 if ( ! file_exists( $_tests_dir . '/includes/functions.php' ) ) {
-	echo "Could not find $_tests_dir/includes/functions.php, have you run bin/install-wp-tests.sh ?" . PHP_EOL;
+	echo esc_html( "Could not find $_tests_dir/includes/functions.php, have you run bin/install-wp-tests.sh ?" ) . PHP_EOL;
 	exit( 1 );
 }
 
@@ -39,8 +39,8 @@ function _manually_load_plugin() {
 	if ( file_exists( $plugin_path ) ) {
 		require $plugin_path;
 		// Load plugin classes directly for tests.
-		$plugin_dir = dirname( __DIR__ );
-		$class_files = array(
+		$plugin_dir   = dirname( __DIR__ );
+		$class_files  = array(
 			$plugin_dir . '/includes/class-checkout-customizations.php',
 		);
 		foreach ( $class_files as $file ) {

@@ -196,36 +196,146 @@ define('WP_AUTO_UPDATE_CORE', true);
 
 ## 📦 Deployment
 
-### GitHub Actions
+### GitHub Actions CI/CD
 
-El proyecto incluye workflows automatizados:
+El proyecto incluye un workflow automatizado completo para testing, staging y producción:
 
-```yaml
-# .github/workflows/deploy.yml
-name: Deploy to Production
-on:
-  push:
-    branches: [main]
+#### 🚀 Workflow: Deploy to Production
+
+**Archivo**: `.github/workflows/deploy.yml`
+
+**Triggers**:
+- Push a rama `master`
+- Pull Request a rama `master`
+
+#### 📋 Jobs del Workflow
+
+##### 1. **Job: test** (Testing y Linting)
+- **Runs on**: `ubuntu-latest`
+- **Funciones**:
+  - ✅ Setup PHP 8.1 con extensiones necesarias
+  - ✅ Validación de `composer.json`
+  - ✅ Instalación de dependencias
+  - ✅ Ejecución de PHPCS (WordPress Coding Standards)
+  - ✅ Verificación de sintaxis PHP
+  - ✅ Security audit con Composer
+
+##### 2. **Job: deploy-staging** (Deployment a Staging)
+- **Needs**: `test` (se ejecuta solo si test pasa)
+- **Trigger**: Pull Request
+- **Funciones**:
+  - 🔐 Setup SSH con clave privada
+  - 📤 Deploy via rsync (excluye archivos de desarrollo)
+  - 🔧 Post-deploy commands:
+    - `composer install --no-dev --optimize-autoloader`
+    - `wp cache flush`
+    - `wp rewrite flush`
+
+##### 3. **Job: deploy-production** (Deployment a Producción)
+- **Needs**: `test` (se ejecuta solo si test pasa)
+- **Trigger**: Push a `master`
+- **Environment**: `production` (requiere aprobación)
+- **Funciones**:
+  - 💾 Backup automático antes del deploy
+  - 📤 Deploy via rsync con exclusiones
+  - 🔧 Post-deploy commands:
+    - `composer install --no-dev --optimize-autoloader`
+    - `wp cache flush`
+    - `wp rewrite flush`
+    - `wp db optimize`
+  - 📢 Notificación Slack automática
+
+##### 4. **Job: notify** (Notificaciones)
+- **Needs**: `deploy-production`
+- **Trigger**: Push a `master`
+- **Funciones**:
+  - 📧 Email de confirmación de deployment
+  - 📊 Detalles del commit y autor
+
+#### 🔐 Secrets Requeridos
+
+Para que el workflow funcione correctamente, necesitas configurar estos secrets en GitHub:
+
+**Staging**:
+- `STAGING_SSH_KEY`: Clave SSH privada para staging
+- `STAGING_HOST`: Hostname del servidor staging
+- `STAGING_USER`: Usuario SSH para staging
+- `STAGING_PATH`: Ruta en el servidor staging
+
+**Producción**:
+- `PRODUCTION_SSH_KEY`: Clave SSH privada para producción
+- `PRODUCTION_HOST`: Hostname del servidor producción
+- `PRODUCTION_USER`: Usuario SSH para producción
+- `PRODUCTION_PATH`: Ruta en el servidor producción
+- `PRODUCTION_URL`: URL del sitio en producción
+
+**Notificaciones**:
+- `SLACK_WEBHOOK`: Webhook URL de Slack
+- `SMTP_SERVER`: Servidor SMTP
+- `SMTP_PORT`: Puerto SMTP
+- `SMTP_USERNAME`: Usuario SMTP
+- `SMTP_PASSWORD`: Contraseña SMTP
+- `NOTIFICATION_EMAIL`: Email para notificaciones
+
+#### 🔄 Flujo de Trabajo
+
+```mermaid
+graph TD
+    A[Push a master] --> B[Job: test]
+    B --> C{¿Tests pasan?}
+    C -->|No| D[❌ Fail]
+    C -->|Sí| E[Job: deploy-production]
+    E --> F[💾 Backup automático]
+    F --> G[📤 Deploy via rsync]
+    G --> H[🔧 Post-deploy commands]
+    H --> I[📢 Notificación Slack]
+    I --> J[📧 Email de confirmación]
+    
+    K[Pull Request] --> L[Job: test]
+    L --> M{¿Tests pasan?}
+    M -->|No| N[❌ Fail]
+    M -->|Sí| O[Job: deploy-staging]
+    O --> P[📤 Deploy a staging]
 ```
 
-### Proceso de deployment
+#### 🛠️ Comandos de Deployment Manual
 
-1. **Desarrollo**: Rama `develop`
-2. **Testing**: Rama `staging`
-3. **Producción**: Rama `main`
-
-### Comandos de deployment
+Si necesitas hacer deployment manual:
 
 ```bash
 # Preparar para producción
 composer install --no-dev --optimize-autoloader
 
-# Optimizar assets
-npm run build
+# Verificar sintaxis PHP
+find wp-content -name "*.php" -exec php -l {} \;
 
-# Sincronizar con servidor
-rsync -avz --exclude='.git' ./ user@server:/path/to/wordpress/
+# Linting del código
+composer lint:all
+
+# Sincronizar con servidor (ejemplo)
+rsync -avz --delete \
+  --exclude='.git' \
+  --exclude='node_modules' \
+  --exclude='vendor' \
+  --exclude='.github' \
+  --exclude='README.md' \
+  --exclude='composer.*' \
+  --exclude='phpcs.xml' \
+  ./ user@server:/path/to/wordpress/
 ```
+
+#### 📊 Monitoreo
+
+- **GitHub Actions**: Ve a la pestaña "Actions" en tu repositorio
+- **Logs de deployment**: Disponibles en cada run del workflow
+- **Notificaciones**: Slack y email automáticos
+- **Rollback**: Usar backup automático si es necesario
+
+### Proceso de deployment
+
+1. **Desarrollo**: Rama `develop` (testing local)
+2. **Staging**: Pull Request → Deploy automático a staging
+3. **Producción**: Push a `master` → Deploy automático a producción
 
 ## 🧪 Testing
 
@@ -284,7 +394,7 @@ if (palafito_is_woocommerce_page()) {
 2. **Crear** rama feature (`git checkout -b feature/nueva-funcionalidad`)
 3. **Commit** cambios (`git commit -am 'Agregar nueva funcionalidad'`)
 4. **Push** a la rama (`git push origin feature/nueva-funcionalidad`)
-5. **Crear** Pull Request
+5. **Crear** Pull Request a `master`
 
 ### Estándares de commit
 
