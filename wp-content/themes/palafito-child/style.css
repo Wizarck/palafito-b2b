@@ -121,13 +121,13 @@ a:hover {
 
 /* Custom B2B Styles */
 .b2b-pricing {
-    background-color: var(--global-palette4);
+    background-color: #f6f7f9;
     padding: 1rem;
     border-radius: 4px;
     margin: 1rem 0;
 }
 
 .b2b-pricing h4 {
-    color: var(--global-palette2);
+    color: #1e73be;
     margin-bottom: 0.5rem;
 }

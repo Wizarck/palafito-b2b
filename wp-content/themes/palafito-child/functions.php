@@ -3,26 +3,46 @@
  * Funciones del tema hijo Palafito
  *
  * @package Palafito_Child
- * @version 1.0.1
+ * @version 1.0.2
  */
 
 // Seguridad: evita acceso directo
 defined('ABSPATH') || exit;
 
 /**
- * Disable Kadence dynamic CSS generation to avoid CSP issues
- * This prevents inline styles that are blocked by Content Security Policy
+ * Filter Kadence dynamic CSS to remove only inline styles that cause CSP issues
+ * Keep the dynamic CSS generation but remove problematic inline styles
  */
-function palafito_disable_kadence_dynamic_css($css) {
+function palafito_filter_kadence_dynamic_css($css) {
     // Debug: log that this filter is being called
     if (defined('WP_DEBUG') && WP_DEBUG) {
-        error_log('Palafito: kadence_dynamic_css filter called - returning empty string');
+        error_log('Palafito: kadence_dynamic_css filter called - filtering inline styles');
     }
-    return '';
+    
+    // Remove any style tags or inline styles that might cause CSP issues
+    $css = preg_replace('/<style[^>]*>.*?<\/style>/s', '', $css);
+    
+    // Keep the CSS but ensure it's clean
+    return $css;
 }
 
-// Add filter with high priority to ensure it runs
-add_filter('kadence_dynamic_css', 'palafito_disable_kadence_dynamic_css', 999);
+// Use a lower priority to allow Kadence to generate CSS first, then filter
+add_filter('kadence_dynamic_css', 'palafito_filter_kadence_dynamic_css', 20);
+
+/**
+ * Remove inline styles from wp_head that cause CSP issues
+ */
+function palafito_remove_inline_styles() {
+    // Remove emoji styles that can cause CSP issues
+    remove_action('wp_head', 'print_emoji_styles');
+    remove_action('wp_print_styles', 'print_emoji_styles');
+    
+    // Remove admin bar for non-admin users to avoid inline styles
+    if (!current_user_can('administrator')) {
+        add_filter('show_admin_bar', '__return_false');
+    }
+}
+add_action('init', 'palafito_remove_inline_styles');
 
 /**
  * Clase principal del tema hijo
