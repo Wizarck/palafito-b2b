@@ -175,34 +175,31 @@ class PackingSlip extends OrderDocumentMethods {
 			),
 		);
 
-		// Eliminado: aviso de upgrade a Pro para adjuntar packing slips a emails.
-		// El plugin Palafito WC Extensions maneja esta funcionalidad automáticamente.
-		//
-		// if ( ! function_exists( 'WPO_WCPDF_Pro' ) ) {
-		//     ob_start();
-		//     ?>
-		//     <div class="notice notice-info inline">
-		//         <p><a href="https://wpovernight.com/downloads/woocommerce-pdf-invoices-packing-slips-professional/" target="_blank"><?php esc_html_e( 'Upgrade to our Professional extension to attach packing slips to any email!', 'woocommerce-pdf-invoices-packing-slips' ); ?></a></p>
-		//     </div>
-		//     <?php
-		//     $html = ob_get_clean();
-		//
-		//     $pro_notice = array(
-		//         array(
-		//             'type'         => 'setting',
-		//             'id'           => 'attach_to_email_ids',
-		//             'title'        => __( 'Attach to:', 'woocommerce-pdf-invoices-packing-slips' ),
-		//             'callback'     => 'html_section',
-		//             'section'      => 'packing_slip',
-		//             'args'         => array(
-		//                 'option_name' => $option_name,
-		//                 'id'          => 'attach_to_email_ids',
-		//                 'html'        => $html,
-		//             )
-		//         ),
-		//     );
-		//     $settings_fields = WPO_WCPDF()->settings->move_setting_after_id( $settings_fields, $pro_notice, 'enabled' );
-		// }
+		// Configuración para adjuntar packing slips a emails (funcionalidad habilitada para Palafito).
+		$email_settings = array(
+			array(
+				'type'			=> 'setting',
+				'id'			=> 'attach_to_email_ids',
+				'title'			=> __( 'Attach to:', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback'		=> 'multiple_checkboxes',
+				'section'		=> 'packing_slip',
+				'args'			=> array(
+					'option_name'	=> $option_name,
+					'id'			=> 'attach_to_email_ids',
+					'fields'		=> array(
+						'customer_completed_order'	=> __( 'Customer completed order email', 'woocommerce-pdf-invoices-packing-slips' ),
+						'customer_processing_order'	=> __( 'Customer processing order email', 'woocommerce-pdf-invoices-packing-slips' ),
+						'customer_on_hold_order'		=> __( 'Customer on-hold order email', 'woocommerce-pdf-invoices-packing-slips' ),
+						'new_order'					=> __( 'New order email (to admin)', 'woocommerce-pdf-invoices-packing-slips' ),
+						'customer_invoice'			=> __( 'Customer invoice email', 'woocommerce-pdf-invoices-packing-slips' ),
+						'customer_refunded_order'	=> __( 'Customer refunded order email', 'woocommerce-pdf-invoices-packing-slips' ),
+						'customer_partially_refunded_order' => __( 'Customer partially refunded order email', 'woocommerce-pdf-invoices-packing-slips' ),
+					),
+					'description'	=> __( 'Select which emails should have the packing slip attached.', 'woocommerce-pdf-invoices-packing-slips' ),
+				)
+			),
+		);
+		$settings_fields = WPO_WCPDF()->settings->move_setting_after_id( $settings_fields, $email_settings, 'enabled' );
 
 		// Legacy filter to allow plugins to alter settings fields.
 		$settings_fields = apply_filters( 'wpo_wcpdf_settings_fields_documents_packing_slip', $settings_fields, $page, $option_group, $option_name );
