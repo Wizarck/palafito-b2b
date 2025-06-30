@@ -21,9 +21,10 @@ add_filter('wpo_wcpdf_filename', function($filename, $document_type, $order_ids,
             $albaran_number = 'A-' . $order->get_order_number();
             $filename = $albaran_number . ' - ' . $display_name . '.pdf';
         } elseif ($document_type === 'invoice') {
-            // Intentar obtener el número de factura del meta estándar
-            $invoice_number = get_post_meta($order->get_id(), '_wcpdf_invoice_number', true);
-            if (!$invoice_number) {
+            $invoice = function_exists('wcpdf_get_invoice') ? wcpdf_get_invoice($order) : null;
+            if ($invoice && $invoice->exists() && $invoice->get_number()) {
+                $invoice_number = $invoice->get_number()->get_formatted();
+            } else {
                 $invoice_number = $order->get_order_number();
             }
             $filename = $invoice_number . ' - ' . $display_name . '.pdf';
