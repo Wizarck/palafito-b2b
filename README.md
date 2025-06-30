@@ -8,11 +8,10 @@ Palafito B2B es una plataforma de comercio electrónico especializada en ventas 
 
 ### ✨ Características principales
 
-- **Precios B2B**: Sistema de precios diferenciados para clientes mayoristas
-- **Descuentos por cantidad**: Aplicación automática de descuentos según volumen
-- **Facturación mexicana**: Campos RFC y Uso CFDI integrados
-- **Checkout personalizado**: Experiencia optimizada para B2B
-- **Gestión de pedidos**: Flujos de trabajo especializados para mayoristas
+- **Checkout personalizado**: Campos "Last Name" opcionales en billing y shipping
+- **Tema personalizado**: Child theme de Kadence con estilos B2B
+- **Plugin custom**: Extensiones específicas para WooCommerce
+- **CI/CD automatizado**: GitHub Actions para testing y deployment
 - **Responsive design**: Optimizado para todos los dispositivos
 
 ## 🏗️ Estructura del proyecto
@@ -22,17 +21,22 @@ Palafito-b2b/
 ├── .github/                    # GitHub Actions para CI/CD
 ├── wp-content/
 │   ├── plugins/
+│   │   ├── wholesalex/         # Plugin B2B de precios (YA FUNCIONANDO)
 │   │   └── palafito-wc-extensions/  # Plugin personalizado
 │   │       ├── includes/            # Clases y funcionalidades
 │   │       ├── assets/              # CSS, JS y recursos
 │   │       └── languages/           # Traducciones
 │   └── themes/
-│       └── palafito-child/          # Tema hijo de Kadence
+│       ├── kadence/            # Tema padre
+│       └── palafito-child/     # Tema hijo personalizado
 │           ├── woocommerce/         # Templates personalizados
 │           ├── js/                  # JavaScript del tema
 │           └── images/              # Imágenes del tema
 ├── composer.json              # Dependencias PHP
 ├── phpcs.xml                  # Configuración de estándares
+├── CONTEXT.md                 # Memoria del proyecto
+├── TODO.md                    # Lista de tareas generales
+├── TODO-DESIGN-DIAGNOSIS.md   # Diagnóstico de problemas de diseño
 └── .gitignore                 # Archivos ignorados por Git
 ```
 
@@ -40,9 +44,9 @@ Palafito-b2b/
 
 ### Requisitos del sistema
 
-- **PHP**: 7.4 o superior
-- **WordPress**: 5.8 o superior
-- **WooCommerce**: 6.0 o superior
+- **PHP**: 7.4 o superior (producción: 4.4.9)
+- **WordPress**: 6.4+
+- **WooCommerce**: 8.0+
 - **MySQL**: 5.7 o superior
 - **Composer**: Para gestión de dependencias
 
@@ -67,6 +71,7 @@ Palafito-b2b/
 4. **Activar componentes**
    - Activar el tema hijo `palafito-child`
    - Activar el plugin `palafito-wc-extensions`
+   - Activar el plugin `wholesalex` (B2B pricing)
    - Configurar WooCommerce
 
 5. **Configurar WooCommerce**
@@ -94,16 +99,15 @@ El proyecto utiliza **WordPress Coding Standards** con las siguientes configurac
 
 - **PHPCS**: WordPress-Extra + WordPress-Docs
 - **PHP Version**: 7.4+
-- **WordPress Version**: 5.8+
+- **WordPress Version**: 6.4+
 - **Exclusiones**: node_modules, vendor, cache
 
 ### Estructura del plugin
 
-#### Clases principales
+#### Clase principal
 
 - `Palafito_WC_Extensions`: Clase principal del plugin
 - `Palafito_Checkout_Customizations`: Personalizaciones del checkout
-- `Palafito_B2B_Pricing`: Sistema de precios B2B
 
 #### Hooks implementados
 
@@ -112,10 +116,6 @@ El proyecto utiliza **WordPress Coding Standards** con las siguientes configurac
 woocommerce_checkout_fields
 woocommerce_before_checkout_form
 woocommerce_checkout_update_order_meta
-
-// Precios
-woocommerce_product_get_price
-woocommerce_before_calculate_totals
 
 // Productos
 woocommerce_single_product_summary
@@ -130,40 +130,29 @@ woocommerce_after_shop_loop_item_title
 - **Personalizaciones WooCommerce**: Templates y hooks
 - **Responsive design**: Adaptaciones móviles
 - **Performance**: Lazy loading y optimizaciones
+- **HTTPS Fix**: Conversión automática de URLs HTTP a HTTPS
+- **CSP Fix**: Manejo de Content Security Policy
 
 #### Archivos principales
 
 - `functions.php`: Clase principal del tema
+- `style.css`: Estilos del tema hijo (mínimo)
 - `woocommerce.css`: Estilos específicos de WooCommerce
 - `js/palafito-child.js`: JavaScript del tema
 
 ## 🎨 Personalizaciones B2B
 
-### Sistema de precios
+### Checkout personalizado
 
-```php
-// Precio B2B específico por producto
-$b2b_price = get_post_meta($product_id, '_b2b_price', true);
+- **Campos "Last Name" opcionales**: Tanto en billing como shipping
+- **Validación mejorada**: Campos requeridos optimizados para B2B
+- **Experiencia de usuario**: Flujo simplificado para mayoristas
 
-// Descuentos por cantidad
-$quantity_discounts = get_post_meta($product_id, '_quantity_discounts', true);
-```
+### Plugin WholesaleX
 
-### Campos de facturación
-
-- **RFC**: Validación automática de formato mexicano
-- **Uso CFDI**: Catálogo completo de usos fiscales
-- **Condiciones de pago**: Neto 30, Neto 60, etc.
-- **Instrucciones de envío**: Campo personalizado
-
-### Roles de usuario
-
-```php
-// Verificar si es usuario B2B
-function is_b2b_user() {
-    return in_array('b2b_customer', wp_get_current_user()->roles);
-}
-```
+- **Precios B2B**: Sistema de precios diferenciados para mayoristas
+- **Configuración**: Requiere configuración manual en admin
+- **Estado**: YA FUNCIONANDO - NO TOCAR
 
 ## 🔧 Configuración de producción
 
@@ -198,11 +187,11 @@ define('WP_AUTO_UPDATE_CORE', true);
 
 ### GitHub Actions CI/CD
 
-El proyecto incluye un workflow automatizado completo para testing, staging y producción:
+El proyecto incluye un workflow automatizado para testing y linting:
 
-#### 🚀 Workflow: Deploy to Production
+#### 🚀 Workflow: PHP Linting
 
-**Archivo**: `.github/workflows/deploy.yml`
+**Archivo**: `.github/workflows/php-linting.yml`
 
 **Triggers**:
 - Push a rama `master`
@@ -210,7 +199,7 @@ El proyecto incluye un workflow automatizado completo para testing, staging y pr
 
 #### 📋 Jobs del Workflow
 
-##### 1. **Job: test** (Testing y Linting)
+##### 1. **Job: lint** (PHP Linting y Coding Standards)
 - **Runs on**: `ubuntu-latest`
 - **Funciones**:
   - ✅ Setup PHP 8.1 con extensiones necesarias
@@ -220,138 +209,67 @@ El proyecto incluye un workflow automatizado completo para testing, staging y pr
   - ✅ Verificación de sintaxis PHP
   - ✅ Security audit con Composer
 
-##### 2. **Job: deploy-staging** (Deployment a Staging)
-- **Needs**: `test` (se ejecuta solo si test pasa)
-- **Trigger**: Pull Request
-- **Funciones**:
-  - 🔐 Setup SSH con clave privada
-  - 📤 Deploy via rsync (excluye archivos de desarrollo)
-  - 🔧 Post-deploy commands:
-    - `composer install --no-dev --optimize-autoloader`
-    - `wp cache flush`
-    - `wp rewrite flush`
-
-##### 3. **Job: deploy-production** (Deployment a Producción)
-- **Needs**: `test` (se ejecuta solo si test pasa)
-- **Trigger**: Push a `master`
-- **Environment**: `production` (requiere aprobación)
-- **Funciones**:
-  - 💾 Backup automático antes del deploy
-  - 📤 Deploy via rsync con exclusiones
-  - 🔧 Post-deploy commands:
-    - `composer install --no-dev --optimize-autoloader`
-    - `wp cache flush`
-    - `wp rewrite flush`
-    - `wp db optimize`
-  - 📢 Notificación Slack automática
-
-##### 4. **Job: notify** (Notificaciones)
-- **Needs**: `deploy-production`
-- **Trigger**: Push a `master`
-- **Funciones**:
-  - 📧 Email de confirmación de deployment
-  - 📊 Detalles del commit y autor
-
-#### 🔐 Secrets Requeridos
-
-Para que el workflow funcione correctamente, necesitas configurar estos secrets en GitHub:
-
-**Staging**:
-- `STAGING_SSH_KEY`: Clave SSH privada para staging
-- `STAGING_HOST`: Hostname del servidor staging
-- `STAGING_USER`: Usuario SSH para staging
-- `STAGING_PATH`: Ruta en el servidor staging
-
-**Producción**:
-- `PRODUCTION_SSH_KEY`: Clave SSH privada para producción
-- `PRODUCTION_HOST`: Hostname del servidor producción
-- `PRODUCTION_USER`: Usuario SSH para producción
-- `PRODUCTION_PATH`: Ruta en el servidor producción
-- `PRODUCTION_URL`: URL del sitio en producción
-
-**Notificaciones**:
-- `SLACK_WEBHOOK`: Webhook URL de Slack
-- `SMTP_SERVER`: Servidor SMTP
-- `SMTP_PORT`: Puerto SMTP
-- `SMTP_USERNAME`: Usuario SMTP
-- `SMTP_PASSWORD`: Contraseña SMTP
-- `NOTIFICATION_EMAIL`: Email para notificaciones
-
 #### 🔄 Flujo de Trabajo
 
 ```mermaid
 graph TD
-    A[Push a master] --> B[Job: test]
-    B --> C{¿Tests pasan?}
+    A[Push a master] --> B[Job: lint]
+    B --> C{¿Linting pasa?}
     C -->|No| D[❌ Fail]
-    C -->|Sí| E[Job: deploy-production]
-    E --> F[💾 Backup automático]
-    F --> G[📤 Deploy via rsync]
-    G --> H[🔧 Post-deploy commands]
-    H --> I[📢 Notificación Slack]
-    I --> J[📧 Email de confirmación]
-    
-    K[Pull Request] --> L[Job: test]
-    L --> M{¿Tests pasan?}
-    M -->|No| N[❌ Fail]
-    M -->|Sí| O[Job: deploy-staging]
-    O --> P[📤 Deploy a staging]
+    C -->|Sí| E[✅ Success]
 ```
-
-#### 🛠️ Comandos de Deployment Manual
-
-Si necesitas hacer deployment manual:
-
-```bash
-# Preparar para producción
-composer install --no-dev --optimize-autoloader
-
-# Verificar sintaxis PHP
-find wp-content -name "*.php" -exec php -l {} \;
-
-# Linting del código
-composer lint:all
-
-# Sincronizar con servidor (ejemplo)
-rsync -avz --delete \
-  --exclude='.git' \
-  --exclude='node_modules' \
-  --exclude='vendor' \
-  --exclude='.github' \
-  --exclude='README.md' \
-  --exclude='composer.*' \
-  --exclude='phpcs.xml' \
-  ./ user@server:/path/to/wordpress/
-```
-
-#### 📊 Monitoreo
-
-- **GitHub Actions**: Ve a la pestaña "Actions" en tu repositorio
-- **Logs de deployment**: Disponibles en cada run del workflow
-- **Notificaciones**: Slack y email automáticos
-- **Rollback**: Usar backup automático si es necesario
 
 ### Proceso de deployment
 
 1. **Desarrollo**: Rama `develop` (testing local)
-2. **Staging**: Pull Request → Deploy automático a staging
-3. **Producción**: Push a `master` → Deploy automático a producción
+2. **Testing**: Push a `master` → Linting automático
+3. **Producción**: Deploy manual después de linting exitoso
+
+## 🐛 Problemas Resueltos
+
+### 1. Error Fatal `get_instance()`
+- **Problema**: Plugin intentaba llamar método inexistente
+- **Solución**: Removido patrón singleton, instanciación directa
+- **Estado**: ✅ Resuelto
+
+### 2. CSS Roto en Producción
+- **Problema**: Diseño roto después de deployment
+- **Causa**: Inicialización duplicada del plugin
+- **Solución**: Movido inicialización al hook `init`, removida duplicación
+- **Estado**: ✅ Resuelto
+
+### 3. Mixed Content Warnings
+- **Problema**: Console warnings sobre Mixed Content
+- **Solución**: Script `fix-https-urls.php` ejecutado exitosamente
+- **Estado**: ✅ Resuelto
+
+### 4. Content Security Policy (CSP)
+- **Problema**: CSP bloqueando CSS dinámico de Kadence
+- **Solución**: Función `palafito_comprehensive_https_fix()` implementada
+- **Estado**: ✅ Resuelto
+
+## 🔄 Problemas Actuales
+
+### Diseño y CSS
+- **Fuentes**: No coinciden con Kadence
+- **Botones**: Comportamiento extraño en hover
+- **Diagnóstico**: TODO-DESIGN-DIAGNOSIS.md creado con 10 puntos de verificación
 
 ## 🧪 Testing
 
 ### Pruebas manuales
 
-- [ ] Checkout completo con datos B2B
-- [ ] Aplicación de precios B2B
-- [ ] Descuentos por cantidad
-- [ ] Validación de RFC
-- [ ] Emails personalizados
+- [ ] Checkout completo con campos opcionales
+- [ ] Plugin WholesaleX funcionando
+- [ ] Tema hijo cargando correctamente
+- [ ] HTTPS funcionando sin warnings
 - [ ] Responsive design
+- [ ] CSS sin errores de CSP
 
 ### Herramientas de testing
 
-- **PHPUnit**: Para pruebas unitarias
-- **Codeception**: Para pruebas de integración
+- **PHPCS**: Para estándares de código
+- **Composer**: Para auditoría de seguridad
 - **BrowserStack**: Para testing cross-browser
 
 ## 📚 Documentación adicional
@@ -359,11 +277,6 @@ rsync -avz --delete \
 ### Hooks personalizados
 
 ```php
-// Aplicar descuento B2B personalizado
-add_filter('palafito_b2b_discount_percentage', function($percentage) {
-    return 15.0; // 15% de descuento
-});
-
 // Personalizar campos de checkout
 add_filter('palafito_checkout_fields', function($fields) {
     // Modificar campos
@@ -374,16 +287,13 @@ add_filter('palafito_checkout_fields', function($fields) {
 ### Funciones auxiliares
 
 ```php
-// Obtener información B2B del usuario
-$b2b_info = palafito_get_b2b_user_info($user_id);
-
-// Formatear precio B2B
-$formatted_price = palafito_format_b2b_price($price, 'MXN');
-
 // Verificar si es página de WooCommerce
 if (palafito_is_woocommerce_page()) {
     // Lógica específica
 }
+
+// Obtener URL del logo
+$logo_url = palafito_get_logo_url();
 ```
 
 ## 🤝 Contribución
@@ -399,12 +309,12 @@ if (palafito_is_woocommerce_page()) {
 ### Estándares de commit
 
 ```
-feat: agregar sistema de precios B2B
-fix: corregir validación de RFC
+feat: agregar personalización de checkout
+fix: corregir inicialización del plugin
 docs: actualizar documentación
-style: mejorar estilos de checkout
+style: mejorar estilos del tema hijo
 refactor: reorganizar clases del plugin
-test: agregar pruebas para precios B2B
+test: agregar pruebas para checkout
 ```
 
 ## 📄 Licencia
@@ -423,6 +333,7 @@ Este proyecto es privado y propietario. Todos los derechos reservados.
 - [WooCommerce Developer Docs](https://docs.woocommerce.com/)
 - [WordPress Coding Standards](https://developer.wordpress.org/coding-standards/)
 - [Composer Documentation](https://getcomposer.org/doc/)
+- [Kadence Theme Documentation](https://www.kadencewp.com/kadence-theme/)
 
 ---
 
