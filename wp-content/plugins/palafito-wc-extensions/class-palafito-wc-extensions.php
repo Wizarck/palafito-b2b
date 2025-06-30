@@ -1,5 +1,7 @@
 <?php
 /**
+ * Funcionalidad principal y clases para Palafito WC Extensions.
+ *
  * @package Palafito_WC_Extensions
  */
 
