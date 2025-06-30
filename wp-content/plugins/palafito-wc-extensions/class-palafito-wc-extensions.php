@@ -25,6 +25,7 @@ final class Palafito_WC_Extensions {
 	 * Constructor.
 	 */
 	public function __construct() {
+		error_log('Constructor Palafito_WC_Extensions ejecutado');
 		$this->init_hooks();
 		$this->load_classes();
 		$this->init_components();
@@ -34,6 +35,7 @@ final class Palafito_WC_Extensions {
 	 * Initialize plugin hooks.
 	 */
 	private function init_hooks() {
+		error_log('init_hooks ejecutado');
 		// Log initialization for debugging.
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 			error_log( 'Palafito WC Extensions: Plugin initialized' );
@@ -51,6 +53,7 @@ final class Palafito_WC_Extensions {
 	 * Registrar los post status personalizados de pedido en WordPress.
 	 */
 	public static function register_custom_post_statuses() {
+		error_log('register_custom_post_statuses ejecutado');
 		register_post_status(
 			'wc-entregado',
 			array(
