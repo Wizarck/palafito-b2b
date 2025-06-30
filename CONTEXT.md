@@ -11,6 +11,15 @@
 4. **Incluir TODOS los cambios realizados en la sesión actual**
 5. **El TO-DO list está en un archivo separado** - NO en este archivo
 
+## 🚨 PROTOCOLO DE DESPEDIDA - OBLIGATORIO
+
+**CUANDO EL USUARIO DIGA "BUENAS NOCHES":**
+1. **OBLIGATORIO**: Actualizar este archivo CONTEXT.md con todos los cambios de la sesión
+2. **OBLIGATORIO**: Incluir estado actual de problemas resueltos y pendientes
+3. **OBLIGATORIO**: Actualizar fecha de última sesión
+4. **OBLIGATORIO**: Despedirse solo después de actualizar el contexto
+5. **NO OLVIDAR**: Este protocolo es EXPLÍCITO y OBLIGATORIO
+
 ---
 
 ## 📋 Resumen Ejecutivo
@@ -43,7 +52,8 @@ Palafito-b2b/
 │       └── palafito-wc-extensions/  # Plugin custom
 ├── .github/workflows/         # CI/CD
 ├── CONTEXT.md                 # Este archivo (MI MEMORIA)
-└── TODO.md                    # Lista de tareas (archivo separado)
+├── TODO.md                    # Lista de tareas (archivo separado)
+└── TODO-DESIGN-DIAGNOSIS.md   # Diagnóstico específico de diseño
 ```
 
 ---
@@ -59,13 +69,17 @@ Palafito-b2b/
 - **Plugin Custom**: Estructura modular y escalable
 - **Debugging**: Sistema de logs implementado
 - **CSP Issues**: Resuelto problema de Content Security Policy con CSS dinámico
+- **Mixed Content**: Script ejecutado exitosamente para convertir HTTP → HTTPS
+- **HTTPS Fix**: URLs de imágenes y recursos convertidas a HTTPS
 
 ### 🔄 En Progreso
-- **Optimización de Performance**: Resolución de problemas de CSS
+- **Optimización de Performance**: Resolución de problemas de diseño (fuentes, botones)
 - **Debugging**: Monitoreo de logs de producción
 
 ### 📋 TO-DO List
-**IMPORTANTE:** El listado de tareas TO-DO se mantiene en un archivo separado (`TODO.md`). Este archivo de contexto es solo para entender el proyecto, no para el status de tareas.
+**IMPORTANTE:** El listado de tareas TO-DO se mantiene en archivos separados:
+- `TODO.md` - Tareas generales
+- `TODO-DESIGN-DIAGNOSIS.md` - Diagnóstico específico de problemas de diseño
 
 ---
 
@@ -126,6 +140,16 @@ Palafito-b2b/
   ```
 - **Estado**: ✅ Resuelto (implementado en child theme)
 
+### 8. Mixed Content Warnings (HTTP → HTTPS)
+- **Problema**: Console warnings sobre Mixed Content
+- **Síntomas**: 
+  - `Mixed Content: The page was loaded over HTTPS, but requested an insecure element`
+  - Imágenes y recursos cargando por HTTP
+- **Causa**: URLs en base de datos con protocolo HTTP
+- **Solución**: Script `fix-https-urls.php` ejecutado exitosamente
+- **Archivos afectados**: `posts`, `postmeta`, `options`
+- **Estado**: ✅ Resuelto
+
 ---
 
 ## 🔧 Configuraciones Importantes
@@ -144,6 +168,7 @@ Palafito-b2b/
 - **CSS**: Carga correctamente desde Kadence via `@import`
 - **Sistema de carga**: WordPress nativo para child themes
 - **CSP Fix**: Deshabilitado CSS dinámico de Kadence para evitar bloqueos
+- **HTTPS Fix**: Función `palafito_comprehensive_https_fix()` implementada
 
 ### Plugin `wholesalex`
 - **Propósito**: Gestión de precios B2B
@@ -182,6 +207,12 @@ Palafito-b2b/
 - **Errores**: Fatal errors resueltos
 - **Performance**: CSS loading optimizado
 - **CSP**: CSS dinámico deshabilitado para evitar bloqueos
+- **HTTPS**: URLs convertidas correctamente
+
+### Problemas Actuales
+- **Diseño**: Fuentes y botones no coinciden con Kadence
+- **CSS**: Posible interferencia entre child theme y Kadence
+- **Diagnóstico**: TODO-DESIGN-DIAGNOSIS.md creado con 10 puntos de verificación
 
 ---
 
@@ -200,23 +231,14 @@ Palafito-b2b/
 
 ---
 
-## 🔐 Seguridad y Compliance
+## 📅 Historial de Sesiones
 
-### WordPress
-- **Updates**: Automáticos habilitados
-- **Backups**: Configurados en hosting
-- **Security**: Nonces, sanitización implementados
-
-### WooCommerce
-- **Payments**: WooCommerce Payments
-- **SSL**: Certificado activo
-- **GDPR**: Compliance básico
-
-### Content Security Policy
-- **Configuración**: A nivel de hosting (1&1 IONOS)
-- **Restricciones**: Bloquea inline styles (`style` attributes)
-- **Impacto**: CSS dinámico de temas modernos afectado
-- **Solución**: Deshabilitar CSS dinámico cuando sea necesario
+### Última Sesión: [FECHA ACTUAL]
+- ✅ Resuelto: Mixed Content warnings con script HTTPS
+- ✅ Creado: TODO-DESIGN-DIAGNOSIS.md con diagnóstico completo
+- ✅ Implementado: Función `palafito_comprehensive_https_fix()`
+- 🔄 Pendiente: Diagnóstico de problemas de diseño (fuentes, botones)
+- 📋 Próximo: Seguir TODO-DESIGN-DIAGNOSIS.md punto por punto
 
 ---
 
