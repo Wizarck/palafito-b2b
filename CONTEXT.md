@@ -476,4 +476,13 @@ wp theme list --status=active
 
 ---
 
+## Lessons learned y normas de workflow
+
+- Todos los comentarios inline deben terminar en punto, exclamación o interrogación para pasar phpcs.
+- Los comentarios 'translators:' deben estar presentes antes de cada llamada a _n_noop con placeholders y también terminar en punto.
+- En Mac, siempre priorizar bash sobre PowerShell para evitar errores de entorno.
+- Antes de cualquier push, **siempre** correr `composer install` y los comandos de linting y autofix definidos en `composer.json` (por ejemplo, `phpcs` y `phpcbf`).
+- Nunca hacer push sin validar el código con composer y los tests automáticos definidos en el proyecto.
+- Esto es obligatorio para evitar errores en el pipeline de GitHub Actions y asegurar la calidad del código.
+
 *Este archivo es MI MEMORIA EXTERNA. Debo actualizarlo al final de cada sesión cuando el usuario diga "buenas noches".* 
