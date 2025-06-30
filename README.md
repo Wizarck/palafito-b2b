@@ -154,6 +154,21 @@ woocommerce_after_shop_loop_item_title
 - **Configuración**: Requiere configuración manual en admin
 - **Estado**: YA FUNCIONANDO - NO TOCAR
 
+### Dirección de tienda y cliente en PDFs
+
+- La dirección del cliente en los documentos PDF (factura y albarán) sigue el formato:
+  - [Nombre] [Apellido]
+  - NIF: [NIF del cliente] (solo en facturación, si existe)
+  - Dirección (calle, número, piso, puerta)
+  - Código Postal Ciudad - País (nombre completo)
+  - Teléfono: [Teléfono de contacto] (si existe)
+- La dirección de la empresa (tienda) sigue el formato:
+  - NIF: [NIF de la empresa]
+  - Dirección (calle, número)
+  - Código Postal Ciudad - País (nombre completo)
+  - Email: [Email de contacto]
+- El formato es limpio, sin repeticiones, y con los prefijos 'NIF:', 'Teléfono:' y 'Email:' donde corresponde. El nombre de la empresa no se repite en la dirección de tienda.
+
 ## 🔧 Configuración de producción
 
 ### Variables de entorno

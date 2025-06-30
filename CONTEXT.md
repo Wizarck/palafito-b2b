@@ -11,6 +11,9 @@
 4. **Incluir TODOS los cambios realizados en la sesión actual**
 5. **El TO-DO list está en un archivo separado** - NO en este archivo
 
+**REGLA DE FLUJO DE PUSH:**
+Siempre que se realice un push, primero se debe actualizar la documentación relevante (`README.md`, `CONTEXT.md`, etc.) y luego hacer el commit y push de código y documentación juntos. Así, la documentación en el repositorio reflejará siempre el estado real del código y se evitan confusiones.
+
 ## 🚨 PROTOCOLO DE DESPEDIDA - OBLIGATORIO
 
 **CUANDO EL USUARIO DIGA "BUENAS NOCHES":**
@@ -71,6 +74,8 @@ Palafito-b2b/
 - **CSP Issues**: Resuelto problema de Content Security Policy con CSS dinámico
 - **Mixed Content**: Script ejecutado exitosamente para convertir HTTP → HTTPS
 - **HTTPS Fix**: URLs de imágenes y recursos convertidas a HTTPS
+- **Dirección de tienda en PDFs**: Restaurada la llamada estándar `$this->shop_address()` en los templates de factura y albarán. Ahora, mediante filtro en `functions.php`, se añade '- España' solo si el país es España y el email siempre en línea aparte. Esto evita errores de parser y asegura formato correcto.
+- **Formato de direcciones en PDFs**: Ahora el formato es: Cliente ([Nombre] [Apellido], NIF solo en facturación, dirección, CP ciudad - país, teléfono), Tienda (NIF, dirección, CP ciudad - país, email, sin nombre de empresa en la dirección). Sin repeticiones ni mezclas, y con los prefijos correctos.
 
 ### 🔄 En Progreso
 - **Optimización de Performance**: Resolución de problemas de diseño (fuentes, botones)
