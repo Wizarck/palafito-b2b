@@ -60,8 +60,14 @@
 			<?php do_action( 'wpo_wcpdf_before_billing_address', $this->get_type(), $this->order ); ?>
 			<?php
 				// Dirección de facturación personalizada
-				$first_name = $this->order->get_billing_first_name();
-				$last_name = $this->order->get_billing_last_name();
+				$user_id = $this->order->get_customer_id();
+				$display_name = '';
+				if ($user_id) {
+					$user = get_userdata($user_id);
+					if ($user) {
+						$display_name = $user->display_name;
+					}
+				}
 				$nif = get_post_meta($this->order->get_id(), '_billing_rfc', true);
 				$address = $this->order->get_billing_address_1();
 				$address2 = $this->order->get_billing_address_2();
@@ -71,7 +77,7 @@
 				$country_name = WC()->countries->countries[$country] ?? $country;
 				$phone = $this->order->get_billing_phone();
 				$lines = [];
-				if (trim($first_name . $last_name)) $lines[] = trim($first_name . ' ' . $last_name);
+				if ($display_name) $lines[] = $display_name;
 				if ($nif) $lines[] = 'NIF: ' . $nif;
 				if ($address) $lines[] = $address . ($address2 ? ', ' . $address2 : '');
 				$lines[] = trim($cp . ' ' . $city . ' - ' . $country_name);
@@ -90,8 +96,14 @@
 				<p>
 				<?php
 					// Dirección de envío personalizada
-					$first_name = $this->order->get_shipping_first_name();
-					$last_name = $this->order->get_shipping_last_name();
+					$user_id = $this->order->get_customer_id();
+					$display_name = '';
+					if ($user_id) {
+						$user = get_userdata($user_id);
+						if ($user) {
+							$display_name = $user->display_name;
+						}
+					}
 					$address = $this->order->get_shipping_address_1();
 					$address2 = $this->order->get_shipping_address_2();
 					$cp = $this->order->get_shipping_postcode();
@@ -100,7 +112,7 @@
 					$country_name = WC()->countries->countries[$country] ?? $country;
 					$phone = $this->order->get_billing_phone();
 					$lines = [];
-					if (trim($first_name . $last_name)) $lines[] = trim($first_name . ' ' . $last_name);
+					if ($display_name) $lines[] = $display_name;
 					if ($address) $lines[] = $address . ($address2 ? ', ' . $address2 : '');
 					$lines[] = trim($cp . ' ' . $city . ' - ' . $country_name);
 					if ($phone) $lines[] = 'Teléfono: ' . $phone;
@@ -120,14 +132,6 @@
 					<th>Número de albarán:</th>
 					<td>A-<?php echo $this->order->get_order_number(); ?></td>
 				</tr>
-				<tr class="order-number">
-					<th><?php $this->order_number_title(); ?></th>
-					<td><?php $this->order_number(); ?></td>
-				</tr>
-				<tr class="order-date">
-					<th><?php $this->order_date_title(); ?></th>
-					<td><?php $this->order_date(); ?></td>
-				</tr>
 				<tr class="delivery-date">
 					<th>Fecha de entrega:</th>
 					<td><?php echo date_i18n( get_option( 'date_format' ), current_time( 'timestamp' ) ); ?></td>
@@ -138,6 +142,14 @@
 						<td><?php $this->shipping_method(); ?></td>
 					</tr>
 				<?php endif; ?>
+				<tr class="order-number">
+					<th><?php $this->order_number_title(); ?></th>
+					<td><?php $this->order_number(); ?></td>
+				</tr>
+				<tr class="order-date">
+					<th><?php $this->order_date_title(); ?></th>
+					<td><?php $this->order_date(); ?></td>
+				</tr>
 				<?php do_action( 'wpo_wcpdf_after_order_data', $this->get_type(), $this->order ); ?>
 			</table>
 		</td>

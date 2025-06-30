@@ -60,8 +60,14 @@
 			<?php do_action( 'wpo_wcpdf_before_billing_address', $this->get_type(), $this->order ); ?>
 			<?php
 				// Dirección de facturación personalizada
-				$first_name = $this->order->get_billing_first_name();
-				$last_name = $this->order->get_billing_last_name();
+				$user_id = $this->order->get_customer_id();
+				$display_name = '';
+				if ($user_id) {
+					$user = get_userdata($user_id);
+					if ($user) {
+						$display_name = $user->display_name;
+					}
+				}
 				$nif = get_post_meta($this->order->get_id(), '_billing_rfc', true);
 				$address = $this->order->get_billing_address_1();
 				$address2 = $this->order->get_billing_address_2();
@@ -71,7 +77,7 @@
 				$country_name = WC()->countries->countries[$country] ?? $country;
 				$phone = $this->order->get_billing_phone();
 				$lines = [];
-				if (trim($first_name . $last_name)) $lines[] = trim($first_name . ' ' . $last_name);
+				if ($display_name) $lines[] = $display_name;
 				if ($nif) $lines[] = 'NIF: ' . $nif;
 				if ($address) $lines[] = $address . ($address2 ? ', ' . $address2 : '');
 				$lines[] = trim($cp . ' ' . $city . ' - ' . $country_name);
@@ -90,8 +96,14 @@
 				<p>
 				<?php
 					// Dirección de envío personalizada
-					$first_name = $this->order->get_shipping_first_name();
-					$last_name = $this->order->get_shipping_last_name();
+					$user_id = $this->order->get_customer_id();
+					$display_name = '';
+					if ($user_id) {
+						$user = get_userdata($user_id);
+						if ($user) {
+							$display_name = $user->display_name;
+						}
+					}
 					$address = $this->order->get_shipping_address_1();
 					$address2 = $this->order->get_shipping_address_2();
 					$cp = $this->order->get_shipping_postcode();
@@ -100,7 +112,7 @@
 					$country_name = WC()->countries->countries[$country] ?? $country;
 					$phone = $this->order->get_billing_phone();
 					$lines = [];
-					if (trim($first_name . $last_name)) $lines[] = trim($first_name . ' ' . $last_name);
+					if ($display_name) $lines[] = $display_name;
 					if ($address) $lines[] = $address . ($address2 ? ', ' . $address2 : '');
 					$lines[] = trim($cp . ' ' . $city . ' - ' . $country_name);
 					if ($phone) $lines[] = 'Teléfono: ' . $phone;

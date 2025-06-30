@@ -354,7 +354,11 @@ Este proyecto es privado y propietario. Todos los derechos reservados.
 
 **Palafito B2B** - Tu plataforma de confianza para comercio mayorista 🚀
 
-### [2024-xx-xx] Cambios recientes en PDFs
-- El país de la tienda se muestra como nombre completo en los documentos PDF (factura y albarán).
-- El teléfono solo aparece una vez en la dirección personalizada de facturación.
-- Recuerda: Actualiza la documentación antes de cada push.
+### [2024-xx-xx] Cambios recientes
+- Se usa el campo 'Mostrar este nombre públicamente' (display_name) como primera línea en las direcciones de cliente en factura y albarán.
+- En el albarán, el bloque de datos de pedido (derecha) muestra los campos en este orden:
+  1. Número de albarán
+  2. Fecha de entrega
+  3. Método de envío
+  4. Número de pedido
+  5. Fecha de pedido
