@@ -1,21 +1,38 @@
 <?php
 /**
  * Plugin Name: Palafito WC Extensions
- * Description: Personalizaciones funcionales de WooCommerce para el proyecto Palafito.
- * Author: Arturo Ramirez
+ * Plugin URI: https://palafito.com
+ * Description: Extensiones personalizadas para WooCommerce en Palafito B2B.
  * Version: 1.0.0
+ * Author: Palafito Team
+ * Author URI: https://palafito.com
+ * Text Domain: palafito-wc-extensions
+ * Domain Path: /languages
+ * Requires at least: 5.0
+ * Tested up to: 6.4
+ * Requires PHP: 7.4
+ * WC requires at least: 5.0
+ * WC tested up to: 8.0
+ *
+ * @package Palafito_WC_Extensions
  */
 
-// Seguridad: evita acceso directo
-defined('ABSPATH') || exit;
+// Prevent direct access.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-// Aquí van tus funciones personalizadas
-add_action('init', function () {
-    // Puedes dejar este mensaje para saber que el plugin carga bien
-    error_log('[Palafito WC Extensions] Plugin cargado correctamente');
-});
+// Define plugin constants.
+define( 'PALAFITO_WC_EXTENSIONS_VERSION', '1.0.0' );
+define( 'PALAFITO_WC_EXTENSIONS_PLUGIN_FILE', __FILE__ );
+define( 'PALAFITO_WC_EXTENSIONS_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'PALAFITO_WC_EXTENSIONS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
-/**
- * Añadir un aviso personalizado en el checkout de WooCommerce.
- */
-add_action('woocommerce_before_checkout_form', 'palafito_custom_checkout_notice');
+// Load plugin hooks first.
+require_once PALAFITO_WC_EXTENSIONS_PLUGIN_DIR . 'includes/plugin-hooks.php';
+
+// Load the main plugin class.
+require_once PALAFITO_WC_EXTENSIONS_PLUGIN_DIR . 'class-palafito-wc-extensions.php';
+
+// Initialize the plugin.
+add_action( 'plugins_loaded', array( 'Palafito_WC_Extensions', 'get_instance' ) );

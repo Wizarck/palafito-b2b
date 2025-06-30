@@ -1,0 +1,24 @@
+{
+    "name": "palafito/palafito-wc-extensions",
+    "description": "WooCommerce extensions for Palafito B2B",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require-dev": {
+        "phpunit/phpunit": "^9.0",
+        "yoast/phpunit-polyfills": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Palafito_WC_Extensions\\": "includes/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Palafito_WC_Extensions\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test:coverage": "phpunit --coverage-html coverage"
+    }
+} 

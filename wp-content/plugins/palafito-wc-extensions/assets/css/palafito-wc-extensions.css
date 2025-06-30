@@ -1,0 +1,341 @@
+/**
+ * Estilos para Palafito WC Extensions
+ * 
+ * @package Palafito_WC_Extensions
+ * @version 1.0.0
+ */
+
+/* ===== CHECKOUT PERSONALIZADO ===== */
+
+/* Aviso de checkout */
+.palafito-checkout-notice {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.palafito-checkout-notice p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.palafito-checkout-notice strong {
+    font-weight: 600;
+    color: #fff;
+}
+
+/* Pie de página del checkout */
+.palafito-checkout-footer {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 15px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.palafito-checkout-footer p {
+    margin: 0;
+    color: #6c757d;
+}
+
+/* Campos personalizados */
+.palafito-custom-fields,
+.palafito-shipping-fields {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.palafito-custom-fields h3,
+.palafito-shipping-fields h3 {
+    margin: 0 0 15px 0;
+    color: #495057;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* Campos de facturación personalizados */
+#billing_payment_terms {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background: white;
+    font-size: 14px;
+}
+
+#shipping_instructions {
+    width: 100%;
+    min-height: 80px;
+    padding: 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background: white;
+    font-size: 14px;
+    resize: vertical;
+}
+
+/* ===== PRECIOS B2B ===== */
+
+/* Información de precios B2B */
+.b2b-pricing-info {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+    box-shadow: 0 2px 10px rgba(40, 167, 69, 0.2);
+}
+
+.b2b-price {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.b2b-price strong {
+    color: #fff;
+    font-weight: 600;
+}
+
+/* Precios B2B en loop */
+.b2b-price-loop {
+    margin-top: 8px;
+}
+
+.b2b-price-loop small {
+    background: #28a745;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Tabla de descuentos por cantidad */
+.quantity-discounts-table {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.quantity-discounts-table h4 {
+    margin: 0 0 15px 0;
+    color: #495057;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.discount-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.discount-table th {
+    background: #495057;
+    color: white;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.discount-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e9ecef;
+    font-size: 14px;
+}
+
+.discount-table tr:last-child td {
+    border-bottom: none;
+}
+
+.discount-table tr:hover {
+    background: #f8f9fa;
+}
+
+/* Descuentos por cantidad en carrito */
+.quantity-discount {
+    color: #28a745;
+    font-weight: 500;
+}
+
+/* ===== ADMIN ===== */
+
+/* Campos de descuento por cantidad en admin */
+.quantity-discount-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+}
+
+.quantity-discount-row input {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 14px;
+}
+
+.quantity-discount-row .remove-discount {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.quantity-discount-row .remove-discount:hover {
+    background: #c82333;
+}
+
+#add-quantity-discount {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+#add-quantity-discount:hover {
+    background: #218838;
+}
+
+/* Campos personalizados en admin */
+.palafito-custom-fields-admin {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.palafito-custom-fields-admin h3 {
+    margin: 0 0 10px 0;
+    color: #495057;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.palafito-custom-fields-admin p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.palafito-custom-fields-admin strong {
+    color: #495057;
+    font-weight: 600;
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 768px) {
+    .palafito-checkout-notice {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .palafito-checkout-notice p {
+        font-size: 14px;
+    }
+    
+    .palafito-custom-fields,
+    .palafito-shipping-fields {
+        padding: 15px;
+        margin: 15px 0;
+    }
+    
+    .quantity-discounts-table {
+        padding: 15px;
+    }
+    
+    .discount-table th,
+    .discount-table td {
+        padding: 8px;
+        font-size: 13px;
+    }
+    
+    .quantity-discount-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    
+    .quantity-discount-row input {
+        width: 100%;
+    }
+}
+
+/* ===== ANIMACIONES ===== */
+
+.palafito-checkout-notice,
+.b2b-pricing-info,
+.quantity-discounts-table {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== ESTADOS ===== */
+
+.palafito-checkout-notice:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.b2b-pricing-info:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    transition: all 0.3s ease;
+}
+
+/* ===== ACCESIBILIDAD ===== */
+
+.palafito-checkout-notice:focus,
+.b2b-pricing-info:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+
+/* ===== IMPRESIÓN ===== */
+
+@media print {
+    .palafito-checkout-notice,
+    .palafito-checkout-footer,
+    .b2b-pricing-info {
+        display: none;
+    }
+} 

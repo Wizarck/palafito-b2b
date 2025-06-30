@@ -1,24 +1,181 @@
-name: Deploy to IONOS
+name: Deploy to Production
 
 on:
   push:
-    branches:
-      - master
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  deploy:
+  # Job de testing y linting
+  test:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, iconv, json, mbstring, pdo
+        coverage: none
+        
+    - name: Validate composer.json
+      run: composer validate --strict
+      
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
+      
+    - name: Run PHPCS
+      run: composer lint:all
+      
+    - name: Check PHP syntax
+      run: find wp-content -name "*.php" -exec php -l {} \;
+      
+    - name: Security check
+      run: composer audit --format=json --no-interaction || true
 
-      - name: SSH to IONOS and deploy
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: access-5016482035.webspace-host.com
-          username: a1559522
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd /clickandbuilds/Palafito
-            ./web_update_from_repo.sh
+  # Job de deployment a staging
+  deploy-staging:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.8.0
+      with:
+        ssh-private-key: ${{ secrets.STAGING_SSH_KEY }}
+        
+    - name: Add known hosts
+      run: |
+        ssh-keyscan -H ${{ secrets.STAGING_HOST }} >> ~/.ssh/known_hosts
+        
+    - name: Deploy to staging
+      run: |
+        rsync -avz --delete \
+          --exclude='.git' \
+          --exclude='node_modules' \
+          --exclude='vendor' \
+          --exclude='.github' \
+          --exclude='README.md' \
+          --exclude='composer.*' \
+          --exclude='phpcs.xml' \
+          ./ ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }}:${{ secrets.STAGING_PATH }}
+          
+    - name: Run post-deploy commands
+      run: |
+        ssh ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }} << 'EOF'
+          cd ${{ secrets.STAGING_PATH }}
+          composer install --no-dev --optimize-autoloader
+          wp cache flush --allow-root
+          wp rewrite flush --allow-root
+        EOF
+
+  # Job de deployment a producción
+  deploy-production:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: production
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.8.0
+      with:
+        ssh-private-key: ${{ secrets.PRODUCTION_SSH_KEY }}
+        
+    - name: Add known hosts
+      run: |
+        ssh-keyscan -H ${{ secrets.PRODUCTION_HOST }} >> ~/.ssh/known_hosts
+        
+    - name: Create backup
+      run: |
+        ssh ${{ secrets.PRODUCTION_USER }}@${{ secrets.PRODUCTION_HOST }} << 'EOF'
+          cd ${{ secrets.PRODUCTION_PATH }}
+          tar -czf backup-$(date +%Y%m%d-%H%M%S).tar.gz \
+            --exclude='backup-*.tar.gz' \
+            --exclude='.git' \
+            .
+        EOF
+        
+    - name: Deploy to production
+      run: |
+        rsync -avz --delete \
+          --exclude='.git' \
+          --exclude='node_modules' \
+          --exclude='vendor' \
+          --exclude='.github' \
+          --exclude='README.md' \
+          --exclude='composer.*' \
+          --exclude='phpcs.xml' \
+          --exclude='backup-*.tar.gz' \
+          ./ ${{ secrets.PRODUCTION_USER }}@${{ secrets.PRODUCTION_HOST }}:${{ secrets.PRODUCTION_PATH }}
+          
+    - name: Run post-deploy commands
+      run: |
+        ssh ${{ secrets.PRODUCTION_USER }}@${{ secrets.PRODUCTION_HOST }} << 'EOF'
+          cd ${{ secrets.PRODUCTION_PATH }}
+          composer install --no-dev --optimize-autoloader
+          wp cache flush --allow-root
+          wp rewrite flush --allow-root
+          wp db optimize --allow-root
+        EOF
+        
+    - name: Notify deployment
+      run: |
+        curl -X POST ${{ secrets.SLACK_WEBHOOK }} \
+          -H 'Content-type: application/json' \
+          -d '{
+            "text": "🚀 Palafito B2B ha sido desplegado exitosamente a producción",
+            "attachments": [{
+              "fields": [
+                {
+                  "title": "Commit",
+                  "value": "${{ github.sha }}",
+                  "short": true
+                },
+                {
+                  "title": "Autor",
+                  "value": "${{ github.actor }}",
+                  "short": true
+                }
+              ]
+            }]
+          }'
+
+  # Job de notificación
+  notify:
+    needs: [deploy-production]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Send email notification
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: ${{ secrets.SMTP_SERVER }}
+        server_port: ${{ secrets.SMTP_PORT }}
+        username: ${{ secrets.SMTP_USERNAME }}
+        password: ${{ secrets.SMTP_PASSWORD }}
+        subject: "Palafito B2B - Deployment Exitoso"
+        to: ${{ secrets.NOTIFICATION_EMAIL }}
+        from: "deploy@palafito-b2b.com"
+        body: |
+          El proyecto Palafito B2B ha sido desplegado exitosamente a producción.
+          
+          Detalles del deployment:
+          - Commit: ${{ github.sha }}
+          - Autor: ${{ github.actor }}
+          - Rama: ${{ github.ref }}
+          - Fecha: ${{ github.event.head_commit.timestamp }}
+          
+          Puedes verificar el sitio en: ${{ secrets.PRODUCTION_URL }}
