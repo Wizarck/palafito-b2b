@@ -13,7 +13,16 @@ defined('ABSPATH') || exit;
  * Disable Kadence dynamic CSS generation to avoid CSP issues
  * This prevents inline styles that are blocked by Content Security Policy
  */
-add_filter( 'kadence_dynamic_css', '__return_false' );
+function palafito_disable_kadence_dynamic_css($css) {
+    // Debug: log that this filter is being called
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        error_log('Palafito: kadence_dynamic_css filter called - returning empty string');
+    }
+    return '';
+}
+
+// Add filter with high priority to ensure it runs
+add_filter('kadence_dynamic_css', 'palafito_disable_kadence_dynamic_css', 999);
 
 /**
  * Clase principal del tema hijo
@@ -46,19 +55,14 @@ class Palafito_Child_Theme {
      * Enqueue de estilos
      */
     public function enqueue_styles() {
-        // Enqueue parent theme style
-        wp_enqueue_style( 
-            'kadence-style', 
-            get_template_directory_uri() . '/style.css',
-            array(),
-            wp_get_theme( get_template() )->get( 'Version' )
-        );
+        // Let Kadence handle its own styles automatically
+        // We only need to enqueue our child theme styles
         
-        // Enqueue child theme style
+        // Enqueue child theme style with dependency on Kadence
         wp_enqueue_style( 
             'palafito-child-style', 
             get_stylesheet_directory_uri() . '/style.css',
-            array( 'kadence-style' ),
+            array(), // Let WordPress handle dependencies automatically
             wp_get_theme( get_stylesheet() )->get( 'Version' )
         );
 
