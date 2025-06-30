@@ -1,4 +1,4 @@
-# TO-DO List - Palafito WC Extensions
+# TO-DO List - Palafito B2B
 
 ## 🚀 Próximas Implementaciones
 
@@ -56,6 +56,10 @@
 - [x] Tests unitarios con PHPUnit
 - [x] Limpieza de funcionalidades innecesarias (RFC, B2B pricing)
 - [x] Modificar campos de apellidos en checkout (no mandatory)
+- [x] Checkout visual B2B minimalista (solo dirección de envío y métodos de pago en dos columnas)
+- [x] Restauración de la dinámica de métodos de pago (Stripe, Apple Pay, Google Pay, Pago mensual, etc.)
+- [x] Uso de mensajes de commit solo en ASCII para evitar problemas de codificación
+- [x] Este archivo TODO.md ahora está en la raíz del proyecto
 
 ## 🔄 En Progreso
 - [ ] Próxima funcionalidad a implementar
