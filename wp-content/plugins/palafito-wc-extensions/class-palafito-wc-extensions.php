@@ -54,7 +54,7 @@ final class Palafito_WC_Extensions {
 		add_filter( 'woocommerce_register_shop_order_post_statuses', array( $this, 'register_custom_order_statuses' ) );
 		add_filter( 'wc_order_statuses', array( $this, 'add_custom_order_statuses_to_list' ) );
 		add_filter( 'bulk_actions-edit-shop_order', array( $this, 'add_custom_order_statuses_to_bulk_actions' ) );
-		// Registrar post status personalizados en el hook init
+		// Registrar post status personalizados en el hook init.
 		add_action( 'init', array( $this, 'register_custom_post_statuses' ) );
 	}
 
