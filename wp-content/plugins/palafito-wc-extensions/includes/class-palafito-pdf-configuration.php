@@ -32,7 +32,7 @@ class Palafito_PDF_Configuration {
 	 */
 	public function configure_pdf_settings() {
 		// Solo configurar una vez.
-		if ( get_option( 'palafito_pdf_configured' ) ) {
+		if ( true === get_option( 'palafito_pdf_configured' ) ) {
 			return;
 		}
 
@@ -63,21 +63,12 @@ class Palafito_PDF_Configuration {
 		foreach ( $all_statuses as $status_key => $status_label ) {
 			$status_slug = str_replace( 'wc-', '', $status_key );
 			// Solo permitir en estados personalizados de Palafito.
-			if ( ! in_array( $status_slug, array( 'entregado', 'facturado' ), true ) ) {
+			if ( true !== in_array( $status_slug, array( 'entregado', 'facturado' ), true ) ) {
 				$disabled_statuses[] = $status_key;
 			}
 		}
 
 		$packing_slip_settings['disable_for_statuses'] = $disabled_statuses;
-
-		// Configurar adjuntos de email (opcional).
-		// Puedes descomentar y modificar según necesites.
-
-		/*
-		$packing_slip_settings['attach_to_email_ids'] = array(
-			'customer_completed_order' => 1, // Email de pedido completado.
-		);
-		*/
 
 		// Guardar configuración.
 		update_option( 'wpo_wcpdf_documents_settings_packing-slip', $packing_slip_settings );
@@ -99,20 +90,12 @@ class Palafito_PDF_Configuration {
 		foreach ( $all_statuses as $status_key => $status_label ) {
 			$status_slug = str_replace( 'wc-', '', $status_key );
 			// Solo permitir en estado "Facturado".
-			if ( $status_slug !== 'facturado' ) {
+			if ( 'facturado' !== $status_slug ) {
 				$disabled_statuses[] = $status_key;
 			}
 		}
 
 		$invoice_settings['disable_for_statuses'] = $disabled_statuses;
-
-		// Configurar adjuntos de email (opcional).
-
-		/*
-		$invoice_settings['attach_to_email_ids'] = array(
-			'customer_completed_order' => 1,
-		);
-		*/
 
 		// Guardar configuración.
 		update_option( 'wpo_wcpdf_documents_settings_invoice', $invoice_settings );
@@ -135,14 +118,14 @@ class Palafito_PDF_Configuration {
 
 		// Packing Slip (Albarán) - solo para estados "Entregado" y "Facturado".
 		if ( 'packing-slip' === $document_type ) {
-			if ( ! in_array( $order_status, array( 'entregado', 'facturado' ), true ) ) {
+			if ( true !== in_array( $order_status, array( 'entregado', 'facturado' ), true ) ) {
 				return false;
 			}
 		}
 
 		// Invoice (Factura) - solo para estado "Facturado".
 		if ( 'invoice' === $document_type ) {
-			if ( $order_status !== 'facturado' ) {
+			if ( 'facturado' !== $order_status ) {
 				return false;
 			}
 		}
@@ -170,14 +153,14 @@ class Palafito_PDF_Configuration {
 			foreach ( $types as $key => $document_type ) {
 				// Packing Slip - solo para estados "Entregado" y "Facturado".
 				if ( 'packing-slip' === $document_type ) {
-					if ( ! in_array( $order_status, array( 'entregado', 'facturado' ), true ) ) {
+					if ( true !== in_array( $order_status, array( 'entregado', 'facturado' ), true ) ) {
 						unset( $document_types[ $output_format ][ $key ] );
 					}
 				}
 
 				// Invoice - solo para estado "Facturado".
 				if ( 'invoice' === $document_type ) {
-					if ( $order_status !== 'facturado' ) {
+					if ( 'facturado' !== $order_status ) {
 						unset( $document_types[ $output_format ][ $key ] );
 					}
 				}

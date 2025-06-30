@@ -30,13 +30,13 @@ class Palafito_Admin_PDF_Actions {
 		add_action( 'wp_ajax_palafito_download_invoice', array( $this, 'handle_download_invoice' ) );
 	}
 
-		/**
-		 * Filtra las acciones de PDF existentes según el estado del pedido.
-		 *
-		 * @param array    $actions Acciones disponibles.
-		 * @param WC_Order $order Objeto del pedido.
-		 * @return array
-		 */
+	/**
+	 * Filtra las acciones de PDF existentes según el estado del pedido.
+	 *
+	 * @param array    $actions Acciones disponibles.
+	 * @param WC_Order $order Objeto del pedido.
+	 * @return array
+	 */
 	public function filter_pdf_actions( $actions, $order ) {
 		$order_status = $order->get_status();
 
@@ -88,12 +88,13 @@ class Palafito_Admin_PDF_Actions {
 		return $actions;
 	}
 
-		/**
-		 * Maneja la descarga del Packing Slip (Albarán).
-		 */
+	/**
+	 * Maneja la descarga del Packing Slip (Albarán).
+	 */
 	public function handle_download_packing_slip() {
 		// Verificar nonce.
-		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), 'palafito_download_packing_slip' ) ) {
+		$nonce = isset( $_GET['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) : '';
+		if ( ! wp_verify_nonce( $nonce, 'palafito_download_packing_slip' ) ) {
 			wp_die( esc_html__( 'Acceso no autorizado.', 'palafito-wc-extensions' ) );
 		}
 
@@ -127,12 +128,13 @@ class Palafito_Admin_PDF_Actions {
 		wp_die( esc_html__( 'Error al generar el albarán.', 'palafito-wc-extensions' ) );
 	}
 
-		/**
-		 * Maneja la descarga de la Invoice (Factura).
-		 */
+	/**
+	 * Maneja la descarga de la Invoice (Factura).
+	 */
 	public function handle_download_invoice() {
 		// Verificar nonce.
-		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), 'palafito_download_invoice' ) ) {
+		$nonce = isset( $_GET['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) : '';
+		if ( ! wp_verify_nonce( $nonce, 'palafito_download_invoice' ) ) {
 			wp_die( esc_html__( 'Acceso no autorizado.', 'palafito-wc-extensions' ) );
 		}
 

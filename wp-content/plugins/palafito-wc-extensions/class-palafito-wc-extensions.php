@@ -219,10 +219,9 @@ final class Palafito_WC_Extensions {
 		// Load plugin classes.
 		require_once plugin_dir_path( __FILE__ ) . 'includes/class-palafito-checkout-customizations.php';
 		require_once plugin_dir_path( __FILE__ ) . 'includes/plugin-hooks.php';
-
 		// Load PDF actions if PDF plugin is available.
 		if ( class_exists( 'WPO_WCPDF' ) ) {
-			require_once plugin_dir_path( __FILE__ ) . 'includes/admin-pdf-actions.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/class-palafito-admin-pdf-actions.php';
 		}
 	}
 
