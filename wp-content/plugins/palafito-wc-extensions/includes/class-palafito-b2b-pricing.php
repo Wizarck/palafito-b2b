@@ -124,53 +124,48 @@ class Palafito_B2B_Pricing {
 	}
 
 	/**
-	 * Mostrar precio B2B en el carrito.
+	 * Display cart item price with B2B pricing.
 	 *
-	 * @param string $price_html HTML del precio.
-	 * @param array  $cart_item Item del carrito.
-	 * @param string $cart_item_key Clave del item del carrito.
+	 * @param string $price_html   Price HTML.
+	 * @param array  $cart_item    Cart item data.
+	 * @param string $_cart_item_key Cart item key (unused).
 	 * @return string
 	 */
-	public function display_cart_item_price( $price_html, $cart_item, $cart_item_key ) {
+	public function display_cart_item_price( $price_html, $cart_item, $_cart_item_key ) {
 		if ( ! $this->is_b2b_user() ) {
 			return $price_html;
 		}
 
-		$product   = $cart_item['data'];
-		$b2b_price = $this->get_b2b_price( $product->get_id() );
+		$product_id = $cart_item['product_id'];
+		$b2b_price  = $this->get_b2b_price( $product_id );
 
 		if ( $b2b_price > 0 ) {
-			$price_html = '<span class="b2b-price">';
-			/* translators: %s: B2B price */
-			$price_html .= sprintf( esc_html__( 'Precio B2B: %s', 'palafito-wc-extensions' ), wc_price( $b2b_price ) );
-			$price_html .= '</span>';
+			$price_html = wc_price( $b2b_price );
 		}
 
 		return $price_html;
 	}
 
 	/**
-	 * Mostrar subtotal B2B en el carrito.
+	 * Display cart item subtotal with B2B pricing.
 	 *
-	 * @param string $subtotal_html HTML del subtotal.
-	 * @param array  $cart_item Item del carrito.
-	 * @param string $cart_item_key Clave del item del carrito.
+	 * @param string $subtotal_html   Subtotal HTML.
+	 * @param array  $cart_item       Cart item data.
+	 * @param string $_cart_item_key  Cart item key (unused).
 	 * @return string
 	 */
-	public function display_cart_item_subtotal( $subtotal_html, $cart_item, $cart_item_key ) {
+	public function display_cart_item_subtotal( $subtotal_html, $cart_item, $_cart_item_key ) {
 		if ( ! $this->is_b2b_user() ) {
 			return $subtotal_html;
 		}
 
-		$product   = $cart_item['data'];
-		$b2b_price = $this->get_b2b_price( $product->get_id() );
+		$product_id = $cart_item['product_id'];
+		$quantity   = $cart_item['quantity'];
+		$b2b_price  = $this->get_b2b_price( $product_id );
 
 		if ( $b2b_price > 0 ) {
-			$b2b_subtotal  = $b2b_price * $cart_item['quantity'];
-			$subtotal_html = '<span class="b2b-subtotal">';
-			/* translators: %s: B2B subtotal */
-			$subtotal_html .= sprintf( esc_html__( 'Subtotal B2B: %s', 'palafito-wc-extensions' ), wc_price( $b2b_subtotal ) );
-			$subtotal_html .= '</span>';
+			$subtotal = $b2b_price * $quantity;
+			$subtotal_html = wc_price( $subtotal );
 		}
 
 		return $subtotal_html;
@@ -233,30 +228,30 @@ class Palafito_B2B_Pricing {
 	}
 
 	/**
-	 * Guardar datos de precios B2B.
+	 * Save B2B pricing data.
 	 *
-	 * @param int $post_id ID del post.
+	 * @param int $post_id Post ID.
 	 */
 	public function save_b2b_pricing_data( $post_id ) {
-		// Verificar nonce.
+		// Verify nonce.
 		if ( ! isset( $_POST['palafito_b2b_pricing_nonce'] ) ||
 			! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['palafito_b2b_pricing_nonce'] ) ), 'palafito_b2b_pricing_nonce' ) ) {
 			return;
 		}
 
-		// Verificar permisos.
+		// Verify permissions.
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
 			return;
 		}
 
-		// Guardar precio B2B.
+		// Save B2B price.
 		if ( isset( $_POST['b2b_price'] ) ) {
 			$b2b_price = sanitize_text_field( wp_unslash( $_POST['b2b_price'] ) );
 			$b2b_price = $b2b_price ? (float) $b2b_price : '';
 			update_post_meta( $post_id, '_b2b_price', $b2b_price );
 		}
 
-		// Guardar descuentos por cantidad.
+		// Save quantity discounts.
 		if ( isset( $_POST['quantity_discounts'] ) && is_array( $_POST['quantity_discounts'] ) ) {
 			$quantity_discounts = array();
 			$discounts          = wp_unslash( $_POST['quantity_discounts'] );
@@ -275,11 +270,11 @@ class Palafito_B2B_Pricing {
 	}
 
 	/**
-	 * Aplicar precios B2B a variaciones de productos.
+	 * Apply B2B pricing to product variations.
 	 *
-	 * @param array      $prices Precios de variaciones.
-	 * @param WC_Product $product Producto.
-	 * @param bool       $for_display Si es para mostrar.
+	 * @param array      $prices Variation prices.
+	 * @param WC_Product $product Product object.
+	 * @param bool       $for_display Whether for display.
 	 * @return array
 	 */
 	public function apply_b2b_pricing_to_variations( $prices, $product, $for_display ) {
@@ -301,10 +296,10 @@ class Palafito_B2B_Pricing {
 	}
 
 	/**
-	 * Obtener descuento por cantidad para un producto.
+	 * Get quantity discount for a product.
 	 *
-	 * @param int $product_id ID del producto.
-	 * @param int $quantity Cantidad.
+	 * @param int $product_id Product ID.
+	 * @param int $quantity   Quantity.
 	 * @return float
 	 */
 	public function get_quantity_discount( $product_id, $quantity ) {
@@ -321,59 +316,6 @@ class Palafito_B2B_Pricing {
 		}
 
 		return $max_discount;
-	}
-
-	/**
-	 * Apply quantity discounts to cart items.
-	 *
-	 * @param string $cart_item_key Cart item key.
-	 * @param int    $product_id    Product ID.
-	 * @param int    $quantity      Quantity.
-	 * @param float  $price         Price.
-	 */
-	public function apply_quantity_discounts( $cart_item_key, $product_id, $quantity, $price ) {
-		// Get quantity discount rules for this product.
-		$discount_rules = get_post_meta( $product_id, '_quantity_discounts', true );
-		
-		if ( ! empty( $discount_rules ) && is_array( $discount_rules ) ) {
-			foreach ( $discount_rules as $rule ) {
-				if ( $quantity >= $rule['min_quantity'] ) {
-					$discount_percentage = $rule['discount_percentage'];
-					$new_price = $price * ( 1 - ( $discount_percentage / 100 ) );
-					return $new_price;
-				}
-			}
-		}
-		
-		return $price;
-	}
-
-	/**
-	 * Save quantity discount rules.
-	 *
-	 * @param int $product_id Product ID.
-	 */
-	public function save_quantity_discounts( $product_id ) {
-		if ( ! isset( $_POST['quantity_discounts'] ) ) {
-			return;
-		}
-
-		// Sanitize the input data.
-		$discounts = array();
-		$raw_discounts = wp_kses_post_deep( $_POST['quantity_discounts'] );
-		
-		if ( is_array( $raw_discounts ) ) {
-			foreach ( $raw_discounts as $discount ) {
-				if ( isset( $discount['min_quantity'] ) && isset( $discount['discount_percentage'] ) ) {
-					$discounts[] = array(
-						'min_quantity'        => absint( $discount['min_quantity'] ),
-						'discount_percentage' => floatval( $discount['discount_percentage'] ),
-					);
-				}
-			}
-		}
-		
-		update_post_meta( $product_id, '_quantity_discounts', $discounts );
 	}
 
 	/**

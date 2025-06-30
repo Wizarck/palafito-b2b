@@ -5,6 +5,7 @@
   <!-- WordPress Coding Standards sin la regla obsoleta -->
   <rule ref="WordPress">
     <exclude name="Generic.Functions.CallTimePassByReference"/>
+    <exclude name="WordPress.PHP.DevelopmentFunctions.error_log_error_log"/>
   </rule>
 
   <!-- Excluir directorios de terceros -->
