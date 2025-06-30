@@ -6,4 +6,6 @@
  Version:      1.0
 */
 
+@import url("../kadence/style.css");
+
 /* Los estilos del tema padre (Kadence) se cargan programáticamente en functions.php */
