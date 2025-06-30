@@ -36,10 +36,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
             <?php do_action( 'woocommerce_checkout_shipping' ); ?>
         </div>
         <div class="palafito-checkout-right" style="flex: 1 1 350px; min-width: 320px; max-width: 500px;">
-            <h3 id="order_review_heading"><?php esc_html_e( 'Pedido', 'woocommerce' ); ?></h3>
-            <div id="order_review" class="woocommerce-checkout-review-order">
-                <?php do_action( 'woocommerce_checkout_order_review' ); ?>
-            </div>
+            <?php do_action( 'woocommerce_checkout_order_review' ); ?>
         </div>
     </div>
 </form>
