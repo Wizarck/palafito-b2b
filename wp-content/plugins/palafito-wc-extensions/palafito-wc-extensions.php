@@ -35,4 +35,4 @@ require_once PALAFITO_WC_EXTENSIONS_PLUGIN_DIR . 'includes/plugin-hooks.php';
 require_once PALAFITO_WC_EXTENSIONS_PLUGIN_DIR . 'class-palafito-wc-extensions.php';
 
 // Initialize the plugin.
-add_action( 'plugins_loaded', array( 'Palafito_WC_Extensions', 'get_instance' ) );
+new Palafito_WC_Extensions();
