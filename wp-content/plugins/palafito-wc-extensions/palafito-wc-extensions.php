@@ -44,8 +44,8 @@ function palafito_wc_extensions_init() {
 	}
 }
 
-// Initialize the plugin on init hook.
-add_action( 'init', 'palafito_wc_extensions_init' );
+// Inicializa el plugin directamente para que los hooks de registro de estados se enganchen a tiempo.
+palafito_wc_extensions_init();
 
 // Declarar compatibilidad con HPOS (High Performance Order Storage) de WooCommerce.
 add_action(
