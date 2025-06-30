@@ -3,7 +3,7 @@
  * Funciones del tema hijo Palafito
  *
  * @package Palafito_Child
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 // Seguridad: evita acceso directo
