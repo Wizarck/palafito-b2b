@@ -286,6 +286,61 @@ wp theme list --status=active
 - **CSS compilado**: `wp-content/themes/kadence/assets/css/all.min.css` (no accesible públicamente)
 - **Solución**: Usar `@import` en child theme + sistema nativo WordPress
 
+### Sistema Automático de Kadence
+- **Problema**: Interferencia con sistema automático de carga de estilos de Kadence
+- **Arquitectura Kadence**: 
+  - Componente `Styles\Component()` maneja todo automáticamente
+  - Carga: `global.min.css`, fuentes Google, CSS dinámico, etc.
+  - Ubicación: `wp-content/themes/kadence/inc/components/styles/component.php`
+- **Solución**: NO cargar estilos manualmente, dejar que Kadence maneje todo
+- **Patrón**: Temas modernos tienen sistemas complejos que deben respetarse
+- **Verificación**: Revisar `get_css_files()` en el componente de estilos
+
+### Child Themes en Temas Modernos
+- **Regla general**: Child themes deben respetar el sistema del tema padre
+- **NO hacer**: Cargar estilos del tema padre manualmente
+- **SÍ hacer**: Solo cargar estilos específicos del child theme
+- **Patrón**: Tema padre maneja su sistema, child theme solo personalizaciones
+- **Ejemplo**: Kadence carga automáticamente fuentes, CSS dinámico, estilos base
+
+---
+
+## 🧠 CÓMO IDENTIFICAR APRENDIZAJES PARA EL CONTEXTO
+
+### Criterios para agregar información al CONTEXT.md:
+
+1. **Problemas que requirieron investigación profunda**
+   - Investigación de arquitectura interna de temas/plugins
+   - Descubrimiento de sistemas complejos
+   - Causas raíz no obvias
+
+2. **Soluciones que van contra la intuición inicial**
+   - Cuando la solución real es opuesta a lo que se pensaba
+   - Patrones que contradicen las mejores prácticas generales
+   - Comportamientos específicos del entorno/hosting
+
+3. **Información específica del hosting/entorno**
+   - Limitaciones del hosting (como error 405 en 1&1 IONOS)
+   - Configuraciones específicas del servidor
+   - Comportamientos únicos del entorno
+
+4. **Patrones que se pueden reutilizar**
+   - Sistemas de temas modernos (como Kadence)
+   - Arquitecturas de plugins complejos
+   - Patrones de troubleshooting específicos
+
+5. **Comandos y rutas específicas**
+   - Ubicaciones de archivos importantes
+   - Comandos de verificación específicos
+   - Logs típicos para identificar problemas
+
+### Ejemplo de aprendizaje agregado:
+- **Problema**: CSS roto en child theme
+- **Investigación**: Arquitectura interna de Kadence
+- **Descubrimiento**: Sistema automático de componentes
+- **Solución**: NO interferir con sistema automático
+- **Patrón**: Respetar arquitectura del tema padre
+
 ---
 
 *Este archivo es MI MEMORIA EXTERNA. Debo actualizarlo al final de cada sesión cuando el usuario diga "buenas noches".* 
