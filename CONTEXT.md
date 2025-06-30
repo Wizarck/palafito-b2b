@@ -485,4 +485,10 @@ wp theme list --status=active
 - Nunca hacer push sin validar el código con composer y los tests automáticos definidos en el proyecto.
 - Esto es obligatorio para evitar errores en el pipeline de GitHub Actions y asegurar la calidad del código.
 
-*Este archivo es MI MEMORIA EXTERNA. Debo actualizarlo al final de cada sesión cuando el usuario diga "buenas noches".* 
+*Este archivo es MI MEMORIA EXTERNA. Debo actualizarlo al final de cada sesión cuando el usuario diga "buenas noches".*
+
+- Para la compatibilidad con HPOS de WooCommerce, si el warning persiste, usar plugin_basename(__FILE__) en la declaración de FeaturesUtil::declare_compatibility en vez de __FILE__, ya que algunas instalaciones lo requieren para detectar correctamente el archivo principal del plugin. 
+
+- Nunca debe haber más de un archivo con cabecera de plugin (Plugin Name, etc.) en la misma carpeta de plugin. Si hay dos, WordPress mostrará el plugin duplicado en el admin. La estructura profesional de clases se mantiene, pero solo el archivo principal debe tener la cabecera de plugin. 
+
+- No usar tildes, eñes ni símbolos especiales en los mensajes de commit. Usar solo caracteres ASCII para asegurar compatibilidad en terminal, git y GitHub Actions. Ejemplo: 'anadir', 'funcion', 'correccion'. 

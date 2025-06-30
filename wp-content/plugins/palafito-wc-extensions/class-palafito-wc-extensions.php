@@ -40,17 +40,17 @@ final class Palafito_WC_Extensions {
 		}
 
 		// Registrar nuevos estados personalizados de pedido.
-		add_filter( 'woocommerce_register_shop_order_post_statuses', array( $this, 'register_custom_order_statuses' ) );
-		add_filter( 'wc_order_statuses', array( $this, 'add_custom_order_statuses_to_list' ) );
-		add_filter( 'bulk_actions-edit-shop_order', array( $this, 'add_custom_order_statuses_to_bulk_actions' ) );
+		add_filter( 'woocommerce_register_shop_order_post_statuses', array( __CLASS__, 'register_custom_order_statuses' ) );
+		add_filter( 'wc_order_statuses', array( __CLASS__, 'add_custom_order_statuses_to_list' ) );
+		add_filter( 'bulk_actions-edit-shop_order', array( __CLASS__, 'add_custom_order_statuses_to_bulk_actions' ) );
 		// Registrar post status personalizados en el hook init.
-		add_action( 'init', array( $this, 'register_custom_post_statuses' ) );
+		add_action( 'init', array( __CLASS__, 'register_custom_post_statuses' ) );
 	}
 
 	/**
 	 * Registrar los post status personalizados de pedido en WordPress.
 	 */
-	public function register_custom_post_statuses() {
+	public static function register_custom_post_statuses() {
 		register_post_status(
 			'wc-entregado',
 			array(
@@ -91,7 +91,7 @@ final class Palafito_WC_Extensions {
 	 * @param array $order_statuses Array de estados de pedido registrados.
 	 * @return array
 	 */
-	public function register_custom_order_statuses( $order_statuses ) {
+	public static function register_custom_order_statuses( $order_statuses ) {
 		$order_statuses['wc-entregado'] = array(
 			'label'                     => _x( 'Entregado', 'Order status', 'palafito-wc-extensions' ),
 			'public'                    => true,
@@ -119,7 +119,7 @@ final class Palafito_WC_Extensions {
 	 * @param array $order_statuses Array de estados de pedido.
 	 * @return array
 	 */
-	public function add_custom_order_statuses_to_list( $order_statuses ) {
+	public static function add_custom_order_statuses_to_list( $order_statuses ) {
 		// Insertar 'entregado' después de 'processing'.
 		$new_order_statuses = array();
 		foreach ( $order_statuses as $key => $label ) {
@@ -140,7 +140,7 @@ final class Palafito_WC_Extensions {
 	 * @param array $bulk_actions Acciones masivas disponibles.
 	 * @return array
 	 */
-	public function add_custom_order_statuses_to_bulk_actions( $bulk_actions ) {
+	public static function add_custom_order_statuses_to_bulk_actions( $bulk_actions ) {
 		$bulk_actions['mark_entregado'] = __( 'Cambiar a Entregado', 'palafito-wc-extensions' );
 		$bulk_actions['mark_facturado'] = __( 'Cambiar a Facturado', 'palafito-wc-extensions' );
 		return $bulk_actions;
