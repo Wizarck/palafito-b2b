@@ -25,9 +25,10 @@ class Palafito_Admin_PDF_Actions {
 		// Manejar las acciones AJAX personalizadas.
 		add_action( 'wp_ajax_palafito_download_packing_slip', array( $this, 'handle_download_packing_slip' ) );
 		add_action( 'wp_ajax_palafito_download_invoice', array( $this, 'handle_download_invoice' ) );
+
+		// Handler AJAX para cambiar estado a entregado o facturado.
+		add_action( 'wp_ajax_palafito_mark_order_status', array( $this, 'handle_mark_order_status' ) );
 	}
-
-
 
 	/**
 	 * Agrega acciones personalizadas de PDF con mejor control.
@@ -39,6 +40,23 @@ class Palafito_Admin_PDF_Actions {
 	public function add_custom_pdf_actions( $actions, $order ) {
 		$order_status = $order->get_status();
 		$order_id     = $order->get_id();
+
+		// Botón para cambiar a Entregado si está en procesando.
+		if ( 'processing' === $order_status ) {
+			$actions['palafito_mark_entregado'] = array(
+				'url'    => wp_nonce_url( admin_url( 'admin-ajax.php?action=palafito_mark_order_status&status=entregado&order_id=' . $order_id ), 'palafito_mark_order_status' ),
+				'name'   => __( 'Entregado', 'palafito-wc-extensions' ),
+				'action' => 'palafito-mark-entregado',
+			);
+		}
+		// Botón para cambiar a Facturado si está en entregado.
+		if ( 'entregado' === $order_status ) {
+			$actions['palafito_mark_facturado'] = array(
+				'url'    => wp_nonce_url( admin_url( 'admin-ajax.php?action=palafito_mark_order_status&status=facturado&order_id=' . $order_id ), 'palafito_mark_order_status' ),
+				'name'   => __( 'Facturado', 'palafito-wc-extensions' ),
+				'action' => 'palafito-mark-facturado',
+			);
+		}
 
 		// Agregar acción de Packing Slip solo si el pedido está en "Entregado" o "Facturado".
 		if ( in_array( $order_status, array( 'entregado', 'facturado' ), true ) ) {
@@ -139,6 +157,35 @@ class Palafito_Admin_PDF_Actions {
 		}
 
 		wp_die( esc_html__( 'Error al generar la factura.', 'palafito-wc-extensions' ) );
+	}
+
+	/**
+	 * Handler AJAX para cambiar el estado del pedido a entregado o facturado.
+	 */
+	public function handle_mark_order_status() {
+		if ( ! current_user_can( 'edit_shop_orders' ) ) {
+			wp_send_json_error( array( 'message' => __( 'No tienes permisos para cambiar el estado del pedido.', 'palafito-wc-extensions' ) ) );
+		}
+
+		$nonce = isset( $_REQUEST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ) : '';
+		if ( ! wp_verify_nonce( $nonce, 'palafito_mark_order_status' ) ) {
+			wp_send_json_error( array( 'message' => __( 'Nonce inválido.', 'palafito-wc-extensions' ) ) );
+		}
+
+		$order_id = isset( $_REQUEST['order_id'] ) ? absint( $_REQUEST['order_id'] ) : 0;
+		$status   = isset( $_REQUEST['status'] ) ? sanitize_text_field( $_REQUEST['status'] ) : '';
+
+		if ( ! $order_id || ! in_array( $status, array( 'entregado', 'facturado' ), true ) ) {
+			wp_send_json_error( array( 'message' => __( 'Datos inválidos.', 'palafito-wc-extensions' ) ) );
+		}
+
+		$order = wc_get_order( $order_id );
+		if ( ! $order ) {
+			wp_send_json_error( array( 'message' => __( 'Pedido no encontrado.', 'palafito-wc-extensions' ) ) );
+		}
+
+		$order->update_status( $status, __( 'Cambio de estado vía acción rápida.', 'palafito-wc-extensions' ) );
+		wp_send_json_success( array( 'message' => __( 'Estado actualizado correctamente.', 'palafito-wc-extensions' ) ) );
 	}
 }
 
