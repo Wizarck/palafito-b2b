@@ -41,3 +41,4 @@ function palafito_wc_extensions_deactivate() {
 // Registrar hooks de activación/desactivación.
 register_activation_hook( PALAFITO_WC_EXTENSIONS_PLUGIN_FILE, 'palafito_wc_extensions_activate' );
 register_deactivation_hook( PALAFITO_WC_EXTENSIONS_PLUGIN_FILE, 'palafito_wc_extensions_deactivate' );
+ 

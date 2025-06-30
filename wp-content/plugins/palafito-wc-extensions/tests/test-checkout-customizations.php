@@ -124,3 +124,4 @@ class Test_Palafito_Checkout_Customizations extends WP_UnitTestCase {
 		$this->assertTrue( method_exists( $this->checkout_customizations, 'make_last_name_optional' ) );
 	}
 }
+ 

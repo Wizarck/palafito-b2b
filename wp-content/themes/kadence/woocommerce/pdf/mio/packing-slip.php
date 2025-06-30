@@ -67,7 +67,7 @@
 					<div class="shipping-phone"><?php $this->shipping_phone(); ?>
 			</div>
 				<?php endif; ?>
-			<?php endif; ?>					
+			<?php endif; ?>
 		</td>
 		<td class="order-data">
 			<table>
@@ -152,14 +152,14 @@
 					</div>
 				<?php endif; ?>
 				<?php do_action( 'wpo_wcpdf_after_document_notes', $this->get_type(), $this->order ); ?>
-				<?php do_action( 'wpo_wcpdf_before_customer_notes', $this->get_type(), $this->order ); ?>
-				<?php if ( $this->get_shipping_notes() ) : ?>
-					<div class="customer-notes">
+<?php do_action( 'wpo_wcpdf_before_customer_notes', $this->get_type(), $this->order ); ?>
+<?php if ( $this->get_shipping_notes() ) : ?>
+	<div class="customer-notes">
 						<h3><?php $this->customer_notes_title(); ?></h3>
-						<?php $this->shipping_notes(); ?>
-					</div>
-				<?php endif; ?>
-				<?php do_action( 'wpo_wcpdf_after_customer_notes', $this->get_type(), $this->order ); ?>
+		<?php $this->shipping_notes(); ?>
+	</div>
+<?php endif; ?>
+<?php do_action( 'wpo_wcpdf_after_customer_notes', $this->get_type(), $this->order ); ?>
 			</td>
 			<td class="no-borders totals-cell">
 				<table class="totals">
