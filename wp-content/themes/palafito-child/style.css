@@ -6,13 +6,12 @@
  Version:      1.0
 */
 
-@import url("../kadence/style.css");
+/* Import parent theme styles */
+@import url('../kadence/style.css');
 
-/* Los estilos del tema padre (Kadence) se cargan programáticamente en functions.php */
-
-/* Define missing CSS variables that would normally come from dynamic CSS */
+/* Essential CSS variables that Kadence needs */
 :root {
-    /* Kadence default color palette */
+    /* Color palette - Kadence defaults */
     --global-palette1: #2ea3f2;
     --global-palette2: #1e73be;
     --global-palette3: #0a4b78;
@@ -34,9 +33,9 @@
     --global-palette-highlight-alt: #1e73be;
     --global-palette-highlight-alt2: #0a4b78;
     
-    /* Typography */
-    --global-body-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-    --global-heading-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    /* Gray colors */
+    --global-gray-400: #CBD5E0;
+    --global-gray-500: #A0AEC0;
     
     /* Spacing */
     --global-xs-spacing: 1em;
@@ -48,17 +47,19 @@
     --global-edge-spacing: 1.5rem;
     --global-boxed-spacing: 2rem;
     --global-content-edge-padding: 1.5rem;
-    
-    /* Font sizes */
-    --global-font-size-small: clamp(0.8rem, 0.73rem + 0.217vw, 0.9rem);
-    --global-font-size-medium: clamp(1.1rem, 0.995rem + 0.326vw, 1.25rem);
-    --global-font-size-large: clamp(1.75rem, 1.576rem + 0.543vw, 2rem);
-    --global-font-size-larger: clamp(2rem, 1.6rem + 1vw, 2.5rem);
-    --global-font-size-xxlarge: clamp(2.25rem, 1.728rem + 1.63vw, 3rem);
-    
-    /* Gray colors */
-    --global-gray-400: #CBD5E0;
-    --global-gray-500: #A0AEC0;
+}
+
+/* Custom B2B Styles - minimal and non-conflicting */
+.b2b-pricing {
+    background-color: #f6f7f9;
+    padding: 1rem;
+    border-radius: 4px;
+    margin: 1rem 0;
+}
+
+.b2b-pricing h4 {
+    color: #1e73be;
+    margin-bottom: 0.5rem;
 }
 
 /* Ensure basic styling works */
@@ -117,17 +118,4 @@ a:hover {
 
 .content-bg {
     background: var(--global-palette5);
-}
-
-/* Custom B2B Styles */
-.b2b-pricing {
-    background-color: #f6f7f9;
-    padding: 1rem;
-    border-radius: 4px;
-    margin: 1rem 0;
-}
-
-.b2b-pricing h4 {
-    color: #1e73be;
-    margin-bottom: 0.5rem;
 }
