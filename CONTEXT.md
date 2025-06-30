@@ -441,4 +441,11 @@ wp theme list --status=active
 
 ---
 
+## [2024-xx-xx] Corrección formato dirección tienda y teléfono en PDFs
+- El país de la tienda ahora se muestra como nombre completo (no como código tipo 'ES:B') en los PDFs de factura y albarán.
+- El teléfono solo aparece una vez en la dirección personalizada de facturación, nunca duplicado ni fuera del bloque personalizado.
+- Regla: La documentación y memoria externa deben actualizarse antes de cada push.
+
+---
+
 *Este archivo es MI MEMORIA EXTERNA. Debo actualizarlo al final de cada sesión cuando el usuario diga "buenas noches".* 

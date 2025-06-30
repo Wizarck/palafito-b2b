@@ -353,3 +353,8 @@ Este proyecto es privado y propietario. Todos los derechos reservados.
 ---
 
 **Palafito B2B** - Tu plataforma de confianza para comercio mayorista 🚀
+
+### [2024-xx-xx] Cambios recientes en PDFs
+- El país de la tienda se muestra como nombre completo en los documentos PDF (factura y albarán).
+- El teléfono solo aparece una vez en la dirección personalizada de facturación.
+- Recuerda: Actualiza la documentación antes de cada push.
