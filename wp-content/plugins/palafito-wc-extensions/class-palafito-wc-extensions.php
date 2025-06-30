@@ -223,7 +223,6 @@ final class Palafito_WC_Extensions {
 		if ( class_exists( 'WPO_WCPDF' ) ) {
 			require_once plugin_dir_path( __FILE__ ) . 'includes/class-palafito-admin-pdf-actions.php';
 			require_once plugin_dir_path( __FILE__ ) . 'includes/class-palafito-email-attachments.php';
-			require_once plugin_dir_path( __FILE__ ) . 'includes/class-palafito-packing-slip-settings.php';
 		}
 	}
 
