@@ -13,49 +13,17 @@ defined('ABSPATH') || exit;
  * Filter Kadence dynamic CSS to remove only inline styles that cause CSP issues
  * Keep the dynamic CSS generation but remove problematic inline styles
  */
-function palafito_filter_kadence_dynamic_css($css) {
-    // Debug: log that this filter is being called
-    error_log('Palafito: kadence_dynamic_css filter called with length: ' . strlen($css));
-    error_log('Palafito: CSS content preview: ' . substr($css, 0, 200));
-    
-    // If CSS is empty, don't filter it
-    if (empty($css)) {
-        error_log('Palafito: CSS is empty, returning as is');
-        return $css;
-    }
-    
-    // Remove any style tags or inline styles that might cause CSP issues
-    $css = preg_replace('/<style[^>]*>.*?<\/style>/s', '', $css);
-    
-    // Keep the CSS but ensure it's clean
-    return $css;
-}
-
-// Use a lower priority to allow Kadence to generate CSS first, then filter
-add_filter('kadence_dynamic_css', 'palafito_filter_kadence_dynamic_css', 20);
+// add_filter('kadence_dynamic_css', 'palafito_filter_kadence_dynamic_css', 20);
 
 /**
  * Debug: Catch CSS output to see what's happening
  */
-function palafito_debug_css_output() {
-    error_log('Palafito: Debug CSS output function called');
-}
-add_action('wp_head', 'palafito_debug_css_output', 1);
+// add_action('wp_head', 'palafito_debug_css_output', 1);
 
 /**
  * Remove inline styles from wp_head that cause CSP issues
  */
-function palafito_remove_inline_styles() {
-    // Remove emoji styles that can cause CSP issues
-    remove_action('wp_head', 'print_emoji_styles');
-    remove_action('wp_print_styles', 'print_emoji_styles');
-    
-    // Remove admin bar for non-admin users to avoid inline styles
-    if (!current_user_can('administrator')) {
-        add_filter('show_admin_bar', '__return_false');
-    }
-}
-add_action('init', 'palafito_remove_inline_styles');
+// add_action('init', 'palafito_remove_inline_styles');
 
 /**
  * Clase principal del tema hijo
