@@ -20,7 +20,19 @@
 			<div class="shop-name"><h3><?php $this->shop_name(); ?></h3></div>
 			<?php do_action( 'wpo_wcpdf_after_shop_name', $this->get_type(), $this->order ); ?>
 			<?php do_action( 'wpo_wcpdf_before_shop_address', $this->get_type(), $this->order ); ?>
-			<div class="shop-address"><?php $this->shop_address(); ?></div>
+			<div class="shop-address">
+			<?php
+				// Obtener dirección de la tienda y país
+				$shop_address = wp_strip_all_tags( $this->get_full_shop_address() );
+				$shop_country = $this->get_shop_country();
+				if ( $shop_country === 'ES' || stripos($shop_address, 'España') !== false ) {
+					// Evitar duplicados y añadir '- España' solo si no está
+					$shop_address = preg_replace('/\n?España$/i', '', $shop_address);
+					$shop_address .= ' - España';
+				}
+				echo nl2br( esc_html( $shop_address ) );
+			?>
+			</div>
 			<?php do_action( 'wpo_wcpdf_after_shop_address', $this->get_type(), $this->order ); ?>
 		</td>
 	</tr>
@@ -38,7 +50,18 @@
 	<tr>
 		<td class="address billing-address">
 			<?php do_action( 'wpo_wcpdf_before_billing_address', $this->get_type(), $this->order ); ?>
-			<?php $this->billing_address(); ?>
+			<?php
+				// Dirección de facturación personalizada
+				$billing_address = wp_strip_all_tags( $this->order->get_formatted_billing_address() );
+				$billing_country = $this->order->get_billing_country();
+				if ( $billing_country === 'ES' || stripos($billing_address, 'España') !== false ) {
+					$billing_address = preg_replace('/\n?España$/i', '', $billing_address);
+					$billing_address .= ' - España';
+				}
+				// Evitar ciudad duplicada
+				$billing_address = preg_replace('/\n([^\n]+)\n\1/', "\n$1", $billing_address);
+				echo nl2br( esc_html( $billing_address ) );
+			?>
 			<?php do_action( 'wpo_wcpdf_after_billing_address', $this->get_type(), $this->order ); ?>
 			<?php if ( isset( $this->settings['display_email'] ) ) : ?>
 				<div class="billing-email"><?php $this->billing_email(); ?></div>
@@ -61,11 +84,23 @@
 			<?php if ( $this->show_shipping_address() ) : ?>
 				<h3><?php $this->shipping_address_title(); ?></h3>
 				<?php do_action( 'wpo_wcpdf_before_shipping_address', $this->get_type(), $this->order ); ?>
-				<p><?php $this->shipping_address();?></p>
+				<p>
+				<?php
+					// Dirección de envío personalizada
+					$shipping_address = wp_strip_all_tags( $this->order->get_formatted_shipping_address() );
+					$shipping_country = $this->order->get_shipping_country();
+					if ( $shipping_country === 'ES' || stripos($shipping_address, 'España') !== false ) {
+						$shipping_address = preg_replace('/\n?España$/i', '', $shipping_address);
+						$shipping_address .= ' - España';
+					}
+					// Evitar ciudad duplicada
+					$shipping_address = preg_replace('/\n([^\n]+)\n\1/', "\n$1", $shipping_address);
+					echo nl2br( esc_html( $shipping_address ) );
+				?>
+				</p>
 				
 				<?php if ( isset( $this->settings['display_phone'] ) ) : ?>
-					<div class="shipping-phone"><?php $this->shipping_phone(); ?>
-			</div>
+					<div class="shipping-phone"><?php $this->shipping_phone(); ?></div>
 				<?php endif; ?>
 			<?php endif; ?>					
 		</td>
