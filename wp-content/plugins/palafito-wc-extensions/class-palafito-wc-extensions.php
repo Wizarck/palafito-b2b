@@ -79,6 +79,6 @@ final class Palafito_WC_Extensions {
 		// Log status change for debugging.
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 			error_log( "Palafito WC Extensions: Order {$order_id} status changed from {$old_status} to {$new_status}" );
-	}
+		}
 	}
 }
