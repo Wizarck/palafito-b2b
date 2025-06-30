@@ -7,9 +7,38 @@
     <exclude name="Generic.Functions.CallTimePassByReference"/>
   </rule>
 
+  <!-- Excluir directorios de terceros -->
   <exclude-pattern>*/node_modules/*</exclude-pattern>
   <exclude-pattern>*/vendor/*</exclude-pattern>
   <exclude-pattern>*/wp-content/cache/*</exclude-pattern>
+  <exclude-pattern>*/wp-content/uploads/*</exclude-pattern>
+  <exclude-pattern>*/wp-content/upgrade/*</exclude-pattern>
+  <exclude-pattern>*/wp-content/upgrade-temp-backup/*</exclude-pattern>
+  
+  <!-- Excluir plugins de terceros -->
+  <exclude-pattern>*/wp-content/plugins/akismet/*</exclude-pattern>
+  <exclude-pattern>*/wp-content/plugins/google-listings-and-ads/*</exclude-pattern>
+  <exclude-pattern>*/wp-content/plugins/kadence-blocks/*</exclude-pattern>
+  <exclude-pattern>*/wp-content/plugins/kadence-starter-templates/*</exclude-pattern>
+  <exclude-pattern>*/wp-content/plugins/kadence-woocommerce-email-designer/*</exclude-pattern>
+  <exclude-pattern>*/wp-content/plugins/merge-orders/*</exclude-pattern>
+  <exclude-pattern>*/wp-content/plugins/product-blocks/*</exclude-pattern>
+  <exclude-pattern>*/wp-content/plugins/wholesalex/*</exclude-pattern>
+  <exclude-pattern>*/wp-content/plugins/woo-update-manager/*</exclude-pattern>
+  <exclude-pattern>*/wp-content/plugins/woocommerce/*</exclude-pattern>
+  <exclude-pattern>*/wp-content/plugins/woocommerce-payments/*</exclude-pattern>
+  <exclude-pattern>*/wp-content/plugins/woocommerce-pdf-invoices-packing-slips/*</exclude-pattern>
+  <exclude-pattern>*/wp-content/plugins/woocommerce-pdf-ips-pro/*</exclude-pattern>
+  <exclude-pattern>*/wp-content/plugins/woocommerce-services/*</exclude-pattern>
+  <exclude-pattern>*/wp-content/plugins/wp-mail-smtp/*</exclude-pattern>
+  <exclude-pattern>*/wp-content/plugins/wpforms-lite/*</exclude-pattern>
+  
+  <!-- Excluir temas de terceros -->
+  <exclude-pattern>*/wp-content/themes/kadence/*</exclude-pattern>
+  <exclude-pattern>*/wp-content/themes/twentytwentyfive/*</exclude-pattern>
+  <exclude-pattern>*/wp-content/themes/twentytwentyfour/*</exclude-pattern>
+  
+  <!-- Excluir archivos no-PHP -->
   <exclude-pattern>*.css</exclude-pattern>
   <exclude-pattern>*.js</exclude-pattern>
   <exclude-pattern>*.json</exclude-pattern>
@@ -17,6 +46,10 @@
   <exclude-pattern>*.txt</exclude-pattern>
   <exclude-pattern>*.yml</exclude-pattern>
   <exclude-pattern>*.yaml</exclude-pattern>
+  
+  <!-- Solo incluir nuestro plugin personalizado -->
+  <include-pattern>*/wp-content/plugins/palafito-wc-extensions/*</include-pattern>
+  <include-pattern>*/wp-content/themes/palafito-child/*</include-pattern>
 
   <arg name="colors"/>
   <arg name="report" value="full"/>
