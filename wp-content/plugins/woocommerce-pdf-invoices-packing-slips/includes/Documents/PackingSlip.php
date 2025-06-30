@@ -209,6 +209,107 @@ class PackingSlip extends OrderDocumentMethods {
 		);
 		$settings_fields = WPO_WCPDF()->settings->move_setting_after_id( $settings_fields, $email_settings, 'enabled' );
 
+		// Configuración adicional de packing slip (funcionalidades Pro habilitadas para Palafito).
+		$additional_settings = array(
+			array(
+				'type'			=> 'setting',
+				'id'			=> 'display_date',
+				'title'			=> __( 'Display packing slip date', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback'		=> 'checkbox',
+				'section'		=> 'packing_slip',
+				'args'			=> array(
+					'option_name'	=> $option_name,
+					'id'			=> 'display_date',
+				)
+			),
+			array(
+				'type'			=> 'setting',
+				'id'			=> 'display_number',
+				'title'			=> __( 'Display packing slip number', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback'		=> 'select',
+				'section'		=> 'packing_slip',
+				'args'			=> array(
+					'option_name'	=> $option_name,
+					'id'			=> 'display_number',
+					'options' 		=> array(
+						''					=> __( 'No' , 'woocommerce-pdf-invoices-packing-slips' ),
+						'packing_slip_number'=> __( 'Packing Slip Number' , 'woocommerce-pdf-invoices-packing-slips' ),
+						'order_number'		=> __( 'Order Number' , 'woocommerce-pdf-invoices-packing-slips' ),
+					),
+					'description'	=> sprintf(
+						'<strong>%s</strong> %s <a href="https://docs.wpovernight.com/woocommerce-pdf-invoices-packing-slips/invoice-numbers-explained/#why-is-the-pdf-invoice-number-different-from-the-woocommerce-order-number">%s</a>',
+						__( 'Warning!', 'woocommerce-pdf-invoices-packing-slips' ),
+						__( 'Using the Order Number as packing slip number is not recommended as this may lead to gaps in the packing slip number sequence (even when order numbers are sequential).', 'woocommerce-pdf-invoices-packing-slips' ),
+						__( 'More information', 'woocommerce-pdf-invoices-packing-slips' )
+					),
+				)
+			),
+			array(
+				'type'			=> 'setting',
+				'id'			=> 'next_packing_slip_number',
+				'title'			=> __( 'Next packing slip number (without prefix/suffix etc.)', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback'		=> 'next_number_edit',
+				'section'		=> 'packing_slip',
+				'args'			=> array(
+					'store_callback' => array( $this, 'get_sequential_number_store' ),
+					'size'           => '10',
+					'description'    => __( 'This is the number that will be used for the next document. By default, numbering starts from 1 and increases for every new document. Note that if you override this and set it lower than the current/highest number, this could create duplicate numbers!', 'woocommerce-pdf-invoices-packing-slips' ),
+				)
+			),
+			array(
+				'type'     => 'setting',
+				'id'       => 'number_format',
+				'title'    => __( 'Number format', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback' => 'multiple_text_input',
+				'section'  => 'packing_slip',
+				'args'     => array(
+					'option_name' => $option_name,
+					'id'          => 'number_format',
+					'fields'      => array(
+						'prefix'  => array(
+							'label'       => __( 'Prefix' , 'woocommerce-pdf-invoices-packing-slips' ),
+							'size'        => 20,
+							'description' => __( 'If set, this value will be used as number prefix.' , 'woocommerce-pdf-invoices-packing-slips' ) . ' ' . sprintf(
+								/* translators: 1. document type, 2-3 placeholders */
+								__( 'You can use the %1$s year and/or month with the %2$s or %3$s placeholders respectively.', 'woocommerce-pdf-invoices-packing-slips' ),
+								strtolower( __( 'Packing Slip', 'woocommerce-pdf-invoices-packing-slips' ) ), '<strong>[packing_slip_year]</strong>', '<strong>[packing_slip_month]</strong>'
+							) . ' ' . __( 'Check the Docs article below to see all the available placeholders for prefix/suffix.', 'woocommerce-pdf-invoices-packing-slips' ),
+						),
+						'suffix'  => array(
+							'label'       => __( 'Suffix' , 'woocommerce-pdf-invoices-packing-slips' ),
+							'size'        => 20,
+							'description' => __( 'If set, this value will be used as number suffix.' , 'woocommerce-pdf-invoices-packing-slips' ) . ' ' . sprintf(
+								/* translators: 1. document type, 2-3 placeholders */
+								__( 'You can use the %1$s year and/or month with the %2$s or %3$s placeholders respectively.', 'woocommerce-pdf-invoices-packing-slips' ),
+								strtolower( __( 'Packing Slip', 'woocommerce-pdf-invoices-packing-slips' ) ), '<strong>[packing_slip_year]</strong>', '<strong>[packing_slip_month]</strong>'
+							) . ' ' . __( 'Check the Docs article below to see all the available placeholders for prefix/suffix.', 'woocommerce-pdf-invoices-packing-slips' ),
+						),
+						'padding' => array(
+							'label'       => __( 'Padding' , 'woocommerce-pdf-invoices-packing-slips' ),
+							'size'        => 20,
+							'type'        => 'number',
+							/* translators: document type */
+							'description' => sprintf( __( 'Enter the number of digits you want to use as padding. For instance, enter <code>6</code> to display the %s number <code>123</code> as <code>000123</code>, filling it with zeros until the number set as padding is reached.' , 'woocommerce-pdf-invoices-packing-slips' ), strtolower( __( 'Packing Slip', 'woocommerce-pdf-invoices-packing-slips' ) ) ),
+						),
+					),
+					/* translators: document type */
+					'description' => __( 'For more information about setting up the number format and see the available placeholders for the prefix and suffix, check this article:', 'woocommerce-pdf-invoices-packing-slips' ) . sprintf( ' <a href="https://docs.wpovernight.com/woocommerce-pdf-invoices-packing-slips/number-format-explained/" target="_blank">%s</a>', __( 'Number format explained', 'woocommerce-pdf-invoices-packing-slips') ) . '.<br><br>'. sprintf( __( '<strong>Note</strong>: Changes made to the number format will only be reflected on new orders. Also, if you have already created a custom %s number format with a filter, the above settings will be ignored.', 'woocommerce-pdf-invoices-packing-slips' ), strtolower( __( 'Packing Slip', 'woocommerce-pdf-invoices-packing-slips' ) ) ),
+				)
+			),
+			array(
+				'type'			=> 'setting',
+				'id'			=> 'reset_number_yearly',
+				'title'			=> __( 'Reset packing slip number yearly', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback'		=> 'checkbox',
+				'section'		=> 'packing_slip',
+				'args'			=> array(
+					'option_name'	=> $option_name,
+					'id'			=> 'reset_number_yearly',
+				)
+			),
+		);
+		$settings_fields = WPO_WCPDF()->settings->move_setting_after_id( $settings_fields, $additional_settings, 'display_customer_notes' );
+
 		// Legacy filter to allow plugins to alter settings fields.
 		$settings_fields = apply_filters( 'wpo_wcpdf_settings_fields_documents_packing_slip', $settings_fields, $page, $option_group, $option_name );
 
