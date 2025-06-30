@@ -30,6 +30,9 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 }
 ?>
 <form name="checkout" method="post" class="checkout woocommerce-checkout" action="<?php echo esc_url( wc_get_checkout_url() ); ?>" enctype="multipart/form-data">
+    <div style="display: none;">
+        <?php do_action( 'woocommerce_checkout_billing' ); ?>
+    </div>
     <div class="palafito-checkout-grid" style="display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap;">
         <div class="palafito-checkout-left" style="flex: 1 1 350px; min-width: 320px;">
             <h3><?php esc_html_e( 'Dirección de envío', 'woocommerce' ); ?></h3>
