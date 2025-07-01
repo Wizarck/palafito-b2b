@@ -55,6 +55,12 @@ class Palafito_PDF_Configuration {
 		// Habilitar Packing Slip.
 		$packing_slip_settings['enabled'] = 1;
 
+		// Asegurar que 'customer_entregado' está presente y marcado en 'attach_to_email_ids'.
+		if ( empty( $packing_slip_settings['attach_to_email_ids'] ) || ! is_array( $packing_slip_settings['attach_to_email_ids'] ) ) {
+			$packing_slip_settings['attach_to_email_ids'] = array();
+		}
+		$packing_slip_settings['attach_to_email_ids']['customer_entregado'] = 1;
+
 		// Configurar para que se genere solo en estados específicos.
 		// Deshabilitar para todos los estados excepto los personalizados.
 		$all_statuses      = wc_get_order_statuses();
