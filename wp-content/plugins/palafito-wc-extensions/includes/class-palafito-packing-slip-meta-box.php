@@ -347,21 +347,21 @@ class Palafito_Packing_Slip_Meta_Box {
 		if ( 'packing-slip' !== $document_type ) {
 			return;
 		}
-		// Mostrar número de albarán usando el helper estándar.
-		if ( $document->exists() && $document->get_number() ) {
+		// Mostrar número de albarán usando el helper estándar del documento.
+		if ( method_exists( $document, 'get_number' ) && $document->get_number() ) {
 			?>
 			<div class="packing-slip-number">
 				<strong><?php esc_html_e( 'Número de albarán:', 'palafito-wc-extensions' ); ?></strong>
-				<?php $document->number( 'packing-slip' ); ?>
+				<?php $document->number( $document_type ); ?>
 			</div>
 			<?php
 		}
-		// Mostrar fecha de entrega usando el helper estándar.
-		if ( $document->exists() && $document->get_date() ) {
+		// Mostrar fecha de entrega usando el helper estándar del documento.
+		if ( method_exists( $document, 'get_date' ) && $document->get_date() ) {
 			?>
 			<div class="delivery-date">
 				<strong><?php esc_html_e( 'Fecha de entrega:', 'palafito-wc-extensions' ); ?></strong>
-				<?php $document->date( 'packing-slip' ); ?>
+				<?php $document->date( $document_type ); ?>
 			</div>
 			<?php
 		}
