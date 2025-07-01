@@ -74,10 +74,9 @@ function palafito_wc_extensions_handle_order_status_change( $order_id, $old_stat
 
 	// Enviar email automático cuando el estado cambie a "Entregado".
 	if ( 'entregado' === $new_status ) {
-		// Trigger custom email action with correct arguments.
-		do_action( 'woocommerce_order_status_entregado', $order_id, $old_status, $new_status );
-
-		// Log the action for debugging.
+		$order = wc_get_order( $order_id );
+		// Trigger custom email action with correct arguments (order_id, order).
+		do_action( 'woocommerce_order_status_entregado', $order_id, $order );
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 			error_log( "Palafito WC Extensions: Order {$order_id} status changed to 'entregado', triggering email action." );
 		}
@@ -85,10 +84,8 @@ function palafito_wc_extensions_handle_order_status_change( $order_id, $old_stat
 
 	// Enviar email automático cuando el estado cambie a "Facturado".
 	if ( 'facturado' === $new_status ) {
-		// Trigger custom email action with correct arguments.
-		do_action( 'woocommerce_order_status_facturado', $order_id, $old_status, $new_status );
-
-		// Log the action for debugging.
+		$order = wc_get_order( $order_id );
+		do_action( 'woocommerce_order_status_facturado', $order_id, $order );
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 			error_log( "Palafito WC Extensions: Order {$order_id} status changed to 'facturado', triggering email action." );
 		}

@@ -17,7 +17,7 @@
  * @since 1.0.0
  */
 function installatron_automation_example() {
-    // Example automation task.
+	// Example automation task.
 }
 
 // To block this plugin, create an empty file in the same directory named:

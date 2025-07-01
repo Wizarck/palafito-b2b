@@ -27,6 +27,36 @@ class Palafito_Packing_Slip_Settings {
 
 		// Hook para agregar JavaScript al admin.
 		add_action( 'admin_footer', array( $this, 'add_packing_slip_js' ) );
+
+		// Hook para forzar visibilidad del botón de descarga de albarán en Mi cuenta.
+		add_filter(
+			'wpo_wcpdf_my_account_button_packing-slip',
+			function ( $show, $order ) {
+				// Forzar visibilidad si el packing slip existe y la opción está activa.
+				if ( ! $order ) {
+					return $show;
+				}
+				if ( function_exists( 'wcpdf_get_document' ) ) {
+					$packing_slip = wcpdf_get_document( 'packing-slip', $order );
+					if ( $packing_slip && $packing_slip->exists() ) {
+						$settings           = get_option( 'wpo_wcpdf_documents_settings_packing-slip', array() );
+						$my_account_setting = isset( $settings['my_account_buttons'] ) ? $settings['my_account_buttons'] : '';
+						if ( 'always' === $my_account_setting || 'available' === $my_account_setting ) {
+							return true;
+						}
+						if ( 'custom' === $my_account_setting && isset( $settings['my_account_restrict'] ) ) {
+							$allowed_statuses = (array) $settings['my_account_restrict'];
+							if ( in_array( 'wc-' . $order->get_status(), $allowed_statuses, true ) ) {
+								return true;
+							}
+						}
+					}
+				}
+				return $show;
+			},
+			10,
+			2
+		);
 	}
 
 	/**

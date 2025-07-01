@@ -69,6 +69,10 @@ class Palafito_Email_Attachments {
 		if ( 'entregado' === $order_status && 'customer_entregado' === $email_id ) {
 			if ( function_exists( 'wcpdf_get_document' ) ) {
 				$packing_slip = wcpdf_get_document( 'packing-slip', $order );
+				// Forzar generación si no existe.
+				if ( $packing_slip && ! $packing_slip->exists() ) {
+					$packing_slip->create();
+				}
 				if ( $packing_slip && $packing_slip->exists() ) {
 					$settings = get_option( 'wpo_wcpdf_documents_settings_packing-slip', array() );
 					if ( ! empty( $settings['attach_to_email_ids'] ) && in_array( 'customer_entregado', (array) $settings['attach_to_email_ids'], true ) ) {
