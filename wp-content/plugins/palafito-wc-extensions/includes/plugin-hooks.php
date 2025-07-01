@@ -1,6 +1,8 @@
 <?php
 /**
- * Plugin activation and deactivation hooks.
+ * Plugin Hooks for Palafito WC Extensions
+ *
+ * Handles custom hooks, status changes, and email triggers for the Palafito B2B workflow.
  *
  * @package Palafito_WC_Extensions
  * @since 1.0.0
@@ -92,3 +94,15 @@ function palafito_wc_extensions_handle_order_status_change( $order_id, $old_stat
 		}
 	}
 }
+
+// Register custom emails for Entregado and Facturado.
+add_filter(
+	'woocommerce_email_classes',
+	function ( $email_classes ) {
+		require_once __DIR__ . '/emails/class-wc-email-customer-entregado.php';
+		require_once __DIR__ . '/emails/class-wc-email-customer-facturado.php';
+		$email_classes['WC_Email_Customer_Entregado'] = new WC_Email_Customer_Entregado();
+		$email_classes['WC_Email_Customer_Facturado'] = new WC_Email_Customer_Facturado();
+		return $email_classes;
+	}
+);

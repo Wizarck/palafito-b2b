@@ -1,16 +1,31 @@
 <?php
 /**
- * Funciones del tema hijo Palafito (limpio para troubleshooting)
+ * Functions for Palafito Child Theme
+ *
+ * Contains theme setup and customizations.
  *
  * @package Palafito_Child
- * @version 1.0.2
+ * @since 1.0.0
  */
 
-// Seguridad: evita acceso directo
-defined('ABSPATH') || exit;
-
+/**
+ * Main theme class for Palafito Child.
+ *
+ * Handles theme setup and customizations.
+ *
+ * @since 1.0.0
+ */
 class Palafito_Child_Theme {
-    public function __construct() {}
+	/**
+	 * Constructor.
+	 *
+	 * Sets up theme hooks.
+	 *
+	 * @since 1.0.0
+	 */
+	public function __construct() {
+		// Theme setup actions.
+	}
 }
 
 new Palafito_Child_Theme();

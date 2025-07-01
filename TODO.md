@@ -10,8 +10,8 @@
 
 ### 2. 🧪 Testing y control de calidad
 - [x] Configurar PHPUnit (tests unitarios para tu plugin o funciones)
-- [ ] Automatizar tests con GitHub Actions
-- [ ] Validar calidad de código continuo (PHPCS, PHPStan, etc.)
+- [x] Automatizar tests con GitHub Actions
+- [x] Validar calidad de código continuo (PHPCS, PHPStan, etc.)
 - [ ] Cobertura de tests (coverage report)
 - [ ] Tests de integración/end-to-end (opcional)
 
@@ -70,7 +70,7 @@
 
 ## ✅ Completado
 - [x] Estructura base del plugin
-- [x] Checkout customizations básicas
+- [x] Checkout customizations básicas y cumplimiento PHPCS
 - [x] Tests unitarios con PHPUnit
 - [x] Limpieza de funcionalidades innecesarias (RFC, B2B pricing)
 - [x] Modificar campos de apellidos en checkout (no mandatory)
@@ -91,9 +91,12 @@
 - [x] **Generación Automática PRO**: Número y fecha usando métodos nativos
 - [x] **Columna Fecha Ordenable**: Usando meta keys PRO
 - [x] **Template Integration PRO**: Campos en PDF usando métodos nativos
+- [x] **PHPCS**: Todo el código relevante cumple los estándares WordPress/WooCommerce
+- [x] **Emails nativos**: Implementados y documentados para "Entregado" y "Facturado"
+- [x] **Push/documentación**: Flujo de push actualizado y documentado
 
 ## 🔄 En Progreso
 - [ ] Próxima funcionalidad a implementar
 
 ---
-*Última actualización: 19 de Diciembre, 2024 - Refactor completo de albarán para estructura PRO* 
+*Última actualización: 10 de Julio, 2025 - Cumplimiento total PHPCS, emails nativos, checkout y push documentado* 

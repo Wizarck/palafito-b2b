@@ -14,9 +14,9 @@
 **REGLA DE FLUJO DE PUSH:**
 Siempre que se realice un push, primero se debe actualizar la documentación relevante (`README.md`, `CONTEXT.md`, etc.) y luego hacer el commit y push de código y documentación juntos. Así, la documentación en el repositorio reflejará siempre el estado real del código y se evitan confusiones.
 
-## 📅 Última Actualización
-**Fecha**: 19 de Diciembre, 2024  
-**Sesión**: Refactor completo de albarán para usar estructura PRO nativa
+## 🟢 Última Actualización
+**Fecha**: 10 de Julio, 2025  
+**Sesión**: Cumplimiento total PHPCS, emails nativos, checkout y push documentado
 
 ## 🚨 PROTOCOLO DE DESPEDIDA - OBLIGATORIO
 
@@ -32,6 +32,12 @@ Siempre que se realice un push, primero se debe actualizar la documentación rel
 ## 📋 Resumen Ejecutivo
 
 **Palafito B2B** es una plataforma de comercio electrónico B2B (Business-to-Business) construida sobre WordPress + WooCommerce, diseñada específicamente para ventas mayoristas. El proyecto utiliza el tema Kadence con un child theme personalizado y un plugin custom para funcionalidades específicas.
+
+- Todo el código relevante (plugin, tema hijo, checkout, emails, PDF) cumple PHPCS y pasa los checks automáticos.
+- El checkout está 100% adaptado a B2B, con campos y validaciones según requerimientos.
+- Los emails nativos de WooCommerce para "Entregado" y "Facturado" están implementados y documentados.
+- El flujo de push exige actualizar CONTEXT.md, TODO.md y documentación antes de cada commit/push.
+- Los únicos errores PHPCS restantes están en archivos generados (.l10n.php) o de ejemplo (hello.php), que pueden ignorarse.
 
 ---
 
@@ -104,7 +110,7 @@ Palafito-b2b/
 
 ---
 
-## 🐛 Problemas Resueltos
+## 🟢 Problemas Resueltos
 
 ### 1. Error Fatal `get_instance()`
 - **Problema**: Plugin intentaba llamar método inexistente

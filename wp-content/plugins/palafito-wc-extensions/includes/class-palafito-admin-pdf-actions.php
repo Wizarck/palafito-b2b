@@ -1,8 +1,11 @@
 <?php
 /**
- * Acciones de PDF en la tabla de pedidos para Palafito.
+ * Admin PDF Actions for Palafito WC Extensions
+ *
+ * Handles admin-side PDF actions and custom order status transitions.
  *
  * @package Palafito_WC_Extensions
+ * @since 1.0.0
  */
 
 // Prevent direct access.
@@ -11,7 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Maneja las acciones de PDF en la tabla de pedidos.
+ * Handles admin PDF actions and custom order status transitions.
+ *
+ * @since 1.0.0
  */
 class Palafito_Admin_PDF_Actions {
 

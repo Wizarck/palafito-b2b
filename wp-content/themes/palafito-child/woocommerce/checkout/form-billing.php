@@ -1,4 +1,12 @@
 <?php
+/**
+ * WooCommerce Checkout: Form Billing
+ *
+ * Custom billing form for Palafito Child theme.
+ *
+ * @package Palafito_Child
+ * @since 1.0.0
+ */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -16,15 +24,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 		// Hacer todos los campos de facturación opcionales y ajustar el label de teléfono.
 		foreach ( $fields as $key => &$field ) {
 			$field['required'] = false;
-			if ( $key === 'billing_phone' ) {
+			if ( 'billing_phone' === $key ) {
 				$field['label'] = __( 'Teléfono', 'woocommerce' );
 			}
-			if (empty($field['class'])) {
-				$field['class'] = array('form-row-wide');
+			if ( empty( $field['class'] ) ) {
+				$field['class'] = array( 'form-row-wide' );
 			}
 			woocommerce_form_field( $key, $field, $checkout->get_value( $key ) );
 		}
-		unset($field);
+		unset( $field );
 		?>
 	</div>
 	<?php do_action( 'woocommerce_after_checkout_billing_form', $checkout ); ?>
