@@ -111,15 +111,11 @@ add_action(
 		if ( function_exists( 'wcpdf_get_document' ) ) {
 			$packing_slip = wcpdf_get_document( 'packing-slip', $order, true );
 			if ( $packing_slip && $packing_slip->is_allowed() ) {
-				if ( $packing_slip->exists() ) {
-					$packing_slip->regenerate();
-				} else {
+				if ( ! $packing_slip->exists() ) {
 					$packing_slip->initiate_number();
 					$packing_slip->initiate_date();
 					$packing_slip->save();
 				}
-				$order->add_order_note( __( 'Albarán generado automáticamente al cambiar a Entregado.', 'palafito-wc-extensions' ) );
-				$order->save();
 			}
 		}
 	},
