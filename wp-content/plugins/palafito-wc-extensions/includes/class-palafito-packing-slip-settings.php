@@ -49,11 +49,12 @@ class Palafito_Packing_Slip_Settings {
 				continue;
 			}
 
-			// Orden exacto como en factura.
-			// General: enabled, attach_to_email_ids, disable_for_statuses, my_account_buttons.
-			// Document details: display_email, display_phone, display_customer_notes, display_billing_address, display_number, next_packing_slip_number, number_format, display_date.
+			// Orden exacto como en factura (Invoice.php).
+			// General: enabled, attach_to_email_ids, disable_for_statuses.
+			// Document details: display_shipping_address (display_billing_address para packing slip), display_email, display_phone, display_customer_notes, display_number, next_packing_slip_number, number_format, display_date.
+			// My Account: my_account_buttons.
 			// Admin: packing_slip_number_column, packing_slip_date_column.
-			// Advanced: next_packing_slip_number, reset_number_yearly, mark_printed, unmark_printed.
+			// Advanced: reset_number_yearly, mark_printed, unmark_printed.
 
 			switch ( $field['id'] ) {
 				// General section (como en factura).
@@ -66,11 +67,11 @@ class Palafito_Packing_Slip_Settings {
 				case 'disable_for_statuses':
 					$reorganized_fields[2] = $field;
 					break;
-				case 'my_account_buttons':
-					$reorganized_fields[3] = $field;
-					break;
 
 				// Document details section (como en factura).
+				case 'display_billing_address': // Equivalente a display_shipping_address en factura.
+					$reorganized_fields[3] = $field;
+					break;
 				case 'display_email':
 					$reorganized_fields[4] = $field;
 					break;
@@ -80,19 +81,21 @@ class Palafito_Packing_Slip_Settings {
 				case 'display_customer_notes':
 					$reorganized_fields[6] = $field;
 					break;
-				case 'display_billing_address':
+				case 'display_number':
 					$reorganized_fields[7] = $field;
 					break;
-				case 'display_number':
+				case 'next_packing_slip_number':
 					$reorganized_fields[8] = $field;
 					break;
-				case 'next_packing_slip_number':
+				case 'number_format':
 					$reorganized_fields[9] = $field;
 					break;
-				case 'number_format':
+				case 'display_date':
 					$reorganized_fields[10] = $field;
 					break;
-				case 'display_date':
+
+				// My Account section (como en factura).
+				case 'my_account_buttons':
 					$reorganized_fields[11] = $field;
 					break;
 
