@@ -67,31 +67,63 @@ class Palafito_Email_Attachments {
 
 		// Adjuntar packing slip solo si el email es el nativo de WooCommerce para 'entregado' y está configurado en el plugin PDF.
 		if ( 'entregado' === $order_status && 'customer_entregado' === $email_id ) {
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( 'Palafito WC Extensions: Processing packing slip attachment for order ' . $order->get_id() );
+			}
 			if ( function_exists( 'wcpdf_get_document' ) ) {
 				$packing_slip = wcpdf_get_document( 'packing-slip', $order );
-				// Forzar generación si no existe.
-				if ( $packing_slip && ! $packing_slip->exists() ) {
-					$packing_slip->create();
-				}
 				if ( $packing_slip && $packing_slip->exists() ) {
-					$settings = get_option( 'wpo_wcpdf_documents_settings_packing-slip', array() );
-					if ( ! empty( $settings['attach_to_email_ids'] ) && in_array( 'customer_entregado', (array) $settings['attach_to_email_ids'], true ) ) {
-						$attachments[] = $packing_slip->get_pdf( 'path' );
+					if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+						error_log( 'Palafito WC Extensions: Packing slip exists for order ' . $order->get_id() );
 					}
+					$settings = get_option( 'wpo_wcpdf_documents_settings_packing-slip', array() );
+					if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+						error_log( 'Palafito WC Extensions: Packing slip settings: ' . print_r( $settings, true ) );
+					}
+					if ( ! empty( $settings['attach_to_email_ids'] ) && in_array( 'customer_entregado', (array) $settings['attach_to_email_ids'], true ) ) {
+						if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+							error_log( 'Palafito WC Extensions: Adding packing slip to attachments for order ' . $order->get_id() );
+						}
+						$attachments[] = $packing_slip->get_pdf( 'path' );
+					} elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+						error_log( 'Palafito WC Extensions: Packing slip not configured for customer_entregado email' );
+					}
+				} elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					error_log( 'Palafito WC Extensions: Packing slip does not exist for order ' . $order->get_id() );
 				}
+			} elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( 'Palafito WC Extensions: wcpdf_get_document function not available' );
 			}
 		}
 
 		// Adjuntar invoice solo si el email es el nativo de WooCommerce para 'facturado' y está configurado en el plugin PDF.
 		if ( 'facturado' === $order_status && 'customer_facturado' === $email_id ) {
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( "Palafito WC Extensions: Processing invoice attachment for order {$order->get_id()}" );
+			}
 			if ( function_exists( 'wcpdf_get_document' ) ) {
 				$invoice = wcpdf_get_document( 'invoice', $order );
 				if ( $invoice && $invoice->exists() ) {
-					$settings = get_option( 'wpo_wcpdf_documents_settings_invoice', array() );
-					if ( ! empty( $settings['attach_to_email_ids'] ) && in_array( 'customer_facturado', (array) $settings['attach_to_email_ids'], true ) ) {
-						$attachments[] = $invoice->get_pdf( 'path' );
+					if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+						error_log( "Palafito WC Extensions: Invoice exists for order {$order->get_id()}" );
 					}
+					$settings = get_option( 'wpo_wcpdf_documents_settings_invoice', array() );
+					if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+						error_log( 'Palafito WC Extensions: Invoice settings: ' . print_r( $settings, true ) );
+					}
+					if ( ! empty( $settings['attach_to_email_ids'] ) && in_array( 'customer_facturado', (array) $settings['attach_to_email_ids'], true ) ) {
+						if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+							error_log( "Palafito WC Extensions: Adding invoice to attachments for order {$order->get_id()}" );
+						}
+						$attachments[] = $invoice->get_pdf( 'path' );
+					} elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+							error_log( 'Palafito WC Extensions: Invoice not configured for customer_facturado email' );
+					}
+				} elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+						error_log( "Palafito WC Extensions: Invoice doesn't exist for order {$order->get_id()}" );
 				}
+			} elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					error_log( 'Palafito WC Extensions: wcpdf_get_document function not available for invoice' );
 			}
 		}
 
