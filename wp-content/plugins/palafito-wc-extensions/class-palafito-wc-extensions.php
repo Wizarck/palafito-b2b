@@ -236,12 +236,8 @@ final class Palafito_WC_Extensions {
 			error_log( "Palafito WC Extensions: Order {$order_id} status changed from {$old_status} to {$new_status}" );
 		}
 
-		// Trigger custom actions for our custom statuses.
-		if ( 'entregado' === $new_status ) {
-			do_action( 'woocommerce_order_status_entregado', $order_id, $old_status, $new_status, $order );
-		} elseif ( 'facturado' === $new_status ) {
-			do_action( 'woocommerce_order_status_facturado', $order_id, $old_status, $new_status, $order );
-		}
+		// Los emails se envían automáticamente por los hooks de WooCommerce.
+		// No necesitamos disparar manualmente las acciones aquí.
 	}
 
 	/**

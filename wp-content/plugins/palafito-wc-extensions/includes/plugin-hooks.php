@@ -52,6 +52,9 @@ if ( class_exists( 'WPO_WCPDF' ) ) {
 // Hooks para cambio de estado de pedidos y envío automático de emails.
 add_action( 'woocommerce_order_status_changed', 'palafito_wc_extensions_handle_order_status_change', 10, 3 );
 
+// Hook para disparar automáticamente las acciones de estado personalizado.
+add_action( 'woocommerce_order_status_changed', 'palafito_wc_extensions_trigger_custom_status_actions', 20, 3 );
+
 /**
  * Manejar cambios de estado de pedidos y enviar emails automáticos.
  *
@@ -72,23 +75,41 @@ function palafito_wc_extensions_handle_order_status_change( $order_id, $old_stat
 		return;
 	}
 
-	// Enviar email automático cuando el estado cambie a "Entregado".
-	if ( 'entregado' === $new_status ) {
-		$order = wc_get_order( $order_id );
-		// Trigger custom email action with correct arguments (order_id, order).
-		do_action( 'woocommerce_order_status_entregado', $order_id, $order );
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			error_log( "Palafito WC Extensions: Order {$order_id} status changed to 'entregado', triggering email action." );
+	// Log status changes for debugging.
+	if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+		if ( 'entregado' === $new_status ) {
+			error_log( "Palafito WC Extensions: Order {$order_id} status changed to 'entregado'." );
+		}
+		if ( 'facturado' === $new_status ) {
+			error_log( "Palafito WC Extensions: Order {$order_id} status changed to 'facturado'." );
 		}
 	}
 
-	// Enviar email automático cuando el estado cambie a "Facturado".
+	// Los emails se envían automáticamente por los hooks de WooCommerce.
+	// No necesitamos disparar manualmente las acciones aquí.
+}
+
+/**
+ * Disparar automáticamente las acciones de estado personalizado.
+ *
+ * @param int    $order_id   Order ID.
+ * @param string $old_status Old status.
+ * @param string $new_status New status.
+ */
+function palafito_wc_extensions_trigger_custom_status_actions( $order_id, $old_status, $new_status ) {
+	$order = wc_get_order( $order_id );
+	if ( ! $order ) {
+		return;
+	}
+
+	// Disparar acción para estado "Entregado".
+	if ( 'entregado' === $new_status ) {
+		do_action( 'woocommerce_order_status_entregado', $order_id, $order );
+	}
+
+	// Disparar acción para estado "Facturado".
 	if ( 'facturado' === $new_status ) {
-		$order = wc_get_order( $order_id );
 		do_action( 'woocommerce_order_status_facturado', $order_id, $order );
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			error_log( "Palafito WC Extensions: Order {$order_id} status changed to 'facturado', triggering email action." );
-		}
 	}
 }
 
