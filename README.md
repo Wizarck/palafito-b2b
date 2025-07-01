@@ -362,3 +362,9 @@ Este proyecto es privado y propietario. Todos los derechos reservados.
 - Si el child theme no se ve igual que el parent, revisa primero la configuración del personalizador.
 - Exporta las personalizaciones desde el parent e impórtalas en el child usando Apariencia > Personalizar > Import/Export.
 - Así el child hereda exactamente el mismo diseño, fuentes y colores que el parent.
+
+## Albarán (Packing Slip): Fecha de entrega
+- Por defecto, la fecha de entrega del albarán es la fecha en la que el pedido pasa a 'Entregado'.
+- Si editas la fecha manualmente en el metabox del pedido, esa fecha será la que se muestre en el PDF, el metabox y la columna de la lista de pedidos.
+- La fecha solo se sobrescribe si eliminas el documento y lo generas de nuevo desde cero.
+- Así puedes corregir o ajustar la fecha de entrega según la operativa real del negocio.

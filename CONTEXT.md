@@ -626,3 +626,10 @@ Esto es imprescindible para evitar errores en los checks automáticos y mantener
 - El PDF del albarán se adjunta automáticamente al email de 'Entregado' si está configurado.
 - Todo cambio queda registrado como nota de pedido y en logs si WP_DEBUG está activo.
 - El flujo es ahora igual de robusto que el de facturas (invoice).
+
+## Albarán (Packing Slip): Fecha de entrega
+- Por defecto, la fecha de entrega del albarán es la fecha en la que el pedido pasa a 'Entregado'.
+- Si el usuario edita la fecha manualmente en el metabox, esa fecha tiene prioridad y se respeta en el PDF, el metabox y la columna de la lista de pedidos.
+- La fecha solo se sobrescribe si el documento se elimina y se regenera desde cero.
+- No hay lógica personalizada que sobrescriba la fecha cada vez que el pedido pasa a 'Entregado'.
+- Este comportamiento garantiza trazabilidad y flexibilidad para el administrador.
