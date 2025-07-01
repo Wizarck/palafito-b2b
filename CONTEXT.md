@@ -16,7 +16,7 @@ Siempre que se realice un push, primero se debe actualizar la documentación rel
 
 ## 🟢 Última Actualización
 **Fecha**: 10 de Julio, 2025  
-**Sesión**: Cumplimiento total PHPCS, emails nativos, checkout y push documentado
+**Sesión**: Corrección de emails duplicados, eliminación de triggers manuales, emails nativos funcionando correctamente
 
 ## 🚨 PROTOCOLO DE DESPEDIDA - OBLIGATORIO
 
@@ -98,6 +98,8 @@ Palafito-b2b/
 - **Columna Fecha de Entrega**: Ordenable usando meta keys PRO (`_wcpdf_packing-slip_date`)
 - **Generación Automática PRO**: Número y fecha de albarán usando métodos nativos de la PRO
 - **UI Consistente**: Meta box de albarán idéntico al de factura (editable, con notas, trigger, etc.)
+- **Emails Nativos WooCommerce**: Implementados emails nativos para estados "Entregado" y "Facturado" con templates personalizados
+- **Corrección de Emails Duplicados**: Eliminados triggers manuales duplicados, emails se envían una sola vez por cambio de estado
 
 ### 🔄 En Progreso
 - **Optimización de Performance**: Resolución de problemas de diseño (fuentes, botones)
@@ -198,6 +200,25 @@ Palafito-b2b/
   - UI consistente para el usuario
   - Meta keys estándar para exportaciones/importaciones
   - Código más limpio y mantenible
+
+### 10. Emails Duplicados en Estado "Facturado"
+- **Problema**: Email de factura llegaba 3 veces al cliente
+- **Síntomas**: 
+  - Múltiples emails idénticos con el mismo adjunto
+  - Formato nativo de WooCommerce en cada email
+- **Causa**: Múltiples triggers manuales disparando la misma acción `woocommerce_order_status_facturado`
+- **Ubicaciones del problema**:
+  - `plugin-hooks.php` línea 87: Trigger manual
+  - `class-palafito-wc-extensions.php` línea 242: Otro trigger manual
+  - `class-wc-email-customer-facturado.php` línea 35: Hook automático del email
+- **Solución**: Eliminación de triggers manuales duplicados
+- **Cambios Realizados**:
+  - ✅ Eliminado trigger manual en `plugin-hooks.php`
+  - ✅ Eliminado trigger manual en `class-palafito-wc-extensions.php`
+  - ✅ Agregado hook automático en `plugin-hooks.php` para disparar acciones de estado personalizado
+  - ✅ Mantenido solo el hook automático del email nativo de WooCommerce
+- **Resultado**: Email se envía una sola vez por cambio de estado
+- **Estado**: ✅ Resuelto
 - **Estado**: ✅ Resuelto
 
 ---
