@@ -24,11 +24,11 @@ class Palafito_Checkout_Customizations {
 		add_filter(
 			'woocommerce_my_account_my_orders_actions',
 			function ( $actions, $order ) {
-				// Elimina la acción de cancelar
+				// Elimina la acción de cancelar.
 				if ( isset( $actions['cancel'] ) ) {
 					unset( $actions['cancel'] );
 				}
-				// Elimina la acción de pagar
+				// Elimina la acción de pagar.
 				if ( isset( $actions['pay'] ) ) {
 					unset( $actions['pay'] );
 				}
