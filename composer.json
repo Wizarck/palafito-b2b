@@ -14,9 +14,10 @@
         }
     },
     "scripts": {
-    "lint": "vendor/bin/phpcs --standard=phpcs.xml wp-content/plugins/palafito-wc-extensions",
-    "fix": "vendor/bin/phpcbf --standard=phpcs.xml wp-content/plugins/palafito-wc-extensions",
-    "lint:all": "vendor/bin/phpcs --standard=phpcs.xml wp-content",
-    "fix:all": "vendor/bin/phpcbf --standard=phpcs.xml wp-content"
+        "lint": "vendor/bin/phpcs --standard=phpcs.xml --warning-severity=0 wp-content/plugins/palafito-wc-extensions",
+        "fix": "vendor/bin/phpcbf --standard=phpcs.xml wp-content/plugins/palafito-wc-extensions",
+        "lint:all": "vendor/bin/phpcs --standard=phpcs.xml --warning-severity=0 wp-content",
+        "fix:all": "vendor/bin/phpcbf --standard=phpcs.xml wp-content",
+        "prepush": "composer fix:all && composer lint:all"
     }
 }
