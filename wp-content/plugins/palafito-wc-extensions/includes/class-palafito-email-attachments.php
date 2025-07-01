@@ -32,8 +32,8 @@ class Palafito_Email_Attachments {
 		add_filter( 'woocommerce_email_actions', array( $this, 'add_custom_email_actions' ), 10, 1 );
 
 		// Hook into order status change actions to send custom emails.
-		add_action( 'woocommerce_order_status_entregado', array( $this, 'send_entregado_email' ), 10, 2 );
-		add_action( 'woocommerce_order_status_facturado', array( $this, 'send_facturado_email' ), 10, 2 );
+		add_action( 'woocommerce_order_status_entregado', array( $this, 'send_entregado_email' ), 10, 4 );
+		add_action( 'woocommerce_order_status_facturado', array( $this, 'send_facturado_email' ), 10, 4 );
 
 		// Customize the list of available emails for PDF attachments.
 		add_filter( 'wpo_wcpdf_wc_emails', array( $this, 'customize_wc_emails_list' ), 10, 1 );
@@ -250,6 +250,16 @@ class Palafito_Email_Attachments {
 	 * @param WC_Order $order      Order object.
 	 */
 	public function send_entregado_email( $order_id, $old_status, $new_status, $order ) {
+		// Verificar que el order existe y es válido.
+		if ( ! $order || ! is_a( $order, 'WC_Order' ) ) {
+			$order = wc_get_order( $order_id );
+		}
+
+		if ( ! $order ) {
+			return;
+		}
+
+		// Solo enviar si el estado cambió a entregado.
 		if ( 'entregado' === $new_status ) {
 			$this->send_custom_order_email( $order, 'entregado' );
 		}
@@ -264,6 +274,16 @@ class Palafito_Email_Attachments {
 	 * @param WC_Order $order      Order object.
 	 */
 	public function send_facturado_email( $order_id, $old_status, $new_status, $order ) {
+		// Verificar que el order existe y es válido.
+		if ( ! $order || ! is_a( $order, 'WC_Order' ) ) {
+			$order = wc_get_order( $order_id );
+		}
+
+		if ( ! $order ) {
+			return;
+		}
+
+		// Solo enviar si el estado cambió a facturado.
 		if ( 'facturado' === $new_status ) {
 			$this->send_custom_order_email( $order, 'facturado' );
 		}
@@ -280,13 +300,15 @@ class Palafito_Email_Attachments {
 		$customer_email = $order->get_billing_email();
 
 		if ( ! $customer_email ) {
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( 'Palafito WC Extensions: No customer email found for order ' . $order->get_id() );
+			}
 			return;
 		}
 
 		// Prepare email content.
 		$subject = $this->get_email_subject( $status_type, $order );
 		$message = $this->get_email_message( $status_type, $order );
-		$headers = array( 'Content-Type: text/html; charset=UTF-8' );
 
 		// Prepare attachments.
 		$attachments = array();
@@ -303,8 +325,17 @@ class Palafito_Email_Attachments {
 			}
 		}
 
-		// Send email.
-		$sent = wp_mail( $customer_email, $subject, $message, $headers, $attachments );
+		// Use WooCommerce email system for better compatibility.
+		$mailer = WC()->mailer();
+
+		// Prepare email headers.
+		$headers = array(
+			'Content-Type: text/html; charset=UTF-8',
+			'From: ' . get_option( 'blogname' ) . ' <' . get_option( 'admin_email' ) . '>',
+		);
+
+		// Send email using WooCommerce mailer.
+		$sent = $mailer->send( $customer_email, $subject, $message, $headers, $attachments );
 
 		// Log the email sending.
 		if ( $sent ) {
@@ -315,6 +346,10 @@ class Palafito_Email_Attachments {
 					ucfirst( $status_type )
 				)
 			);
+
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( 'Palafito WC Extensions: Email sent successfully for order ' . $order->get_id() . ' with status ' . $status_type );
+			}
 		} else {
 			$order->add_order_note(
 				sprintf(
@@ -323,6 +358,10 @@ class Palafito_Email_Attachments {
 					ucfirst( $status_type )
 				)
 			);
+
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( 'Palafito WC Extensions: Failed to send email for order ' . $order->get_id() . ' with status ' . $status_type );
+			}
 		}
 	}
 
