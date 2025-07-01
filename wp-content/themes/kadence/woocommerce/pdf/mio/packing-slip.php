@@ -128,18 +128,16 @@
 		<td class="order-data">
 			<table>
 				<?php do_action( 'wpo_wcpdf_before_order_data', $this->get_type(), $this->order ); ?>
-				<tr class="delivery-note-number">
-					<th>Número de albarán:</th>
-					<td>A-<?php echo $this->order->get_order_number(); ?></td>
-				</tr>
-				<tr class="delivery-date">
-					<th>Fecha de entrega:</th>
-					<td><?php echo date_i18n( get_option( 'date_format' ), current_time( 'timestamp' ) ); ?></td>
-				</tr>
-				<?php if ( $this->get_shipping_method() ) : ?>
-					<tr class="shipping-method">
-						<th><?php $this->shipping_method_title(); ?></th>
-						<td><?php $this->shipping_method(); ?></td>
+				<?php if ( isset( $this->settings['display_number'] ) ) : ?>
+					<tr class="packing-slip-number">
+						<th><?php $this->number_title(); ?></th>
+						<td><?php $this->number( $this->get_type() ); ?></td>
+					</tr>
+				<?php endif; ?>
+				<?php if ( isset( $this->settings['display_date'] ) ) : ?>
+					<tr class="packing-slip-date">
+						<th><?php $this->date_title(); ?></th>
+						<td><?php $this->date( $this->get_type() ); ?></td>
 					</tr>
 				<?php endif; ?>
 				<tr class="order-number">
@@ -150,6 +148,12 @@
 					<th><?php $this->order_date_title(); ?></th>
 					<td><?php $this->order_date(); ?></td>
 				</tr>
+				<?php if ( $this->get_shipping_method() ) : ?>
+					<tr class="shipping-method">
+						<th><?php $this->shipping_method_title(); ?></th>
+						<td><?php $this->shipping_method(); ?></td>
+					</tr>
+				<?php endif; ?>
 				<?php do_action( 'wpo_wcpdf_after_order_data', $this->get_type(), $this->order ); ?>
 			</table>
 		</td>
