@@ -129,7 +129,16 @@ add_action(
 					error_log( '[PALAFITO] Packing slip adjunto (valor número): ' . print_r( $packing_slip->get_number(), true ) );
 					error_log( '[PALAFITO] Packing slip adjunto (fecha): ' . print_r( $packing_slip->get_date(), true ) );
 				}
-				$path = $packing_slip->get_pdf_path();
+				// Obtener la ruta del PDF de forma compatible.
+				$path = null;
+				if ( method_exists( $packing_slip, 'get_pdf_path' ) ) {
+					$path = $packing_slip->get_pdf_path();
+				} elseif ( method_exists( $packing_slip, 'get_pdf' ) ) {
+					$path = $packing_slip->get_pdf( 'path' );
+				}
+				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					error_log( '[PALAFITO] Packing slip PDF path: ' . print_r( $path, true ) );
+				}
 				if ( $path && file_exists( $path ) ) {
 					$attachments[] = $path;
 					if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
@@ -168,7 +177,16 @@ add_filter(
 					$packing_slip->initiate_number();
 					$packing_slip->save();
 				}
-				$path = $packing_slip->get_pdf_path();
+				// Obtener la ruta del PDF de forma compatible.
+				$path = null;
+				if ( method_exists( $packing_slip, 'get_pdf_path' ) ) {
+					$path = $packing_slip->get_pdf_path();
+				} elseif ( method_exists( $packing_slip, 'get_pdf' ) ) {
+					$path = $packing_slip->get_pdf( 'path' );
+				}
+				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					error_log( '[PALAFITO] Packing slip PDF path: ' . print_r( $path, true ) );
+				}
 				if ( $path && file_exists( $path ) ) {
 					$attachments[] = $path;
 					if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
