@@ -111,11 +111,9 @@ add_action(
 		if ( function_exists( 'wcpdf_get_document' ) ) {
 			$packing_slip = wcpdf_get_document( 'packing-slip', $order, true );
 			if ( $packing_slip && $packing_slip->is_allowed() ) {
-				if ( ! $packing_slip->exists() ) {
-					$packing_slip->initiate_number();
-					$packing_slip->initiate_date();
-					$packing_slip->save();
-				}
+				$packing_slip->initiate_date();
+				$packing_slip->initiate_number();
+				$packing_slip->save();
 			}
 		}
 	},

@@ -128,16 +128,16 @@
 		<td class="order-data">
 			<table>
 				<?php do_action( 'wpo_wcpdf_before_order_data', $this->get_type(), $this->order ); ?>
-				<?php if ( isset( $this->settings['display_number'] ) ) : ?>
+				<?php if ( method_exists( $this, 'get_number' ) && $this->get_number() ) : ?>
 					<tr class="packing-slip-number">
 						<th><?php $this->number_title(); ?></th>
-						<td><?php $this->number( $this->get_type() ); ?></td>
+						<td><?php $this->number( 'packing-slip' ); ?></td>
 					</tr>
 				<?php endif; ?>
-				<?php if ( isset( $this->settings['display_date'] ) ) : ?>
+				<?php if ( method_exists( $this, 'get_date' ) && $this->get_date() ) : ?>
 					<tr class="packing-slip-date">
 						<th><?php $this->date_title(); ?></th>
-						<td><?php $this->date( $this->get_type() ); ?></td>
+						<td><?php $this->date( 'packing-slip' ); ?></td>
 					</tr>
 				<?php endif; ?>
 				<tr class="order-number">

@@ -78,7 +78,12 @@ class Palafito_Packing_Slip_Meta_Box {
 		if ( ! $packing_slip ) {
 			return;
 		}
-
+		// Refuerzo: si el packing slip existe pero no tiene número o fecha, los genero.
+		if ( $packing_slip->exists() && ( ! $packing_slip->get_number() || ! $packing_slip->get_date() ) ) {
+			$packing_slip->initiate_date();
+			$packing_slip->initiate_number();
+			$packing_slip->save();
+		}
 		// Use the same structure as invoice in the PRO.
 		$data = array(
 			'number'           => array(
@@ -97,8 +102,6 @@ class Palafito_Packing_Slip_Meta_Box {
 				'label' => __( 'Notes (printed in the packing slip):', 'woocommerce-pdf-invoices-packing-slips' ),
 			),
 		);
-
-		// Output using the same method as invoice.
 		$admin->output_number_date_edit_fields( $packing_slip, $data );
 	}
 
