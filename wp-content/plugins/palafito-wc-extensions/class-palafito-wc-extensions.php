@@ -42,6 +42,9 @@ final class Palafito_WC_Extensions {
 		add_filter( 'handle_bulk_actions-edit-shop_order', array( __CLASS__, 'handle_bulk_order_status_actions' ), 10, 3 );
 		// Registrar post status personalizados en el hook init.
 		add_action( 'init', array( __CLASS__, 'register_custom_post_statuses' ), 1 );
+
+		// Cargar estilos personalizados para colores de estados.
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
 	}
 
 	/**
@@ -222,6 +225,22 @@ final class Palafito_WC_Extensions {
 		// Log status change for debugging.
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 			error_log( "Palafito WC Extensions: Order {$order_id} status changed from {$old_status} to {$new_status}" );
+		}
+	}
+
+	/**
+	 * Enqueue admin styles.
+	 */
+	public function enqueue_admin_styles() {
+		// Solo cargar en páginas de WooCommerce relacionadas con pedidos.
+		$screen = get_current_screen();
+		if ( $screen && ( 'edit-shop_order' === $screen->id || 'woocommerce_page_wc-orders' === $screen->id ) ) {
+			wp_enqueue_style(
+				'palafito-order-status-colors',
+				plugin_dir_url( __FILE__ ) . 'assets/css/admin-order-status-colors.css',
+				array(),
+				'1.0.0'
+			);
 		}
 	}
 }
