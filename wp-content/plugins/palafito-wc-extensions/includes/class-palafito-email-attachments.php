@@ -32,8 +32,8 @@ class Palafito_Email_Attachments {
 		add_filter( 'woocommerce_email_actions', array( $this, 'add_custom_email_actions' ), 10, 1 );
 
 		// Hook into order status change actions to send custom emails.
-		add_action( 'woocommerce_order_status_entregado', array( $this, 'send_entregado_email' ), 10, 4 );
-		add_action( 'woocommerce_order_status_facturado', array( $this, 'send_facturado_email' ), 10, 4 );
+		add_action( 'woocommerce_order_status_entregado', array( $this, 'send_entregado_email' ), 10, 3 );
+		add_action( 'woocommerce_order_status_facturado', array( $this, 'send_facturado_email' ), 10, 3 );
 
 		// Customize the list of available emails for PDF attachments.
 		add_filter( 'wpo_wcpdf_wc_emails', array( $this, 'customize_wc_emails_list' ), 10, 1 );
@@ -244,16 +244,13 @@ class Palafito_Email_Attachments {
 	/**
 	 * Send custom email when order status changes to "Entregado".
 	 *
-	 * @param int      $order_id   Order ID.
-	 * @param string   $old_status Old status.
-	 * @param string   $new_status New status.
-	 * @param WC_Order $order      Order object.
+	 * @param int    $order_id   Order ID.
+	 * @param string $old_status Old status.
+	 * @param string $new_status New status.
 	 */
-	public function send_entregado_email( $order_id, $old_status, $new_status, $order ) {
-		// Verificar que el order existe y es válido.
-		if ( ! $order || ! is_a( $order, 'WC_Order' ) ) {
-			$order = wc_get_order( $order_id );
-		}
+	public function send_entregado_email( $order_id, $old_status, $new_status ) {
+		// Obtener el objeto order.
+		$order = wc_get_order( $order_id );
 
 		if ( ! $order ) {
 			return;
@@ -268,16 +265,13 @@ class Palafito_Email_Attachments {
 	/**
 	 * Send custom email when order status changes to "Facturado".
 	 *
-	 * @param int      $order_id   Order ID.
-	 * @param string   $old_status Old status.
-	 * @param string   $new_status New status.
-	 * @param WC_Order $order      Order object.
+	 * @param int    $order_id   Order ID.
+	 * @param string $old_status Old status.
+	 * @param string $new_status New status.
 	 */
-	public function send_facturado_email( $order_id, $old_status, $new_status, $order ) {
-		// Verificar que el order existe y es válido.
-		if ( ! $order || ! is_a( $order, 'WC_Order' ) ) {
-			$order = wc_get_order( $order_id );
-		}
+	public function send_facturado_email( $order_id, $old_status, $new_status ) {
+		// Obtener el objeto order.
+		$order = wc_get_order( $order_id );
 
 		if ( ! $order ) {
 			return;
