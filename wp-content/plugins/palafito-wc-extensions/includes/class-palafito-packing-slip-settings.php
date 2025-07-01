@@ -23,6 +23,15 @@ class Palafito_Packing_Slip_Settings {
 	public function __construct() {
 		// Hook para sincronizar use_order_number y display_number al guardar opciones.
 		add_filter( 'pre_update_option_wpo_wcpdf_documents_settings_packing-slip', array( $this, 'sync_use_order_number_and_display_number' ), 10, 2 );
+		$this->init_hooks();
+	}
+
+	/**
+	 * Initialize hooks.
+	 */
+	private function init_hooks() {
+		// Add custom emails to PDF plugin email lists.
+		add_filter( 'wpo_wcpdf_wc_emails', array( $this, 'add_custom_emails_to_pdf_list' ) );
 	}
 
 	/**
@@ -45,6 +54,20 @@ class Palafito_Packing_Slip_Settings {
 			}
 		}
 		return $new_value;
+	}
+
+	/**
+	 * Add custom order status emails to the PDF plugin email list.
+	 *
+	 * @param array $emails Array of available emails.
+	 * @return array
+	 */
+	public function add_custom_emails_to_pdf_list( $emails ) {
+		// Add custom order status emails.
+		$emails['customer_entregado'] = __( 'Pedido entregado', 'palafito-wc-extensions' );
+		$emails['customer_facturado'] = __( 'Pedido facturado', 'palafito-wc-extensions' );
+
+		return $emails;
 	}
 }
 

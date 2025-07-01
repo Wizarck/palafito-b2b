@@ -259,7 +259,10 @@ final class Palafito_WC_Extensions {
 	private function init_components() {
 		// Initialize checkout customizations.
 		new Palafito_Checkout_Customizations();
-		// Nota: El plugin PRO maneja toda la funcionalidad de PDF automáticamente.
+		// Initialize PDF settings if PDF plugin is available.
+		if ( class_exists( 'WPO_WCPDF' ) ) {
+			new Palafito_Packing_Slip_Settings();
+		}
 	}
 
 	/**
