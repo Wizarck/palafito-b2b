@@ -24,15 +24,18 @@ class Palafito_Packing_Slip_Meta_Box {
 	 * Constructor.
 	 */
 	public function __construct() {
-		add_action( 'init', array( $this, 'init' ) );
+		$this->init();
 	}
 
 	/**
 	 * Initialize hooks.
 	 */
 	public function init() {
-		// Add packing slip to the meta box.
-		add_action( 'wpo_wcpdf_meta_box_end', array( $this, 'add_packing_slip_meta_box' ), 10, 2 );
+		// Enable packing slip if not already enabled.
+		add_action( 'init', array( $this, 'enable_packing_slip_if_needed' ) );
+
+		// Add packing slip to the existing PDF meta box.
+		add_action( 'wpo_wcpdf_meta_box_start', array( $this, 'add_packing_slip_to_meta_box' ), 10, 2 );
 
 		// Add delivery date column to orders list.
 		add_filter( 'manage_edit-shop_order_columns', array( $this, 'add_delivery_date_column' ) );
@@ -46,17 +49,36 @@ class Palafito_Packing_Slip_Meta_Box {
 		// Set delivery date when order is "entregado".
 		add_action( 'woocommerce_order_status_entregado', array( $this, 'set_delivery_date' ) );
 
-		// Add packing slip number and delivery date to template.
-		add_action( 'wpo_wcpdf_before_document_label', array( $this, 'add_packing_slip_fields_to_template' ), 10, 2 );
+		// Add packing slip fields to template.
+		add_action( 'wpo_wcpdf_after_document_label', array( $this, 'add_packing_slip_fields_to_template' ), 10, 2 );
 	}
 
 	/**
-	 * Add packing slip meta box to PDF document data.
+	 * Enable packing slip if not already enabled.
+	 */
+	public function enable_packing_slip_if_needed() {
+		// Only run once and only if PDF plugin is available.
+		if ( ! class_exists( 'WPO_WCPDF' ) ) {
+			return;
+		}
+
+		$option_name = 'wpo_wcpdf_documents_settings_packing-slip';
+		$settings    = get_option( $option_name, array() );
+
+		// Enable packing slip if not already enabled.
+		if ( empty( $settings['enabled'] ) ) {
+			$settings['enabled'] = 1;
+			update_option( $option_name, $settings );
+		}
+	}
+
+	/**
+	 * Add packing slip to the existing PDF meta box.
 	 *
 	 * @param WC_Order $order Order object.
 	 * @param object   $admin Admin object.
 	 */
-	public function add_packing_slip_meta_box( $order, $admin ) {
+	public function add_packing_slip_to_meta_box( $order, $admin ) {
 		$packing_slip = wcpdf_get_document( 'packing-slip', $order );
 		if ( ! $packing_slip ) {
 			return;
