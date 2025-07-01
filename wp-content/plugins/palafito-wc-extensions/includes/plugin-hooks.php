@@ -120,17 +120,39 @@ add_action(
 				}
 				// Forzar recarga y generación nativa tras borrar.
 				$packing_slip = wcpdf_get_document( 'packing-slip', $order, true );
-				// Refuerzo: siempre generar número y fecha como en factura.
+				// Obtener settings del albarán.
+				$settings = get_option( 'wpo_wcpdf_documents_settings_packing-slip', array() );
+				$use_order_number = ! empty( $settings['use_order_number'] );
+				if ( $use_order_number ) {
+					$base_number = $order->get_order_number();
+				} else {
+					// Lógica secuencial (por defecto del plugin)
+					$base_number = $packing_slip->get_number() ? $packing_slip->get_number() : $order->get_id();
+				}
+				// Formatear número según configuración.
+				$formatted_number = $base_number;
+				if ( ! empty( $settings['number_format'] ) && is_array( $settings['number_format'] ) ) {
+					$prefix  = ! empty( $settings['number_format']['prefix'] ) ? $settings['number_format']['prefix'] : '';
+					$suffix  = ! empty( $settings['number_format']['suffix'] ) ? $settings['number_format']['suffix'] : '';
+					$padding = ! empty( $settings['number_format']['padding'] ) ? (int) $settings['number_format']['padding'] : 0;
+					if ( $padding > 0 ) {
+						$formatted_number = str_pad( $base_number, $padding, '0', STR_PAD_LEFT );
+					}
+					$formatted_number = $prefix . $formatted_number . $suffix;
+				}
+				$number_data = array(
+					'number'           => $base_number,
+					'formatted_number' => $formatted_number,
+				);
+				$packing_slip->set_number( $number_data );
 				$packing_slip->initiate_date();
-				$packing_slip->initiate_number();
 				$packing_slip->save();
-				$order->add_order_note( __( 'Número y fecha de albarán generados automáticamente al cambiar a Entregado.', 'palafito-wc-extensions' ) );
+				$order->add_order_note( sprintf( __( 'Número y fecha de albarán generados automáticamente al cambiar a Entregado. Número: %s', 'palafito-wc-extensions' ), $formatted_number ) );
 				$order->save();
 				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 					error_log( '[PALAFITO] Hook entregado ejecutado para pedido ' . $order->get_id() );
-					error_log( '[PALAFITO] Packing slip adjunto (tipo número): ' . gettype( $packing_slip->get_number() ) );
-					error_log( '[PALAFITO] Packing slip adjunto (valor número): ' . print_r( $packing_slip->get_number(), true ) );
-					error_log( '[PALAFITO] Packing slip adjunto (fecha): ' . print_r( $packing_slip->get_date(), true ) );
+					error_log( '[PALAFITO] Packing slip número: ' . print_r( $number_data, true ) );
+					error_log( '[PALAFITO] Packing slip fecha: ' . print_r( $packing_slip->get_date(), true ) );
 				}
 				// Obtener la ruta del PDF de forma compatible.
 				$path = null;
@@ -174,16 +196,34 @@ add_filter(
 				}
 				// Forzar recarga de datos y generación.
 				$packing_slip = wcpdf_get_document( 'packing-slip', $order, true );
-				// Refuerzo: siempre generar número y fecha como en factura.
+				$settings = get_option( 'wpo_wcpdf_documents_settings_packing-slip', array() );
+				$use_order_number = ! empty( $settings['use_order_number'] );
+				if ( $use_order_number ) {
+					$base_number = $order->get_order_number();
+				} else {
+					$base_number = $packing_slip->get_number() ? $packing_slip->get_number() : $order->get_id();
+				}
+				$formatted_number = $base_number;
+				if ( ! empty( $settings['number_format'] ) && is_array( $settings['number_format'] ) ) {
+					$prefix  = ! empty( $settings['number_format']['prefix'] ) ? $settings['number_format']['prefix'] : '';
+					$suffix  = ! empty( $settings['number_format']['suffix'] ) ? $settings['number_format']['suffix'] : '';
+					$padding = ! empty( $settings['number_format']['padding'] ) ? (int) $settings['number_format']['padding'] : 0;
+					if ( $padding > 0 ) {
+						$formatted_number = str_pad( $base_number, $padding, '0', STR_PAD_LEFT );
+					}
+					$formatted_number = $prefix . $formatted_number . $suffix;
+				}
+				$number_data = array(
+					'number'           => $base_number,
+					'formatted_number' => $formatted_number,
+				);
+				$packing_slip->set_number( $number_data );
 				$packing_slip->initiate_date();
-				$packing_slip->initiate_number();
 				$packing_slip->save();
 				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-					error_log( '[PALAFITO] Packing slip adjunto (tipo número): ' . gettype( $packing_slip->get_number() ) );
-					error_log( '[PALAFITO] Packing slip adjunto (valor número): ' . print_r( $packing_slip->get_number(), true ) );
-					error_log( '[PALAFITO] Packing slip adjunto (fecha): ' . print_r( $packing_slip->get_date(), true ) );
+					error_log( '[PALAFITO] Packing slip número: ' . print_r( $number_data, true ) );
+					error_log( '[PALAFITO] Packing slip fecha: ' . print_r( $packing_slip->get_date(), true ) );
 				}
-				// Obtener la ruta del PDF de forma compatible.
 				$path = null;
 				if ( method_exists( $packing_slip, 'get_pdf_path' ) ) {
 					$path = $packing_slip->get_pdf_path();
