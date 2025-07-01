@@ -118,17 +118,25 @@ add_action(
 						error_log( '[PALAFITO] Packing slip previo borrado para pedido ' . $order->get_id() );
 					}
 				}
-				// Forzar recarga de datos y generación.
+				// Forzar recarga y generación nativa tras borrar.
 				$packing_slip = wcpdf_get_document( 'packing-slip', $order, true );
-				$packing_slip->initiate_date();
-				$packing_slip->initiate_number();
 				$packing_slip->save();
 				$order->add_order_note( __( 'Número y fecha de albarán generados automáticamente al cambiar a Entregado.', 'palafito-wc-extensions' ) );
 				$order->save();
 				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 					error_log( '[PALAFITO] Hook entregado ejecutado para pedido ' . $order->get_id() );
-					error_log( '[PALAFITO] Packing slip number: ' . print_r( $packing_slip->get_number(), true ) );
-					error_log( '[PALAFITO] Packing slip date: ' . print_r( $packing_slip->get_date(), true ) );
+					error_log( '[PALAFITO] Packing slip adjunto (tipo número): ' . gettype( $packing_slip->get_number() ) );
+					error_log( '[PALAFITO] Packing slip adjunto (valor número): ' . print_r( $packing_slip->get_number(), true ) );
+					error_log( '[PALAFITO] Packing slip adjunto (fecha): ' . print_r( $packing_slip->get_date(), true ) );
+				}
+				$path = $packing_slip->get_pdf_path();
+				if ( $path && file_exists( $path ) ) {
+					$attachments[] = $path;
+					if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+						error_log( '[PALAFITO] Packing slip adjuntado al email para pedido ' . $order->get_id() . ': ' . $path );
+					}
+				} elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					error_log( '[PALAFITO] Packing slip NO adjuntado (no existe archivo) para pedido ' . $order->get_id() );
 				}
 			}
 		}
