@@ -597,3 +597,25 @@ Siempre que se realicen cambios en archivos PHP del proyecto, es obligatorio cum
 - Usar elseif en vez de else con un solo if dentro.
 
 Esto es imprescindible para evitar errores en los checks automáticos y mantener la calidad y coherencia del código.
+
+# Flujo robusto de generación y edición de número/fecha de albarán (packing slip)
+
+- **Generación automática:**
+  - Al cambiar un pedido a estado **"Entregado"**, se genera y guarda SIEMPRE el número y la fecha de albarán usando el formato/secuencia definido en el plugin (igual que la factura).
+  - Estos valores sobrescriben cualquier valor anterior, ya sea automático o editado manualmente.
+  - Se añade una **nota de pedido** indicando que el cambio fue automático por cambio de estado.
+
+- **Edición manual:**
+  - El metabox en la edición de pedido permite editar manualmente el número y la fecha de albarán, o dejarlos vacíos si se desea.
+  - El PDF y el adjunto del albarán siempre reflejan los valores actuales de los metadatos del pedido (ya sean automáticos o manuales).
+  - Si el pedido vuelve a pasar a "Entregado", los valores se regeneran automáticamente y se añade una nueva nota de trazabilidad.
+
+- **Trazabilidad:**
+  - Cada vez que se genera o edita el número/fecha (automática o manualmente), se deja una nota en el pedido especificando si el cambio fue automático (por estado) o manual (por edición en el metabox).
+
+- **Cumplimiento PHPCS:**
+  - Todo el código cumple los estándares de PHPCS y el flujo ha sido probado.
+
+- **Notas:**
+  - El número y la fecha de albarán son los únicos campos personalizados que siguen esta lógica.
+  - El adjunto del PDF de albarán en emails y la visualización en Mi Cuenta dependen siempre de los valores actuales de los metadatos.
