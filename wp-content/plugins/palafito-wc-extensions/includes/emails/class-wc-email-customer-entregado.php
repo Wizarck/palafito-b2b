@@ -46,18 +46,36 @@ class WC_Email_Customer_Entregado extends WC_Email {
 	 * @param WC_Order $order    Order object.
 	 */
 	public function trigger( $order_id, $order = false ) {
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			error_log( "Palafito WC Extensions: WC_Email_Customer_Entregado trigger called for order {$order_id}" );
+		}
+
 		if ( $order_id && ! is_a( $order, 'WC_Order' ) ) {
 			$order = wc_get_order( $order_id );
 		}
 		if ( ! $order ) {
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( "Palafito WC Extensions: WC_Email_Customer_Entregado - No valid order found for order_id {$order_id}" );
+			}
 			return;
 		}
 
 		$this->object    = $order;
 		$this->recipient = $this->get_recipient_from_order( $order );
 
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			error_log( 'Palafito WC Extensions: WC_Email_Customer_Entregado - Email enabled: ' . ( $this->is_enabled() ? 'yes' : 'no' ) . ', Recipient: ' . $this->get_recipient() );
+		}
+
 		if ( ! $this->is_enabled() || ! $this->get_recipient() ) {
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( 'Palafito WC Extensions: WC_Email_Customer_Entregado - Email not sent (disabled or no recipient)' );
+			}
 			return;
+		}
+
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			error_log( 'Palafito WC Extensions: WC_Email_Customer_Entregado - Sending email to ' . $this->get_recipient() );
 		}
 
 		$this->send( $this->get_recipient(), $this->get_subject(), $this->get_content(), $this->get_headers(), $this->get_attachments() );

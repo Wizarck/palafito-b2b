@@ -104,11 +104,17 @@ function palafito_wc_extensions_trigger_custom_status_actions( $order_id, $old_s
 
 	// Disparar acción para estado "Entregado".
 	if ( 'entregado' === $new_status ) {
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			error_log( "Palafito WC Extensions: Triggering 'woocommerce_order_status_entregado' action for order {$order_id}" );
+		}
 		do_action( 'woocommerce_order_status_entregado', $order_id, $order );
 	}
 
 	// Disparar acción para estado "Facturado".
 	if ( 'facturado' === $new_status ) {
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			error_log( "Palafito WC Extensions: Triggering 'woocommerce_order_status_facturado' action for order {$order_id}" );
+		}
 		do_action( 'woocommerce_order_status_facturado', $order_id, $order );
 	}
 }
