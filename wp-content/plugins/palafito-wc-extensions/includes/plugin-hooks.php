@@ -44,10 +44,8 @@ function palafito_wc_extensions_deactivate() {
 register_activation_hook( PALAFITO_WC_EXTENSIONS_PLUGIN_FILE, 'palafito_wc_extensions_activate' );
 register_deactivation_hook( PALAFITO_WC_EXTENSIONS_PLUGIN_FILE, 'palafito_wc_extensions_deactivate' );
 
-// Cargar configuración de PDF si el plugin está disponible.
-if ( class_exists( 'WPO_WCPDF' ) ) {
-	require_once PALAFITO_WC_EXTENSIONS_PLUGIN_DIR . 'includes/class-palafito-pdf-configuration.php';
-}
+// Cargar archivos de funcionalidad específica.
+// Eliminado: class-palafito-pdf-configuration.php - funcionalidad manejada por el plugin PRO.
 
 // Hooks para cambio de estado de pedidos y envío automático de emails.
 add_action( 'woocommerce_order_status_changed', 'palafito_wc_extensions_handle_order_status_change', 10, 3 );
