@@ -22,12 +22,8 @@ class Palafito_Admin_PDF_Actions {
 		// Agregar acciones personalizadas de cambio de estado.
 		add_filter( 'woocommerce_admin_order_actions', array( $this, 'add_custom_status_actions' ), 30, 2 );
 
-		// Modificar la lógica de WooCommerce para incluir nuestros estados personalizados.
-		add_filter( 'woocommerce_valid_order_statuses_for_payment_complete', array( $this, 'add_custom_statuses_to_payment_complete' ) );
-		add_filter( 'woocommerce_order_is_paid_statuses', array( $this, 'add_custom_statuses_to_paid_statuses' ) );
-
-		// Modificar las acciones después de que WooCommerce las genere.
-		add_filter( 'woocommerce_admin_order_actions', array( $this, 'modify_complete_button_visibility' ), 40, 2 );
+		// Modificar la lógica del botón Complete para que aparezca solo en estados específicos.
+		add_filter( 'woocommerce_admin_order_actions', array( $this, 'modify_complete_button_visibility' ), 20, 2 );
 	}
 
 	/**
@@ -46,15 +42,16 @@ class Palafito_Admin_PDF_Actions {
 			$actions['palafito_mark_entregado'] = array(
 				'url'    => wp_nonce_url( admin_url( 'admin-ajax.php?action=woocommerce_mark_order_status&status=entregado&order_id=' . $order_id ), 'woocommerce-mark-order-status' ),
 				'name'   => __( 'Entregado', 'palafito-wc-extensions' ),
-				'action' => 'palafito-mark-entregado',
+				'action' => 'palafito_mark_entregado',
 			);
 		}
+
 		// Botón para cambiar a Facturado si está en entregado.
 		if ( 'entregado' === $order_status ) {
 			$actions['palafito_mark_facturado'] = array(
 				'url'    => wp_nonce_url( admin_url( 'admin-ajax.php?action=woocommerce_mark_order_status&status=facturado&order_id=' . $order_id ), 'woocommerce-mark-order-status' ),
 				'name'   => __( 'Facturado', 'palafito-wc-extensions' ),
-				'action' => 'palafito-mark-facturado',
+				'action' => 'palafito_mark_facturado',
 			);
 		}
 
@@ -62,29 +59,7 @@ class Palafito_Admin_PDF_Actions {
 	}
 
 	/**
-	 * Agrega nuestros estados personalizados a la lista de estados para completar el pago.
-	 *
-	 * @param array $statuses Lista de estados para completar el pago.
-	 * @return array
-	 */
-	public function add_custom_statuses_to_payment_complete( $statuses ) {
-		$statuses[] = 'entregado';
-		return $statuses;
-	}
-
-	/**
-	 * Agrega nuestros estados personalizados a la lista de estados pagados.
-	 *
-	 * @param array $statuses Lista de estados pagados.
-	 * @return array
-	 */
-	public function add_custom_statuses_to_paid_statuses( $statuses ) {
-		$statuses[] = 'entregado';
-		return $statuses;
-	}
-
-	/**
-	 * Modifica la visibilidad del botón Complete después de que WooCommerce las genere.
+	 * Modifica la visibilidad del botón Complete para que aparezca solo en estados específicos.
 	 *
 	 * @param array    $actions Acciones disponibles.
 	 * @param WC_Order $order Objeto del pedido.
@@ -92,11 +67,20 @@ class Palafito_Admin_PDF_Actions {
 	 */
 	public function modify_complete_button_visibility( $actions, $order ) {
 		$order_status = $order->get_status();
-		$order_id     = $order->get_id();
 
-		// Si el pedido está en estado de procesamiento, ocultar el botón Complete.
-		if ( 'processing' === $order_status ) {
+		// Ocultar el botón Complete si está en processing (ya que tenemos nuestro botón Entregado).
+		if ( 'processing' === $order_status && isset( $actions['complete'] ) ) {
 			unset( $actions['complete'] );
+		}
+
+		// Mostrar el botón Complete si está en facturado (para completar el pedido).
+		if ( 'facturado' === $order_status && ! isset( $actions['complete'] ) ) {
+			$order_id            = $order->get_id();
+			$actions['complete'] = array(
+				'url'    => wp_nonce_url( admin_url( 'admin-ajax.php?action=woocommerce_mark_order_status&status=completed&order_id=' . $order_id ), 'woocommerce-mark-order-status' ),
+				'name'   => __( 'Complete', 'woocommerce' ),
+				'action' => 'complete',
+			);
 		}
 
 		return $actions;
