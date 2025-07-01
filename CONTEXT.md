@@ -16,7 +16,7 @@ Siempre que se realice un push, primero se debe actualizar la documentación rel
 
 ## 📅 Última Actualización
 **Fecha**: 19 de Diciembre, 2024  
-**Sesión**: Implementación completa de funcionalidades Pro en plugin PDF gratuito
+**Sesión**: Refactor completo de albarán para usar estructura PRO nativa
 
 ## 🚨 PROTOCOLO DE DESPEDIDA - OBLIGATORIO
 
@@ -88,6 +88,10 @@ Palafito-b2b/
 - **Configuración de Emails**: Lista dinámica de emails de WooCommerce para adjuntar documentos
 - **Botones de Descarga**: Acceso directo a PDFs desde lista de pedidos según estado
 - **Eliminación de Avisos Pro**: Plugin gratuito funciona sin restricciones ni mensajes de upgrade
+- **Meta Box de Albarán PRO**: Refactor completo para usar estructura nativa de la PRO con meta keys estándar
+- **Columna Fecha de Entrega**: Ordenable usando meta keys PRO (`_wcpdf_packing-slip_date`)
+- **Generación Automática PRO**: Número y fecha de albarán usando métodos nativos de la PRO
+- **UI Consistente**: Meta box de albarán idéntico al de factura (editable, con notas, trigger, etc.)
 
 ### 🔄 En Progreso
 - **Optimización de Performance**: Resolución de problemas de diseño (fuentes, botones)
@@ -167,6 +171,29 @@ Palafito-b2b/
 - **Archivos afectados**: `posts`, `postmeta`, `options`
 - **Estado**: ✅ Resuelto
 
+### 9. Refactor de Albarán para Estructura PRO
+- **Problema**: Código custom de albarán no era consistente con la PRO
+- **Síntomas**: 
+  - Meta keys custom (`_albaran_number`, `_albaran_delivery_date`)
+  - UI diferente entre factura y albarán
+  - Lógica duplicada en lugar de reutilizar PRO
+- **Causa**: Implementación inicial desde cero en lugar de extender la PRO
+- **Solución**: Refactor completo para usar estructura nativa de la PRO
+- **Cambios Realizados**:
+  - ✅ Eliminadas clases custom: `Palafito_Albaran_Fields`, `Palafito_Albaran_Template`
+  - ✅ Creada nueva clase: `Palafito_Packing_Slip_Meta_Box` que extiende la PRO
+  - ✅ Meta keys nativos: `_wcpdf_packing-slip_number`, `_wcpdf_packing-slip_date`, etc.
+  - ✅ UI idéntica: Meta box de albarán igual al de factura (editable, notas, trigger)
+  - ✅ Generación automática: Usando métodos PRO (`set_number()`, `set_date()`)
+  - ✅ Columna ordenable: Fecha de entrega usando meta key PRO
+  - ✅ Template integration: Campos en PDF usando métodos PRO
+- **Beneficios**:
+  - Compatibilidad total con extensiones PRO
+  - UI consistente para el usuario
+  - Meta keys estándar para exportaciones/importaciones
+  - Código más limpio y mantenible
+- **Estado**: ✅ Resuelto
+
 ---
 
 ## 🔧 Configuraciones Importantes
@@ -175,8 +202,15 @@ Palafito-b2b/
 - **Ubicación**: `wp-content/plugins/palafito-wc-extensions/`
 - **Inicialización**: Hook `init` (evita problemas de carga temprana)
 - **Dependencias**: Requiere WooCommerce activo
-- **Funcionalidades**: Customizaciones de checkout
+- **Funcionalidades**: Customizaciones de checkout, estados personalizados, PDF PRO
 - **Estructura**: Clase principal + clases específicas
+- **Clases Principales**:
+  - `Palafito_WC_Extensions` - Clase principal
+  - `Palafito_Checkout_Customizations` - Personalizaciones de checkout
+  - `Palafito_Email_Attachments` - Adjuntos automáticos de PDF
+  - `Palafito_Packing_Slip_Settings` - Configuración de packing slip
+  - `Palafito_Admin_PDF_Actions` - Botones de descarga en admin
+  - `Palafito_Packing_Slip_Meta_Box` - Meta box PRO para albarán
 
 ### Child Theme `palafito-child`
 - **Tema Padre**: Kadence
@@ -198,6 +232,11 @@ Palafito-b2b/
 - **Funcionalidades Pro Replicadas**:
   - ✅ **Adjuntos a Emails**: Configuración dinámica para todos los emails de WooCommerce
   - ✅ **Numeración de Packing Slip**: Sistema completo con prefix, suffix, padding
+  - ✅ **Meta Box PRO**: Albarán editable con misma estructura que factura
+  - ✅ **Meta Keys Nativos**: `_wcpdf_packing-slip_number`, `_wcpdf_packing-slip_date`, etc.
+  - ✅ **Generación Automática**: Número al pasar a "processing", fecha al pasar a "entregado"
+  - ✅ **Columna Ordenable**: Fecha de entrega en lista de pedidos
+  - ✅ **Template Integration**: Campos de albarán en PDF usando métodos PRO
   - ✅ **Reset Yearly**: Reinicio anual de numeración
   - ✅ **Display Date**: Mostrar fecha del packing slip
   - ✅ **Disable for Statuses**: Deshabilitar en estados específicos

@@ -85,9 +85,15 @@
 - [x] **Numeración de Packing Slip**: Sistema completo con prefix, suffix, padding
 - [x] **Botones de Descarga**: Acceso directo a PDFs desde lista de pedidos
 - [x] **Eliminación de Avisos Pro**: Plugin gratuito sin restricciones
+- [x] **Refactor Albarán PRO**: Meta box editable con estructura nativa de la PRO
+- [x] **Meta Keys Estándar**: Uso de `_wcpdf_packing-slip_*` en lugar de custom
+- [x] **UI Consistente**: Meta box de albarán idéntico al de factura
+- [x] **Generación Automática PRO**: Número y fecha usando métodos nativos
+- [x] **Columna Fecha Ordenable**: Usando meta keys PRO
+- [x] **Template Integration PRO**: Campos en PDF usando métodos nativos
 
 ## 🔄 En Progreso
 - [ ] Próxima funcionalidad a implementar
 
 ---
-*Última actualización: 19 de Diciembre, 2024* 
+*Última actualización: 19 de Diciembre, 2024 - Refactor completo de albarán para estructura PRO* 
