@@ -147,6 +147,7 @@ add_action(
 				$packing_slip->set_number( $number_data );
 				$packing_slip->initiate_date();
 				$packing_slip->save();
+				// translators: %s: formatted number.
 				$order->add_order_note( sprintf( __( 'Número y fecha de albarán generados automáticamente al cambiar a Entregado. Número: %s', 'palafito-wc-extensions' ), $formatted_number ) );
 				$order->save();
 				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
