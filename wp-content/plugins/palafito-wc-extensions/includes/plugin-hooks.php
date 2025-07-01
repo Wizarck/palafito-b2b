@@ -48,17 +48,16 @@ if ( class_exists( 'WPO_WCPDF' ) ) {
 }
 
 // Hooks para cambio de estado de pedidos y envío automático de emails.
-add_action( 'woocommerce_order_status_changed', 'palafito_wc_extensions_handle_order_status_change', 10, 4 );
+add_action( 'woocommerce_order_status_changed', 'palafito_wc_extensions_handle_order_status_change', 10, 3 );
 
 /**
  * Manejar cambios de estado de pedidos y enviar emails automáticos.
  *
- * @param int      $order_id   Order ID.
- * @param string   $old_status Old status.
- * @param string   $new_status New status.
- * @param WC_Order $order      Order object.
+ * @param int    $order_id   Order ID.
+ * @param string $old_status Old status.
+ * @param string $new_status New status.
  */
-function palafito_wc_extensions_handle_order_status_change( $order_id, $old_status, $new_status, $order ) {
+function palafito_wc_extensions_handle_order_status_change( $order_id, $old_status, $new_status ) {
 	// Solo procesar si el plugin de PDF está disponible.
 	if ( ! class_exists( 'WPO_WCPDF' ) ) {
 		return;
@@ -73,8 +72,8 @@ function palafito_wc_extensions_handle_order_status_change( $order_id, $old_stat
 
 	// Enviar email automático cuando el estado cambie a "Entregado".
 	if ( 'entregado' === $new_status ) {
-		// Trigger custom email action.
-		do_action( 'woocommerce_order_status_entregado', $order_id, $order );
+		// Trigger custom email action with correct arguments.
+		do_action( 'woocommerce_order_status_entregado', $order_id, $old_status, $new_status );
 
 		// Log the action for debugging.
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
@@ -84,8 +83,8 @@ function palafito_wc_extensions_handle_order_status_change( $order_id, $old_stat
 
 	// Enviar email automático cuando el estado cambie a "Facturado".
 	if ( 'facturado' === $new_status ) {
-		// Trigger custom email action.
-		do_action( 'woocommerce_order_status_facturado', $order_id, $order );
+		// Trigger custom email action with correct arguments.
+		do_action( 'woocommerce_order_status_facturado', $order_id, $old_status, $new_status );
 
 		// Log the action for debugging.
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
