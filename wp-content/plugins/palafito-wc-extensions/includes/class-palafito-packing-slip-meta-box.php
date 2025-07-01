@@ -51,6 +51,7 @@ class Palafito_Packing_Slip_Meta_Box {
 
 		// Desactivado temporalmente para debug:
 		// add_action( 'wpo_wcpdf_after_document_label', array( $this, 'add_packing_slip_fields_to_template' ), 10, 2 ); // Hook desactivado temporalmente para debug.
+		add_action( 'wpo_wcpdf_after_document_label', array( $this, 'add_packing_slip_fields_to_template' ), 10, 2 );
 	}
 
 	/**
