@@ -65,6 +65,13 @@ final class Palafito_WC_Extensions {
 		// Permitir transiciones de estado personalizadas.
 		add_filter( 'woocommerce_order_status_changed', array( __CLASS__, 'handle_custom_order_status_change' ), 10, 4 );
 
+		// Disparar emails personalizados cuando cambien los estados.
+		add_action( 'woocommerce_order_status_entregado', array( __CLASS__, 'trigger_entregado_email' ), 10, 2 );
+		add_action( 'woocommerce_order_status_facturado', array( __CLASS__, 'trigger_facturado_email' ), 10, 2 );
+
+		// Registrar emails personalizados.
+		add_filter( 'woocommerce_email_classes', array( __CLASS__, 'add_custom_email_classes' ) );
+
 		// Cargar estilos personalizados para colores de estados.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
 	}
@@ -276,6 +283,60 @@ final class Palafito_WC_Extensions {
 
 		// Los emails se envían automáticamente por los hooks de WooCommerce.
 		// No necesitamos disparar manualmente las acciones aquí.
+	}
+
+	/**
+	 * Añadir clases de email personalizadas a WooCommerce.
+	 *
+	 * @param array $email_classes Array de clases de email.
+	 * @return array
+	 */
+	public static function add_custom_email_classes( $email_classes ) {
+		// Añadir email de "Entregado".
+		if ( ! isset( $email_classes['WC_Email_Customer_Entregado'] ) ) {
+			$email_classes['WC_Email_Customer_Entregado'] = include plugin_dir_path( __FILE__ ) . 'includes/emails/class-wc-email-customer-entregado.php';
+		}
+
+		// Añadir email de "Facturado".
+		if ( ! isset( $email_classes['WC_Email_Customer_Facturado'] ) ) {
+			$email_classes['WC_Email_Customer_Facturado'] = include plugin_dir_path( __FILE__ ) . 'includes/emails/class-wc-email-customer-facturado.php';
+		}
+
+		return $email_classes;
+	}
+
+	/**
+	 * Disparar email de "Entregado".
+	 *
+	 * @param int      $order_id Order ID.
+	 * @param WC_Order $order Order object.
+	 */
+	public static function trigger_entregado_email( $order_id, $order ) {
+		if ( ! $order ) {
+			$order = wc_get_order( $order_id );
+		}
+
+		if ( $order ) {
+			// Disparar el email personalizado.
+			do_action( 'woocommerce_order_status_entregado_notification', $order_id, $order );
+		}
+	}
+
+	/**
+	 * Disparar email de "Facturado".
+	 *
+	 * @param int      $order_id Order ID.
+	 * @param WC_Order $order Order object.
+	 */
+	public static function trigger_facturado_email( $order_id, $order ) {
+		if ( ! $order ) {
+			$order = wc_get_order( $order_id );
+		}
+
+		if ( $order ) {
+			// Disparar el email personalizado.
+			do_action( 'woocommerce_order_status_facturado_notification', $order_id, $order );
+		}
 	}
 
 	/**
