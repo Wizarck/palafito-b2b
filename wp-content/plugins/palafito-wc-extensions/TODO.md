@@ -1,0 +1,2 @@
+- [ ] Implementar entorno de pruebas automatizadas con WP-CLI para simular cambios de estado de pedido y validar generación/adjunto de PDFs (albarán y factura).
+- [ ] Documentar ejemplos de uso de WP-CLI para QA manual y CI. 
