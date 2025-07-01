@@ -21,6 +21,17 @@ class Palafito_Checkout_Customizations {
 		add_filter( 'woocommerce_checkout_fields', array( $this, 'customize_checkout_fields' ) );
 		add_action( 'woocommerce_checkout_update_order_meta', array( $this, 'save_custom_fields' ) );
 		add_action( 'woocommerce_thankyou', array( $this, 'auto_update_order_status' ), 10, 1 );
+		add_filter( 'woocommerce_my_account_my_orders_actions', function( $actions, $order ) {
+			// Elimina la acción de cancelar
+			if ( isset( $actions['cancel'] ) ) {
+				unset( $actions['cancel'] );
+			}
+			// Elimina la acción de pagar
+			if ( isset( $actions['pay'] ) ) {
+				unset( $actions['pay'] );
+			}
+			return $actions;
+		}, 10, 2 );
 	}
 
 	/**
