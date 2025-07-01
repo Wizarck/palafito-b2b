@@ -49,8 +49,8 @@ class Palafito_Packing_Slip_Meta_Box {
 		// Set delivery date when order is "entregado".
 		add_action( 'woocommerce_order_status_entregado', array( $this, 'set_delivery_date' ) );
 
-		// Add packing slip fields to template.
-		add_action( 'wpo_wcpdf_after_document_label', array( $this, 'add_packing_slip_fields_to_template' ), 10, 2 );
+		// Desactivado temporalmente para debug:
+		// add_action( 'wpo_wcpdf_after_document_label', array( $this, 'add_packing_slip_fields_to_template' ), 10, 2 );
 	}
 
 	/**
