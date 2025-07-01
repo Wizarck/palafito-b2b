@@ -111,9 +111,9 @@ add_action(
 		if ( function_exists( 'wcpdf_get_document' ) ) {
 			$packing_slip = wcpdf_get_document( 'packing-slip', $order, true );
 			if ( $packing_slip && $packing_slip->is_allowed() ) {
-				// Forzar generación y guardado del número y fecha si no existen
+				// Forzar generación y guardado del número y fecha si no existen.
 				if ( ! $packing_slip->exists() || empty( $packing_slip->get_number() ) ) {
-					$packing_slip->set_number(); // PRO: genera y guarda el número
+					$packing_slip->set_number(); // PRO: genera y guarda el número.
 				}
 				if ( empty( $packing_slip->get_date() ) ) {
 					$packing_slip->set_date( current_time( 'timestamp' ) );
