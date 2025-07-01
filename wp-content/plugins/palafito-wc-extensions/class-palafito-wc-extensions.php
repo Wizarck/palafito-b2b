@@ -43,6 +43,19 @@ final class Palafito_WC_Extensions {
 		// Registrar post status personalizados en el hook init.
 		add_action( 'init', array( __CLASS__, 'register_custom_post_statuses' ), 1 );
 
+		// Permitir que los estados personalizados sean válidos para el cambio rápido desde AJAX.
+		add_filter( 'woocommerce_valid_order_statuses_for_payment', array( __CLASS__, 'add_custom_statuses_to_valid_list' ) );
+		add_filter( 'woocommerce_valid_order_statuses_for_cancel', array( __CLASS__, 'add_custom_statuses_to_valid_list' ) );
+		add_filter( 'woocommerce_valid_order_statuses_for_payment_complete', array( __CLASS__, 'add_custom_statuses_to_valid_list' ) );
+		add_filter( 'woocommerce_valid_order_statuses_for_refund', array( __CLASS__, 'add_custom_statuses_to_valid_list' ) );
+		add_filter( 'woocommerce_valid_order_statuses_for_edit', array( __CLASS__, 'add_custom_statuses_to_valid_list' ) );
+
+		// Permitir que los estados personalizados sean válidos para el cambio rápido desde el menú de pedidos.
+		add_filter( 'woocommerce_order_statuses', array( __CLASS__, 'add_custom_statuses_to_order_statuses' ) );
+
+		// Permitir transiciones de estado personalizadas.
+		add_filter( 'woocommerce_order_status_changed', array( __CLASS__, 'handle_custom_order_status_change' ), 10, 4 );
+
 		// Cargar estilos personalizados para colores de estados.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
 	}
@@ -184,6 +197,51 @@ final class Palafito_WC_Extensions {
 			$redirect_to = add_query_arg( 'bulk_facturado', $processed_count, $redirect_to );
 		}
 		return $redirect_to;
+	}
+
+	/**
+	 * Agregar estados personalizados a las listas de estados válidos de WooCommerce.
+	 *
+	 * @param array $statuses Lista de estados válidos.
+	 * @return array
+	 */
+	public static function add_custom_statuses_to_valid_list( $statuses ) {
+		$custom_statuses = array( 'entregado', 'facturado' );
+		return array_merge( $statuses, $custom_statuses );
+	}
+
+	/**
+	 * Agregar estados personalizados a la lista de estados de pedido de WooCommerce.
+	 *
+	 * @param array $order_statuses Lista de estados de pedido.
+	 * @return array
+	 */
+	public static function add_custom_statuses_to_order_statuses( $order_statuses ) {
+		$order_statuses['entregado'] = _x( 'Entregado', 'Order status', 'palafito-wc-extensions' );
+		$order_statuses['facturado'] = _x( 'Facturado', 'Order status', 'palafito-wc-extensions' );
+		return $order_statuses;
+	}
+
+	/**
+	 * Manejar cambios de estado personalizados.
+	 *
+	 * @param int      $order_id Order ID.
+	 * @param string   $old_status Old status.
+	 * @param string   $new_status New status.
+	 * @param WC_Order $order Order object.
+	 */
+	public static function handle_custom_order_status_change( $order_id, $old_status, $new_status, $order ) {
+		// Log status change for debugging.
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			error_log( "Palafito WC Extensions: Order {$order_id} status changed from {$old_status} to {$new_status}" );
+		}
+
+		// Trigger custom actions for our custom statuses.
+		if ( 'entregado' === $new_status ) {
+			do_action( 'woocommerce_order_status_entregado', $order_id, $old_status, $new_status, $order );
+		} elseif ( 'facturado' === $new_status ) {
+			do_action( 'woocommerce_order_status_facturado', $order_id, $old_status, $new_status, $order );
+		}
 	}
 
 	/**
