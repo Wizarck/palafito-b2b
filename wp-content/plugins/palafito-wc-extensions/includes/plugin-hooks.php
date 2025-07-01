@@ -130,62 +130,9 @@ add_filter(
 			return $attachments;
 		}
 		if ( function_exists( 'wcpdf_get_document' ) ) {
-			$packing_slip = wcpdf_get_document( 'packing-slip', $order, true );
-			if ( $packing_slip && $packing_slip->is_allowed() ) {
-				// Borrar packing slip previo para evitar caché interna.
-				if ( $packing_slip->exists() ) {
-					$packing_slip->delete();
-					if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-						error_log( '[PALAFITO] Packing slip previo borrado antes de adjuntar para pedido ' . $order->get_id() );
-					}
-				}
-				// Forzar recarga de datos y generación.
-				$packing_slip     = wcpdf_get_document( 'packing-slip', $order, true );
-				$settings         = get_option( 'wpo_wcpdf_documents_settings_packing-slip', array() );
-				$use_order_number = ! empty( $settings['use_order_number'] );
-				if ( $use_order_number ) {
-					$base_number = $order->get_order_number();
-				} else {
-					$base_number = $packing_slip->get_number() ? $packing_slip->get_number() : $order->get_id();
-				}
-				$formatted_number = $base_number;
-				if ( ! empty( $settings['number_format'] ) && is_array( $settings['number_format'] ) ) {
-					$prefix  = ! empty( $settings['number_format']['prefix'] ) ? $settings['number_format']['prefix'] : '';
-					$suffix  = ! empty( $settings['number_format']['suffix'] ) ? $settings['number_format']['suffix'] : '';
-					$padding = ! empty( $settings['number_format']['padding'] ) ? (int) $settings['number_format']['padding'] : 0;
-					if ( $padding > 0 ) {
-						$formatted_number = str_pad( $base_number, $padding, '0', STR_PAD_LEFT );
-					}
-					$formatted_number = $prefix . $formatted_number . $suffix;
-				}
-				$number_data = array(
-					'number'           => $base_number,
-					'formatted_number' => $formatted_number,
-				);
-				$packing_slip->set_number( $number_data );
-				$packing_slip->initiate_date();
-				$packing_slip->save();
-				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-					error_log( '[PALAFITO] Packing slip número: ' . print_r( $number_data, true ) );
-					error_log( '[PALAFITO] Packing slip fecha: ' . print_r( $packing_slip->get_date(), true ) );
-				}
-				$path = null;
-				if ( method_exists( $packing_slip, 'get_pdf_path' ) ) {
-					$path = $packing_slip->get_pdf_path();
-				} elseif ( method_exists( $packing_slip, 'get_pdf' ) ) {
-					$path = $packing_slip->get_pdf( 'path' );
-				}
-				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-					error_log( '[PALAFITO] Packing slip PDF path: ' . print_r( $path, true ) );
-				}
-				if ( $path && file_exists( $path ) ) {
-					$attachments[] = $path;
-					if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-						error_log( '[PALAFITO] Packing slip adjuntado al email para pedido ' . $order->get_id() . ': ' . $path );
-					}
-				} elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-					error_log( '[PALAFITO] Packing slip NO adjuntado (no existe archivo) para pedido ' . $order->get_id() );
-				}
+			$packing_slip = wcpdf_get_document( 'packing-slip', $order );
+			if ( $packing_slip && $packing_slip->is_allowed() && $packing_slip->exists() ) {
+				$attachments[] = $packing_slip->get_pdf( 'path' );
 			}
 		}
 		return $attachments;
