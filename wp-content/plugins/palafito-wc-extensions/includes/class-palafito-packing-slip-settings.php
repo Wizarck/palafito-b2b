@@ -411,6 +411,11 @@ class Palafito_Packing_Slip_Settings {
 			return;
 		}
 
+		// Verify nonce for security.
+		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'wpo_wcpdf_settings' ) ) {
+			return;
+		}
+
 		?>
 		<script type="text/javascript">
 		jQuery(document).ready(function($) {

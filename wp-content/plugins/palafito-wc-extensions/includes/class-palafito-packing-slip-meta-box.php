@@ -290,8 +290,8 @@ class Palafito_Packing_Slip_Meta_Box {
 	 */
 	private function replace_placeholders( $formatted_number, $order ) {
 		$replacements = array(
-			'[packing_slip_year]'  => date( 'Y' ),
-			'[packing_slip_month]' => date( 'm' ),
+			'[packing_slip_year]'  => gmdate( 'Y' ),
+			'[packing_slip_month]' => gmdate( 'm' ),
 			'[order_number]'       => $order->get_order_number(),
 			'[order_date]'         => $order->get_date_created()->format( 'Y-m-d' ),
 			'[order_date_i18n]'    => $order->get_date_created()->date_i18n( 'Y-m-d' ),
