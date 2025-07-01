@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <?php do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 
-<p><?php esc_html_e( '¡Tu pedido ha sido facturado! A continuación encontrarás un resumen de tu compra y tu factura adjunta si está configurado.', 'palafito-wc-extensions' ); ?></p>
+<p><?php esc_html_e( '¡Tu pedido ha sido facturado! A continuación encontrarás un resumen de tu compra y tu factura adjunta.', 'palafito-wc-extensions' ); ?></p>
 
 <?php
 do_action( 'woocommerce_email_order_details', $order, $sent_to_admin, $plain_text, $email );
