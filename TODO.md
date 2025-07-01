@@ -14,12 +14,13 @@
 - [x] Validar calidad de código continuo (PHPCS, PHPStan, etc.)
 - [ ] Cobertura de tests (coverage report)
 - [ ] Tests de integración/end-to-end (opcional)
+- [ ] **Investigar y documentar la posibilidad de que varios AI (agentes) se comuniquen entre sí para tareas colaborativas.**
+- [ ] **Crear scripts automáticos (pre-push hook o npm/composer script) que ejecuten todos los checks y fixes de linting antes de cada push.**
 
 ### 3. 🔁 Flujo completo de desarrollo
 - [ ] Definir branch strategy (main, develop, feature/*, release/*, hotfix/*)
-- [ ] Configurar pre-commit hooks (lint automático, tests)
-- [ ] Versionado semántico (git tag, CHANGELOG.md, releases)
-- [ ] Documentar el flujo de trabajo en el README o en CONTRIBUTING.md
+- [ ] Configurar reglas de PR y revisión obligatoria
+- [ ] Documentar el flujo de push y CI/CD
 
 ### 4. 🤖 Mejorar el deploy
 - [ ] Añadir logs detallados a los scripts de deploy
