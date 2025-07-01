@@ -31,10 +31,6 @@ class Palafito_Email_Attachments {
 		// Add custom email IDs for our custom order statuses.
 		add_filter( 'woocommerce_email_actions', array( $this, 'add_custom_email_actions' ), 10, 1 );
 
-		// Hook into order status change actions to send custom emails.
-		add_action( 'woocommerce_order_status_entregado', array( $this, 'send_entregado_email' ), 10, 3 );
-		add_action( 'woocommerce_order_status_facturado', array( $this, 'send_facturado_email' ), 10, 3 );
-
 		// Customize the list of available emails for PDF attachments.
 		add_filter( 'wpo_wcpdf_wc_emails', array( $this, 'customize_wc_emails_list' ), 10, 1 );
 	}
@@ -48,7 +44,7 @@ class Palafito_Email_Attachments {
 	 * @param WC_Email $email       Email object.
 	 * @return array
 	 */
-	public function attach_documents_to_email( $attachments, $email_id, $order, $email = null ) {
+	public function attach_documents_to_email( $attachments, $email_id, $order, $email ) {
 		// Unused parameter for compatibility with WooCommerce email filter.
 		unset( $email );
 		// Check if all variables are properly set.
@@ -69,19 +65,29 @@ class Palafito_Email_Attachments {
 		// Get order status.
 		$order_status = $order->get_status();
 
-		// Attach packing slip for "Entregado" status.
-		if ( 'entregado' === $order_status && $this->should_attach_packing_slip( $email_id ) ) {
-			$packing_slip_attachment = $this->get_packing_slip_attachment( $order );
-			if ( $packing_slip_attachment ) {
-				$attachments[] = $packing_slip_attachment;
+		// Adjuntar packing slip solo si el email es el nativo de WooCommerce para 'entregado' y está configurado en el plugin PDF.
+		if ( 'entregado' === $order_status && 'customer_entregado' === $email_id ) {
+			if ( function_exists( 'wcpdf_get_document' ) ) {
+				$packing_slip = wcpdf_get_document( 'packing-slip', $order );
+				if ( $packing_slip && $packing_slip->exists() ) {
+					$settings = get_option( 'wpo_wcpdf_documents_settings_packing-slip', array() );
+					if ( ! empty( $settings['attach_to_email_ids'] ) && in_array( 'customer_entregado', (array) $settings['attach_to_email_ids'], true ) ) {
+						$attachments[] = $packing_slip->get_pdf( 'path' );
+					}
+				}
 			}
 		}
 
-		// Attach invoice for "Facturado" status.
-		if ( 'facturado' === $order_status && $this->should_attach_invoice( $email_id ) ) {
-			$invoice_attachment = $this->get_invoice_attachment( $order );
-			if ( $invoice_attachment ) {
-				$attachments[] = $invoice_attachment;
+		// Adjuntar invoice solo si el email es el nativo de WooCommerce para 'facturado' y está configurado en el plugin PDF.
+		if ( 'facturado' === $order_status && 'customer_facturado' === $email_id ) {
+			if ( function_exists( 'wcpdf_get_document' ) ) {
+				$invoice = wcpdf_get_document( 'invoice', $order );
+				if ( $invoice && $invoice->exists() ) {
+					$settings = get_option( 'wpo_wcpdf_documents_settings_invoice', array() );
+					if ( ! empty( $settings['attach_to_email_ids'] ) && in_array( 'customer_facturado', (array) $settings['attach_to_email_ids'], true ) ) {
+						$attachments[] = $invoice->get_pdf( 'path' );
+					}
+				}
 			}
 		}
 
@@ -95,16 +101,7 @@ class Palafito_Email_Attachments {
 	 * @return array
 	 */
 	public function add_custom_email_attachments( $attach_documents ) {
-		// Add packing slip to custom email IDs.
-		if ( isset( $attach_documents['pdf']['packing-slip'] ) ) {
-			$attach_documents['pdf']['packing-slip'][] = 'custom_entregado_email';
-		}
-
-		// Add invoice to custom email IDs.
-		if ( isset( $attach_documents['pdf']['invoice'] ) ) {
-			$attach_documents['pdf']['invoice'][] = 'custom_facturado_email';
-		}
-
+		// Add packing slip to custom email IDs if needed (legacy, for compatibility).
 		return $attach_documents;
 	}
 
@@ -117,326 +114,20 @@ class Palafito_Email_Attachments {
 	public function add_custom_email_actions( $email_actions ) {
 		$email_actions[] = 'woocommerce_order_status_entregado';
 		$email_actions[] = 'woocommerce_order_status_facturado';
-
 		return $email_actions;
 	}
 
 	/**
 	 * Customize the list of available emails for PDF attachments.
-	 * Adds custom email for "Pedido entregado" and removes duplicates.
 	 *
 	 * @param array $emails Current list of emails.
 	 * @return array
 	 */
 	public function customize_wc_emails_list( $emails ) {
-		// Add custom email for "Pedido entregado" (Entregado status).
-		$emails['custom_entregado_email'] = __( 'Pedido entregado', 'woocommerce-pdf-invoices-packing-slips' );
-
-		// Remove duplicates by ensuring unique values.
-		$emails = array_unique( $emails, SORT_STRING );
-
-		// Sort alphabetically for better UX.
+		$emails['customer_entregado'] = __( 'Pedido entregado', 'woocommerce-pdf-invoices-packing-slips' );
+		$emails['customer_facturado'] = __( 'Pedido facturado', 'woocommerce-pdf-invoices-packing-slips' );
+		$emails                       = array_unique( $emails, SORT_STRING );
 		asort( $emails );
-
 		return $emails;
-	}
-
-	/**
-	 * Check if packing slip should be attached to this email.
-	 *
-	 * @param string $email_id Email ID.
-	 * @return bool
-	 */
-	private function should_attach_packing_slip( $email_id ) {
-		// Attach to customer completed order email and our custom emails.
-		$allowed_emails = array(
-			'customer_completed_order',
-			'custom_entregado_email',
-		);
-
-		return in_array( $email_id, $allowed_emails, true );
-	}
-
-	/**
-	 * Check if invoice should be attached to this email.
-	 *
-	 * @param string $email_id Email ID.
-	 * @return bool
-	 */
-	private function should_attach_invoice( $email_id ) {
-		// Attach to customer completed order email and our custom emails.
-		$allowed_emails = array(
-			'customer_completed_order',
-			'custom_facturado_email',
-		);
-
-		return in_array( $email_id, $allowed_emails, true );
-	}
-
-	/**
-	 * Get packing slip attachment for an order.
-	 *
-	 * @param WC_Order $order Order object.
-	 * @return string|false Attachment file path or false on failure.
-	 */
-	private function get_packing_slip_attachment( $order ) {
-		// Check if PDF plugin is active.
-		if ( ! function_exists( 'WPO_WCPDF' ) ) {
-			return false;
-		}
-
-		try {
-			// Get the packing slip document.
-			$document = wcpdf_get_document( 'packing-slip', array( $order->get_id() ), true );
-
-			if ( ! $document ) {
-				return false;
-			}
-
-			// Get the PDF file.
-			$attachment = wcpdf_get_document_file( $document, 'pdf' );
-
-			return $attachment ? $attachment : false;
-
-		} catch ( Exception $e ) {
-			// Log error if debug is enabled.
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				error_log( 'Palafito WC Extensions: Error generating packing slip attachment: ' . $e->getMessage() );
-			}
-			return false;
-		}
-	}
-
-	/**
-	 * Get invoice attachment for an order.
-	 *
-	 * @param WC_Order $order Order object.
-	 * @return string|false Attachment file path or false on failure.
-	 */
-	private function get_invoice_attachment( $order ) {
-		// Check if PDF plugin is active.
-		if ( ! function_exists( 'WPO_WCPDF' ) ) {
-			return false;
-		}
-
-		try {
-			// Get the invoice document.
-			$document = wcpdf_get_document( 'invoice', array( $order->get_id() ), true );
-
-			if ( ! $document ) {
-				return false;
-			}
-
-			// Get the PDF file.
-			$attachment = wcpdf_get_document_file( $document, 'pdf' );
-
-			return $attachment ? $attachment : false;
-
-		} catch ( Exception $e ) {
-			// Log error if debug is enabled.
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				error_log( 'Palafito WC Extensions: Error generating invoice attachment: ' . $e->getMessage() );
-			}
-			return false;
-		}
-	}
-
-	/**
-	 * Send custom email when order status changes to "Entregado".
-	 *
-	 * @param int    $order_id   Order ID.
-	 * @param string $old_status Old status.
-	 * @param string $new_status New status.
-	 */
-	public function send_entregado_email( $order_id, $old_status, $new_status ) {
-		// Obtener el objeto order.
-		$order = wc_get_order( $order_id );
-
-		if ( ! $order ) {
-			return;
-		}
-
-		// Solo enviar si el estado cambió a entregado.
-		if ( 'entregado' === $new_status ) {
-			$this->send_custom_order_email( $order, 'entregado' );
-		}
-	}
-
-	/**
-	 * Send custom email when order status changes to "Facturado".
-	 *
-	 * @param int    $order_id   Order ID.
-	 * @param string $old_status Old status.
-	 * @param string $new_status New status.
-	 */
-	public function send_facturado_email( $order_id, $old_status, $new_status ) {
-		// Obtener el objeto order.
-		$order = wc_get_order( $order_id );
-
-		if ( ! $order ) {
-			return;
-		}
-
-		// Solo enviar si el estado cambió a facturado.
-		if ( 'facturado' === $new_status ) {
-			$this->send_custom_order_email( $order, 'facturado' );
-		}
-	}
-
-	/**
-	 * Send custom order email with appropriate attachments.
-	 *
-	 * @param WC_Order $order       Order object.
-	 * @param string   $status_type Status type ('entregado' or 'facturado').
-	 */
-	private function send_custom_order_email( $order, $status_type ) {
-		// Get customer email.
-		$customer_email = $order->get_billing_email();
-
-		if ( ! $customer_email ) {
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				error_log( 'Palafito WC Extensions: No customer email found for order ' . $order->get_id() );
-			}
-			return;
-		}
-
-		// Prepare email content.
-		$subject = $this->get_email_subject( $status_type, $order );
-		$message = $this->get_email_message( $status_type, $order );
-
-		// Prepare attachments.
-		$attachments = array();
-
-		if ( 'entregado' === $status_type ) {
-			$packing_slip = $this->get_packing_slip_attachment( $order );
-			if ( $packing_slip ) {
-				$attachments[] = $packing_slip;
-			}
-		} elseif ( 'facturado' === $status_type ) {
-			$invoice = $this->get_invoice_attachment( $order );
-			if ( $invoice ) {
-				$attachments[] = $invoice;
-			}
-		}
-
-		// Use WooCommerce email system for better compatibility.
-		$mailer = WC()->mailer();
-
-		// Prepare email headers.
-		$headers = array(
-			'Content-Type: text/html; charset=UTF-8',
-			'From: ' . get_option( 'blogname' ) . ' <' . get_option( 'admin_email' ) . '>',
-		);
-
-		// Send email using WooCommerce mailer.
-		$sent = $mailer->send( $customer_email, $subject, $message, $headers, $attachments );
-
-		// Log the email sending.
-		if ( $sent ) {
-			$order->add_order_note(
-				sprintf(
-					/* translators: %s: Status type */
-					__( 'Email de %s enviado al cliente con adjuntos.', 'palafito-wc-extensions' ),
-					ucfirst( $status_type )
-				)
-			);
-
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				error_log( 'Palafito WC Extensions: Email sent successfully for order ' . $order->get_id() . ' with status ' . $status_type );
-			}
-		} else {
-			$order->add_order_note(
-				sprintf(
-					/* translators: %s: Status type */
-					__( 'Error al enviar email de %s al cliente.', 'palafito-wc-extensions' ),
-					ucfirst( $status_type )
-				)
-			);
-
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				error_log( 'Palafito WC Extensions: Failed to send email for order ' . $order->get_id() . ' with status ' . $status_type );
-			}
-		}
-	}
-
-	/**
-	 * Get email subject for custom status.
-	 *
-	 * @param string   $status_type Status type.
-	 * @param WC_Order $order       Order object.
-	 * @return string
-	 */
-	private function get_email_subject( $status_type, $order ) {
-		$order_number = $order->get_order_number();
-
-		if ( 'entregado' === $status_type ) {
-			return sprintf(
-				/* translators: %s: Order number */
-				__( 'Su pedido #%s ha sido entregado - Palafito', 'palafito-wc-extensions' ),
-				$order_number
-			);
-		} elseif ( 'facturado' === $status_type ) {
-			return sprintf(
-				/* translators: %s: Order number */
-				__( 'Factura disponible para su pedido #%s - Palafito', 'palafito-wc-extensions' ),
-				$order_number
-			);
-		}
-
-		return '';
-	}
-
-	/**
-	 * Get email message for custom status.
-	 *
-	 * @param string   $status_type Status type.
-	 * @param WC_Order $order       Order object.
-	 * @return string
-	 */
-	private function get_email_message( $status_type, $order ) {
-		$order_number  = $order->get_order_number();
-		$customer_name = $order->get_billing_first_name();
-
-		if ( 'entregado' === $status_type ) {
-			return sprintf(
-				'<h2>%s</h2>
-				<p>%s</p>
-				<p>%s</p>
-				<p>%s</p>',
-				__( 'Pedido Entregado', 'palafito-wc-extensions' ),
-				sprintf(
-					/* translators: %s: Customer name */
-					__( 'Estimado/a %s,', 'palafito-wc-extensions' ),
-					$customer_name
-				),
-				sprintf(
-					/* translators: %s: Order number */
-					__( 'Su pedido #%s ha sido entregado exitosamente.', 'palafito-wc-extensions' ),
-					$order_number
-				),
-				__( 'Adjunto encontrará el albarán de entrega para su referencia.', 'palafito-wc-extensions' )
-			);
-		} elseif ( 'facturado' === $status_type ) {
-			return sprintf(
-				'<h2>%s</h2>
-				<p>%s</p>
-				<p>%s</p>
-				<p>%s</p>',
-				__( 'Factura Disponible', 'palafito-wc-extensions' ),
-				sprintf(
-					/* translators: %s: Customer name */
-					__( 'Estimado/a %s,', 'palafito-wc-extensions' ),
-					$customer_name
-				),
-				sprintf(
-					/* translators: %s: Order number */
-					__( 'La factura para su pedido #%s ya está disponible.', 'palafito-wc-extensions' ),
-					$order_number
-				),
-				__( 'Adjunto encontrará la factura correspondiente.', 'palafito-wc-extensions' )
-			);
-		}
-
-		return '';
 	}
 }

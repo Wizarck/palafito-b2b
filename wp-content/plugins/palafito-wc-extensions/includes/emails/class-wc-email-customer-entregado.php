@@ -142,19 +142,5 @@ class WC_Email_Customer_Entregado extends WC_Email {
 	 *
 	 * @return array
 	 */
-	public function get_attachments() {
-		$attachments = array();
-		// Adjuntar PDF de albarán si está configurado en PDF Invoices.
-		if ( function_exists( 'wcpdf_get_document' ) ) {
-			$order        = $this->object;
-			$packing_slip = wcpdf_get_document( 'packing-slip', $order );
-			if ( $packing_slip && $packing_slip->exists() ) {
-				$settings = get_option( 'wpo_wcpdf_documents_settings_packing-slip', array() );
-				if ( ! empty( $settings['attach_to_email_ids'] ) && in_array( 'customer_entregado', (array) $settings['attach_to_email_ids'], true ) ) {
-					$attachments[] = $packing_slip->get_pdf( 'path' );
-				}
-			}
-		}
-		return $attachments;
-	}
+	// Eliminado: los adjuntos se gestionan por el filtro global en Palafito_Email_Attachments.
 }

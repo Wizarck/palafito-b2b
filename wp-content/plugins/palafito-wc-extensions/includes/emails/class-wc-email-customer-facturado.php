@@ -142,19 +142,5 @@ class WC_Email_Customer_Facturado extends WC_Email {
 	 *
 	 * @return array
 	 */
-	public function get_attachments() {
-		$attachments = array();
-		// Adjuntar PDF de factura si está configurado en PDF Invoices.
-		if ( function_exists( 'wcpdf_get_document' ) ) {
-			$order   = $this->object;
-			$invoice = wcpdf_get_document( 'invoice', $order );
-			if ( $invoice && $invoice->exists() ) {
-				$settings = get_option( 'wpo_wcpdf_documents_settings_invoice', array() );
-				if ( ! empty( $settings['attach_to_email_ids'] ) && in_array( 'customer_facturado', (array) $settings['attach_to_email_ids'], true ) ) {
-					$attachments[] = $invoice->get_pdf( 'path' );
-				}
-			}
-		}
-		return $attachments;
-	}
+	// Eliminado: los adjuntos se gestionan por el filtro global en Palafito_Email_Attachments.
 }

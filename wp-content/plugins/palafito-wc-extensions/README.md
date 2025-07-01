@@ -18,6 +18,43 @@ This plugin provides custom WooCommerce functionality for B2B (Business-to-Busin
 - B2B-specific order status handling
 - Integration with existing B2B pricing systems (wholesalex plugin)
 
+---
+
+## 📧 Custom Order Status Emails: Entregado & Facturado
+
+### Overview
+- Native WooCommerce emails are sent automatically when an order is marked as **Entregado** or **Facturado**.
+- PDF attachments (packing slip or invoice) are included if configured in the PDF Invoices & Packing Slips plugin.
+
+### How it works
+- **Triggering:**
+  - Emails are sent when the order status changes to "Entregado" or "Facturado".
+  - This works via:
+    - Custom admin buttons (bulk or single order view)
+    - Manual status change in the order edit screen
+    - Any automated status transition
+- **Email Classes:**
+  - `WC_Email_Customer_Entregado` and `WC_Email_Customer_Facturado` are registered as native WooCommerce emails.
+  - Each class hooks into the corresponding status change and sends the email only if enabled and with a valid recipient.
+- **PDF Attachments:**
+  - The plugin integrates with PDF Invoices & Packing Slips.
+  - In **Facturas PDF > Documentos**, you can select which emails should include the packing slip or invoice as an attachment.
+  - The plugin respects this configuration: PDFs are only attached if the email is checked in the admin settings.
+- **Document Generation:**
+  - Packing slip is generated only for "Entregado" and "Facturado".
+  - Invoice is generated only for "Facturado".
+- **Robustness:**
+  - The trigger works for all admin actions (buttons, bulk, manual) and is not duplicated.
+  - All logic is PHPCS-compliant and fully integrated with WooCommerce and the PDF plugin.
+
+### Example Workflow
+1. Admin marks an order as "Entregado" (via button, bulk, or manual change)
+2. The plugin triggers the custom email and attaches the packing slip if configured
+3. Later, admin marks the order as "Facturado"
+4. The plugin triggers the custom email and attaches the invoice if configured
+
+---
+
 ## Installation
 
 1. Upload the plugin files to `/wp-content/plugins/palafito-wc-extensions/`
