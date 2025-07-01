@@ -111,18 +111,13 @@ add_action(
 		if ( function_exists( 'wcpdf_get_document' ) ) {
 			$packing_slip = wcpdf_get_document( 'packing-slip', $order, true );
 			if ( $packing_slip && $packing_slip->is_allowed() ) {
-				// Forzar generación y guardado del número y fecha si no existen.
-				if ( ! $packing_slip->exists() || empty( $packing_slip->get_number() ) ) {
-					$packing_slip->set_number(); // PRO: genera y guarda el número.
-				}
-				if ( empty( $packing_slip->get_date() ) ) {
-					$packing_slip->set_date( current_time( 'timestamp' ) );
-				}
+				// Generar y guardar SIEMPRE número y fecha (sobrescribe manuales).
+				$packing_slip->initiate_date();
+				$packing_slip->initiate_number();
 				$packing_slip->save();
-				$packing_slip->get_pdf( 'path' );
-				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-					error_log( 'Palafito WC Extensions: Packing slip generated and saved for order ' . $order->get_id() );
-				}
+				// Nota de pedido para trazabilidad.
+				$order->add_order_note( __( 'Número y fecha de albarán generados automáticamente al cambiar a Entregado.', 'palafito-wc-extensions' ) );
+				$order->save();
 			}
 		}
 	},
