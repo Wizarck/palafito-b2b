@@ -111,67 +111,15 @@ add_action(
 		if ( function_exists( 'wcpdf_get_document' ) ) {
 			$packing_slip = wcpdf_get_document( 'packing-slip', $order, true );
 			if ( $packing_slip && $packing_slip->is_allowed() ) {
-				// Borrar packing slip previo para evitar caché interna.
 				if ( $packing_slip->exists() ) {
-					$packing_slip->delete();
-					if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-						error_log( '[PALAFITO] Packing slip previo borrado para pedido ' . $order->get_id() );
-					}
-				}
-				// Forzar recarga y generación nativa tras borrar.
-				$packing_slip = wcpdf_get_document( 'packing-slip', $order, true );
-				// Obtener settings del albarán.
-				$settings = get_option( 'wpo_wcpdf_documents_settings_packing-slip', array() );
-				$use_order_number = ! empty( $settings['use_order_number'] );
-				if ( $use_order_number ) {
-					$base_number = $order->get_order_number();
+					$packing_slip->regenerate();
 				} else {
-					// Lógica secuencial (por defecto del plugin).
-					$base_number = $packing_slip->get_number() ? $packing_slip->get_number() : $order->get_id();
+					$packing_slip->initiate_number();
+					$packing_slip->initiate_date();
+					$packing_slip->save();
 				}
-				// Formatear número según configuración.
-				$formatted_number = $base_number;
-				if ( ! empty( $settings['number_format'] ) && is_array( $settings['number_format'] ) ) {
-					$prefix  = ! empty( $settings['number_format']['prefix'] ) ? $settings['number_format']['prefix'] : '';
-					$suffix  = ! empty( $settings['number_format']['suffix'] ) ? $settings['number_format']['suffix'] : '';
-					$padding = ! empty( $settings['number_format']['padding'] ) ? (int) $settings['number_format']['padding'] : 0;
-					if ( $padding > 0 ) {
-						$formatted_number = str_pad( $base_number, $padding, '0', STR_PAD_LEFT );
-					}
-					$formatted_number = $prefix . $formatted_number . $suffix;
-				}
-				$number_data = array(
-					'number'           => $base_number,
-					'formatted_number' => $formatted_number,
-				);
-				$packing_slip->set_number( $number_data );
-				$packing_slip->initiate_date();
-				$packing_slip->save();
-				// translators: %s: formatted number.
-				$order->add_order_note( sprintf( __( 'Número y fecha de albarán generados automáticamente al cambiar a Entregado. Número: %s', 'palafito-wc-extensions' ), $formatted_number ) );
+				$order->add_order_note( __( 'Albarán generado automáticamente al cambiar a Entregado.', 'palafito-wc-extensions' ) );
 				$order->save();
-				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-					error_log( '[PALAFITO] Hook entregado ejecutado para pedido ' . $order->get_id() );
-					error_log( '[PALAFITO] Packing slip número: ' . print_r( $number_data, true ) );
-					error_log( '[PALAFITO] Packing slip fecha: ' . print_r( $packing_slip->get_date(), true ) );
-				}
-				// Obtener la ruta del PDF de forma compatible.
-				$path = null;
-				if ( method_exists( $packing_slip, 'get_pdf_path' ) ) {
-					$path = $packing_slip->get_pdf_path();
-				} elseif ( method_exists( $packing_slip, 'get_pdf' ) ) {
-					$path = $packing_slip->get_pdf( 'path' );
-				}
-				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-					error_log( '[PALAFITO] Packing slip PDF path: ' . print_r( $path, true ) );
-				}
-				if ( $path && file_exists( $path ) ) {
-					if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-						error_log( '[PALAFITO] Packing slip adjuntado al email para pedido ' . $order->get_id() . ': ' . $path );
-					}
-				} elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-					error_log( '[PALAFITO] Packing slip NO adjuntado (no existe archivo) para pedido ' . $order->get_id() );
-				}
 			}
 		}
 	},
@@ -196,8 +144,8 @@ add_filter(
 					}
 				}
 				// Forzar recarga de datos y generación.
-				$packing_slip = wcpdf_get_document( 'packing-slip', $order, true );
-				$settings = get_option( 'wpo_wcpdf_documents_settings_packing-slip', array() );
+				$packing_slip     = wcpdf_get_document( 'packing-slip', $order, true );
+				$settings         = get_option( 'wpo_wcpdf_documents_settings_packing-slip', array() );
 				$use_order_number = ! empty( $settings['use_order_number'] );
 				if ( $use_order_number ) {
 					$base_number = $order->get_order_number();

@@ -347,30 +347,21 @@ class Palafito_Packing_Slip_Meta_Box {
 		if ( 'packing-slip' !== $document_type ) {
 			return;
 		}
-
-		$order = method_exists( $document, 'get_order' ) ? $document->get_order() : ( property_exists( $document, 'order' ) ? $document->order : null );
-		if ( ! $order || ! is_object( $order ) ) {
-			return;
-		}
-
-		// Add packing slip number if it exists.
-		$number_obj = $document->get_number();
-		if ( $document->exists() && ! empty( $number_obj ) && method_exists( $number_obj, 'get_formatted' ) ) {
+		// Mostrar número de albarán usando el helper estándar.
+		if ( $document->exists() && $document->get_number() ) {
 			?>
 			<div class="packing-slip-number">
 				<strong><?php esc_html_e( 'Número de albarán:', 'palafito-wc-extensions' ); ?></strong>
-				<?php echo esc_html( $number_obj->get_formatted() ); ?>
+				<?php $document->number( 'packing-slip' ); ?>
 			</div>
 			<?php
 		}
-
-		// Add delivery date if it exists.
-		$date_obj = $document->get_date();
-		if ( $document->exists() && ! empty( $date_obj ) && method_exists( $date_obj, 'date_i18n' ) ) {
+		// Mostrar fecha de entrega usando el helper estándar.
+		if ( $document->exists() && $document->get_date() ) {
 			?>
 			<div class="delivery-date">
 				<strong><?php esc_html_e( 'Fecha de entrega:', 'palafito-wc-extensions' ); ?></strong>
-				<?php echo esc_html( $date_obj->date_i18n( get_option( 'date_format' ) ) ); ?>
+				<?php $document->date( 'packing-slip' ); ?>
 			</div>
 			<?php
 		}
