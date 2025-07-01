@@ -36,11 +36,13 @@ class Palafito_Admin_PDF_Actions {
 	public function add_custom_status_actions( $actions, $order ) {
 		$order_status = $order->get_status();
 		$order_id     = $order->get_id();
+		// Obtener el referer de forma segura para la redirección.
+		$referer = isset( $_SERVER['REQUEST_URI'] ) ? rawurlencode( esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) ) : '';
 
 		// Botón para cambiar a Entregado si está en procesando.
 		if ( 'processing' === $order_status ) {
 			$actions['palafito_mark_entregado'] = array(
-				'url'    => wp_nonce_url( admin_url( 'admin-ajax.php?action=woocommerce_mark_order_status&status=entregado&order_id=' . $order_id ), 'woocommerce-mark-order-status' ),
+				'url'    => wp_nonce_url( admin_url( 'admin-ajax.php?action=woocommerce_mark_order_status&status=entregado&order_id=' . $order_id . '&wp_http_referer=' . $referer ), 'woocommerce-mark-order-status' ),
 				'name'   => __( 'Entregado', 'palafito-wc-extensions' ),
 				'action' => 'palafito_mark_entregado',
 			);
@@ -49,7 +51,7 @@ class Palafito_Admin_PDF_Actions {
 		// Botón para cambiar a Facturado si está en entregado.
 		if ( 'entregado' === $order_status ) {
 			$actions['palafito_mark_facturado'] = array(
-				'url'    => wp_nonce_url( admin_url( 'admin-ajax.php?action=woocommerce_mark_order_status&status=facturado&order_id=' . $order_id ), 'woocommerce-mark-order-status' ),
+				'url'    => wp_nonce_url( admin_url( 'admin-ajax.php?action=woocommerce_mark_order_status&status=facturado&order_id=' . $order_id . '&wp_http_referer=' . $referer ), 'woocommerce-mark-order-status' ),
 				'name'   => __( 'Facturado', 'palafito-wc-extensions' ),
 				'action' => 'palafito_mark_facturado',
 			);
