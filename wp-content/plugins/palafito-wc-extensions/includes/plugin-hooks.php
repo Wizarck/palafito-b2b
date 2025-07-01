@@ -120,6 +120,9 @@ add_action(
 				}
 				// Forzar recarga y generación nativa tras borrar.
 				$packing_slip = wcpdf_get_document( 'packing-slip', $order, true );
+				// Refuerzo: siempre generar número y fecha como en factura.
+				$packing_slip->initiate_date();
+				$packing_slip->initiate_number();
 				$packing_slip->save();
 				$order->add_order_note( __( 'Número y fecha de albarán generados automáticamente al cambiar a Entregado.', 'palafito-wc-extensions' ) );
 				$order->save();
@@ -140,7 +143,6 @@ add_action(
 					error_log( '[PALAFITO] Packing slip PDF path: ' . print_r( $path, true ) );
 				}
 				if ( $path && file_exists( $path ) ) {
-					$attachments[] = $path;
 					if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 						error_log( '[PALAFITO] Packing slip adjuntado al email para pedido ' . $order->get_id() . ': ' . $path );
 					}
@@ -172,10 +174,14 @@ add_filter(
 				}
 				// Forzar recarga de datos y generación.
 				$packing_slip = wcpdf_get_document( 'packing-slip', $order, true );
-				if ( ! $packing_slip->exists() || empty( $packing_slip->get_number() ) || empty( $packing_slip->get_date() ) ) {
-					$packing_slip->initiate_date();
-					$packing_slip->initiate_number();
-					$packing_slip->save();
+				// Refuerzo: siempre generar número y fecha como en factura.
+				$packing_slip->initiate_date();
+				$packing_slip->initiate_number();
+				$packing_slip->save();
+				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					error_log( '[PALAFITO] Packing slip adjunto (tipo número): ' . gettype( $packing_slip->get_number() ) );
+					error_log( '[PALAFITO] Packing slip adjunto (valor número): ' . print_r( $packing_slip->get_number(), true ) );
+					error_log( '[PALAFITO] Packing slip adjunto (fecha): ' . print_r( $packing_slip->get_date(), true ) );
 				}
 				// Obtener la ruta del PDF de forma compatible.
 				$path = null;

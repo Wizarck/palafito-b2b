@@ -619,3 +619,10 @@ Esto es imprescindible para evitar errores en los checks automáticos y mantener
 - **Notas:**
   - El número y la fecha de albarán son los únicos campos personalizados que siguen esta lógica.
   - El adjunto del PDF de albarán en emails y la visualización en Mi Cuenta dependen siempre de los valores actuales de los metadatos.
+
+## Flujo robusto de albarán (packing slip)
+- Al cambiar un pedido a 'Entregado', el sistema borra cualquier albarán previo, fuerza la generación de número y fecha usando `initiate_number()` y `initiate_date()` (igual que factura), y guarda el documento.
+- El número y la fecha se sobrescriben siempre, tanto en el metabox como en el PDF.
+- El PDF del albarán se adjunta automáticamente al email de 'Entregado' si está configurado.
+- Todo cambio queda registrado como nota de pedido y en logs si WP_DEBUG está activo.
+- El flujo es ahora igual de robusto que el de facturas (invoice).
