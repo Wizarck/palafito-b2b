@@ -87,10 +87,10 @@ class Palafito_Packing_Slip_Meta_Box {
 		// Use the same structure as invoice in the PRO.
 		$data = array(
 			'number'           => array(
-				'label' => __( 'Packing slip number:', 'woocommerce-pdf-invoices-packing-slips' ),
+				'label' => __( 'Número de albarán:', 'palafito-wc-extensions' ),
 			),
 			'date'             => array(
-				'label' => __( 'Packing slip date:', 'woocommerce-pdf-invoices-packing-slips' ),
+				'label' => __( 'Fecha de entrega:', 'palafito-wc-extensions' ),
 			),
 			'display_date'     => array(
 				'label' => __( 'Packing slip display date:', 'woocommerce-pdf-invoices-packing-slips' ),
