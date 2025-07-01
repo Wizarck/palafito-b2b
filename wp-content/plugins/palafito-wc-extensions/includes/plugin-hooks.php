@@ -111,14 +111,20 @@ add_action(
 		if ( function_exists( 'wcpdf_get_document' ) ) {
 			$packing_slip = wcpdf_get_document( 'packing-slip', $order, true );
 			if ( $packing_slip && $packing_slip->is_allowed() ) {
-				// Generar y guardar SIEMPRE número y fecha (sobrescribe manuales).
+				// Borrar packing slip previo para evitar caché interna.
+				if ( $packing_slip->exists() ) {
+					$packing_slip->delete();
+					if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+						error_log( '[PALAFITO] Packing slip previo borrado para pedido ' . $order->get_id() );
+					}
+				}
+				// Forzar recarga de datos y generación.
+				$packing_slip = wcpdf_get_document( 'packing-slip', $order, true );
 				$packing_slip->initiate_date();
 				$packing_slip->initiate_number();
 				$packing_slip->save();
-				// Nota de pedido para trazabilidad.
 				$order->add_order_note( __( 'Número y fecha de albarán generados automáticamente al cambiar a Entregado.', 'palafito-wc-extensions' ) );
 				$order->save();
-				// Log explícito para depuración.
 				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 					error_log( '[PALAFITO] Hook entregado ejecutado para pedido ' . $order->get_id() );
 					error_log( '[PALAFITO] Packing slip number: ' . print_r( $packing_slip->get_number(), true ) );
@@ -140,7 +146,15 @@ add_filter(
 		if ( function_exists( 'wcpdf_get_document' ) ) {
 			$packing_slip = wcpdf_get_document( 'packing-slip', $order, true );
 			if ( $packing_slip && $packing_slip->is_allowed() ) {
-				// Forzar generación y guardado si no existe o está incompleto.
+				// Borrar packing slip previo para evitar caché interna.
+				if ( $packing_slip->exists() ) {
+					$packing_slip->delete();
+					if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+						error_log( '[PALAFITO] Packing slip previo borrado antes de adjuntar para pedido ' . $order->get_id() );
+					}
+				}
+				// Forzar recarga de datos y generación.
+				$packing_slip = wcpdf_get_document( 'packing-slip', $order, true );
 				if ( ! $packing_slip->exists() || empty( $packing_slip->get_number() ) || empty( $packing_slip->get_date() ) ) {
 					$packing_slip->initiate_date();
 					$packing_slip->initiate_number();

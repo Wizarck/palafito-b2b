@@ -253,4 +253,11 @@
 	</htmlpagefooter><!-- required for mPDF engine -->
 <?php endif; ?>
 
+<?php
+if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+	error_log( '[PALAFITO][packing-slip.php] Número de albarán: ' . print_r( $this->get_number(), true ) );
+	error_log( '[PALAFITO][packing-slip.php] Fecha de albarán: ' . print_r( $this->get_date(), true ) );
+}
+?>
+
 <?php do_action( 'wpo_wcpdf_after_document', $this->get_type(), $this->order ); ?>
