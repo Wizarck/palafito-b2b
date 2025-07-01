@@ -578,8 +578,38 @@ class Settings {
 		// load packing slip to reuse method to get wc emails
 		$packing_slip = wcpdf_get_packing_slip( null );
 
-		// Nota: La configuración de "Adjuntar a:" y "Disable for:" ya está habilitada en el plugin gratuito
-		// y se ha eliminado de aquí para evitar duplicación.
+		// Configuración para adjuntar packing slips a emails (funcionalidad PRO).
+		$new_settings = array(
+			array(
+				'type'     => 'setting',
+				'id'       => 'attach_to_email_ids',
+				'title'    => __( 'Attach to:', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback' => 'multiple_checkboxes',
+				'section'  => 'packing_slip',
+				'args'     => array(
+					'option_name'     => $option_name,
+					'id'              => 'attach_to_email_ids',
+					'fields_callback' => array( $packing_slip, 'get_wc_emails' ),
+					'description'     => ! is_writable( WPO_WCPDF()->main->get_tmp_path( 'attachments' ) ) ? '<span class="wpo-warning">' . sprintf( __( 'It looks like the temp folder (<code>%s</code>) is not writable, check the permissions for this folder! Without having write access to this folder, the plugin will not be able to email invoices.', 'woocommerce-pdf-invoices-packing-slips' ), WPO_WCPDF()->main->get_tmp_path( 'attachments' ) ).'</span>' : '',
+				)
+			),
+			array(
+				'type'     => 'setting',
+				'id'       => 'disable_for_statuses',
+				'title'    => __( 'Disable for:', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback' => 'select',
+				'section'  => 'packing_slip',
+				'args'     => array(
+					'option_name'      => $option_name,
+					'id'               => 'disable_for_statuses',
+					'options_callback' => 'wc_get_order_statuses',
+					'multiple'         => true,
+					'enhanced_select'  => true,
+					'placeholder'      => __( 'Select one or more statuses', 'woocommerce-pdf-invoices-packing-slips' ),
+				)
+			),
+		);
+		$settings_fields = $this->move_setting_after_id( $settings_fields, $new_settings, 'enabled' );
 
 		// packing slip number setting
 		$number_setting = array(
