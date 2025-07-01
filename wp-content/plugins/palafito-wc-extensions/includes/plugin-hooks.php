@@ -52,11 +52,11 @@ if ( class_exists( 'WPO_WCPDF' ) ) {
 // Hooks para cambio de estado de pedidos y envío automático de emails.
 add_action( 'woocommerce_order_status_changed', 'palafito_wc_extensions_handle_order_status_change', 10, 3 );
 
-// Hook para disparar automáticamente las acciones de estado personalizado.
-add_action( 'woocommerce_order_status_changed', 'palafito_wc_extensions_trigger_custom_status_actions', 20, 3 );
+// Los emails se envían automáticamente por WooCommerce cuando se registran los estados personalizados.
+// No necesitamos disparar manualmente las acciones.
 
 /**
- * Manejar cambios de estado de pedidos y enviar emails automáticos.
+ * Manejar cambios de estado de pedidos (solo logs para debugging).
  *
  * @param int    $order_id   Order ID.
  * @param string $old_status Old status.
@@ -83,39 +83,6 @@ function palafito_wc_extensions_handle_order_status_change( $order_id, $old_stat
 		if ( 'facturado' === $new_status ) {
 			error_log( "Palafito WC Extensions: Order {$order_id} status changed to 'facturado'." );
 		}
-	}
-
-	// Los emails se envían automáticamente por los hooks de WooCommerce.
-	// No necesitamos disparar manualmente las acciones aquí.
-}
-
-/**
- * Disparar automáticamente las acciones de estado personalizado.
- *
- * @param int    $order_id   Order ID.
- * @param string $old_status Old status.
- * @param string $new_status New status.
- */
-function palafito_wc_extensions_trigger_custom_status_actions( $order_id, $old_status, $new_status ) {
-	$order = wc_get_order( $order_id );
-	if ( ! $order ) {
-		return;
-	}
-
-	// Disparar acción para estado "Entregado".
-	if ( 'entregado' === $new_status ) {
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			error_log( "Palafito WC Extensions: Triggering 'woocommerce_order_status_entregado' action for order {$order_id}" );
-		}
-		do_action( 'woocommerce_order_status_entregado', $order_id, $order );
-	}
-
-	// Disparar acción para estado "Facturado".
-	if ( 'facturado' === $new_status ) {
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			error_log( "Palafito WC Extensions: Triggering 'woocommerce_order_status_facturado' action for order {$order_id}" );
-		}
-		do_action( 'woocommerce_order_status_facturado', $order_id, $order );
 	}
 }
 
