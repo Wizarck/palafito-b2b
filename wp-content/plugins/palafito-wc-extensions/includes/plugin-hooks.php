@@ -2,7 +2,7 @@
 /**
  * Plugin Hooks for Palafito WC Extensions
  *
- * Handles custom hooks, status changes, and email triggers for the Palafito B2B workflow.
+ * Handles custom hooks and status changes for the Palafito B2B workflow.
  *
  * @package Palafito_WC_Extensions
  * @since 1.0.0
@@ -17,10 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Función de activación del plugin.
  */
 function palafito_wc_extensions_activate() {
-	// Crear tablas personalizadas si es necesario.
-	// Configurar opciones por defecto.
-	// Limpiar cachés.
-
 	// Log the hook execution for debugging.
 	if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 		error_log( 'Palafito WC Extensions: Hook executed - palafito_wc_extensions_activate' );
@@ -31,9 +27,6 @@ function palafito_wc_extensions_activate() {
  * Función de desactivación del plugin.
  */
 function palafito_wc_extensions_deactivate() {
-	// Limpiar datos temporales.
-	// No eliminar datos permanentes aquí.
-
 	// Log the hook execution for debugging.
 	if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 		error_log( 'Palafito WC Extensions: Hook executed - palafito_wc_extensions_deactivate' );
@@ -44,14 +37,8 @@ function palafito_wc_extensions_deactivate() {
 register_activation_hook( PALAFITO_WC_EXTENSIONS_PLUGIN_FILE, 'palafito_wc_extensions_activate' );
 register_deactivation_hook( PALAFITO_WC_EXTENSIONS_PLUGIN_FILE, 'palafito_wc_extensions_deactivate' );
 
-// Cargar archivos de funcionalidad específica.
-// Eliminado: class-palafito-pdf-configuration.php - funcionalidad manejada por el plugin PRO.
-
-// Hooks para cambio de estado de pedidos y envío automático de emails.
+// Hooks para cambio de estado de pedidos (solo logs para debugging).
 add_action( 'woocommerce_order_status_changed', 'palafito_wc_extensions_handle_order_status_change', 10, 3 );
-
-// Los emails se envían automáticamente por WooCommerce cuando se registran los estados personalizados.
-// No necesitamos disparar manualmente las acciones.
 
 /**
  * Manejar cambios de estado de pedidos (solo logs para debugging).
@@ -61,18 +48,6 @@ add_action( 'woocommerce_order_status_changed', 'palafito_wc_extensions_handle_o
  * @param string $new_status New status.
  */
 function palafito_wc_extensions_handle_order_status_change( $order_id, $old_status, $new_status ) {
-	// Solo procesar si el plugin de PDF está disponible.
-	if ( ! class_exists( 'WPO_WCPDF' ) ) {
-		return;
-	}
-
-	// Obtener la instancia del plugin.
-	global $palafito_wc_extensions;
-
-	if ( ! isset( $palafito_wc_extensions ) ) {
-		return;
-	}
-
 	// Log status changes for debugging.
 	if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 		if ( 'entregado' === $new_status ) {
@@ -84,55 +59,6 @@ function palafito_wc_extensions_handle_order_status_change( $order_id, $old_stat
 	}
 }
 
-// Register custom emails for Entregado and Facturado.
-add_filter(
-	'woocommerce_email_classes',
-	function ( $email_classes ) {
-		require_once __DIR__ . '/emails/class-wc-email-customer-entregado.php';
-		require_once __DIR__ . '/emails/class-wc-email-customer-facturado.php';
-		$email_classes['WC_Email_Customer_Entregado'] = new WC_Email_Customer_Entregado();
-		$email_classes['WC_Email_Customer_Facturado'] = new WC_Email_Customer_Facturado();
-		return $email_classes;
-	}
-);
-
-// Forzar la generación del albarán (packing slip) al cambiar a Entregado.
-add_action(
-	'woocommerce_order_status_entregado',
-	function ( $order_id, $order = null ) {
-		if ( ! $order ) {
-			$order = wc_get_order( $order_id );
-		}
-		if ( ! $order ) {
-			return;
-		}
-		if ( function_exists( 'wcpdf_get_document' ) ) {
-			$packing_slip = wcpdf_get_document( 'packing-slip', $order, true );
-			if ( $packing_slip && $packing_slip->is_allowed() ) {
-				$packing_slip->initiate_date();
-				$packing_slip->initiate_number();
-				$packing_slip->save();
-			}
-		}
-	},
-	10,
-	2
-);
-
-add_filter(
-	'wpo_wcpdf_email_attachments',
-	function ( $attachments, $status, $order ) {
-		if ( ! $order ) {
-			return $attachments;
-		}
-		if ( function_exists( 'wcpdf_get_document' ) ) {
-			$packing_slip = wcpdf_get_document( 'packing-slip', $order );
-			if ( $packing_slip && $packing_slip->is_allowed() && $packing_slip->exists() ) {
-				$attachments[] = $packing_slip->get_pdf( 'path' );
-			}
-		}
-		return $attachments;
-	},
-	10,
-	3
-);
+// Eliminado: Registro de emails personalizados - funcionalidad manejada por el plugin PRO.
+// Eliminado: Forzar generación de albarán - funcionalidad manejada por el plugin PRO.
+// Eliminado: Adjuntos de email - funcionalidad manejada por el plugin PRO.
