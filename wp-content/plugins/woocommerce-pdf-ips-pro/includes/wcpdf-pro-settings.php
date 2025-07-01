@@ -616,7 +616,7 @@ class Settings {
 			array(
 				'type'     => 'setting',
 				'id'       => 'display_date',
-				'title'    => __( 'Display packing slip date', 'wpo_wcpdf_pro' ),
+				'title'    => __( 'Display delivery date', 'wpo_wcpdf_pro' ),
 				'callback' => 'checkbox',
 				'section'  => 'packing_slip',
 				'args'     => array(

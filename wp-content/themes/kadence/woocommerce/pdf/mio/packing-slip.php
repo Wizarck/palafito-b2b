@@ -81,7 +81,7 @@
 				if ($nif) $lines[] = 'NIF: ' . $nif;
 				if ($address) $lines[] = $address . ($address2 ? ', ' . $address2 : '');
 				$lines[] = trim($cp . ' ' . $city . ' - ' . $country_name);
-				if ($phone) $lines[] = 'Teléfono: ' . $phone;
+				if ($phone && isset( $this->settings['display_phone'] ) ) $lines[] = 'Teléfono: ' . $phone;
 				echo implode("<br>", array_filter($lines));
 			?>
 			<?php do_action( 'wpo_wcpdf_after_billing_address', $this->get_type(), $this->order ); ?>
@@ -115,30 +115,34 @@
 					if ($display_name) $lines[] = $display_name;
 					if ($address) $lines[] = $address . ($address2 ? ', ' . $address2 : '');
 					$lines[] = trim($cp . ' ' . $city . ' - ' . $country_name);
-					if ($phone) $lines[] = 'Teléfono: ' . $phone;
+					if ($phone && isset( $this->settings['display_phone'] ) ) $lines[] = 'Teléfono: ' . $phone;
 					echo implode("<br>", array_filter($lines));
 				?>
 				</p>
 				
-				<?php if ( isset( $this->settings['display_phone'] ) ) : ?>
-					<div class="shipping-phone"><?php $this->shipping_phone(); ?></div>
-				<?php endif; ?>
+
 			<?php endif; ?>
 		</td>
 		<td class="order-data">
 			<table>
 				<?php do_action( 'wpo_wcpdf_before_order_data', $this->get_type(), $this->order ); ?>
 				<?php if ( method_exists( $this, 'get_number' ) && $this->get_number() ) : ?>
-					<div class="packing-slip-number">
-						<strong><?php esc_html_e( 'Número de albarán:', 'palafito-wc-extensions' ); ?></strong>
-						<?php $this->number( 'packing-slip' ); ?>
-					</div>
+					<tr class="packing-slip-number">
+						<th><?php esc_html_e( 'Número de albarán:', 'palafito-wc-extensions' ); ?></th>
+						<td><?php $this->number( 'packing-slip' ); ?></td>
+					</tr>
 				<?php endif; ?>
 				<?php if ( method_exists( $this, 'get_date' ) && $this->get_date() ) : ?>
-					<div class="delivery-date">
-						<strong><?php esc_html_e( 'Fecha de entrega:', 'palafito-wc-extensions' ); ?></strong>
-						<?php $this->date( 'packing-slip' ); ?>
-					</div>
+					<tr class="delivery-date">
+						<th><?php esc_html_e( 'Fecha de entrega:', 'palafito-wc-extensions' ); ?></th>
+						<td><?php $this->date( 'packing-slip' ); ?></td>
+					</tr>
+				<?php endif; ?>
+				<?php if ( $this->get_shipping_method() ) : ?>
+					<tr class="shipping-method">
+						<th><?php $this->shipping_method_title(); ?></th>
+						<td><?php $this->shipping_method(); ?></td>
+					</tr>
 				<?php endif; ?>
 				<tr class="order-number">
 					<th><?php $this->order_number_title(); ?></th>
@@ -148,12 +152,6 @@
 					<th><?php $this->order_date_title(); ?></th>
 					<td><?php $this->order_date(); ?></td>
 				</tr>
-				<?php if ( $this->get_shipping_method() ) : ?>
-					<tr class="shipping-method">
-						<th><?php $this->shipping_method_title(); ?></th>
-						<td><?php $this->shipping_method(); ?></td>
-					</tr>
-				<?php endif; ?>
 				<?php do_action( 'wpo_wcpdf_after_order_data', $this->get_type(), $this->order ); ?>
 			</table>
 		</td>
