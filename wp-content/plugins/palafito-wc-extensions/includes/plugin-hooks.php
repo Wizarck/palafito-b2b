@@ -126,7 +126,7 @@ add_action(
 				if ( $use_order_number ) {
 					$base_number = $order->get_order_number();
 				} else {
-					// Lógica secuencial (por defecto del plugin)
+					// Lógica secuencial (por defecto del plugin).
 					$base_number = $packing_slip->get_number() ? $packing_slip->get_number() : $order->get_id();
 				}
 				// Formatear número según configuración.
