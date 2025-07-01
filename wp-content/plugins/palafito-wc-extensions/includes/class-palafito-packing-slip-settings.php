@@ -24,6 +24,9 @@ class Palafito_Packing_Slip_Settings {
 
 		// Hook para agregar "Pedido entregado" a la lista de emails.
 		add_filter( 'wpo_wcpdf_wc_emails', array( $this, 'add_entregado_email_to_list' ) );
+
+		// Hook para agregar JavaScript al admin.
+		add_action( 'admin_footer', array( $this, 'add_packing_slip_js' ) );
 	}
 
 	/**
@@ -179,6 +182,19 @@ class Palafito_Packing_Slip_Settings {
 			),
 			array(
 				'type'     => 'setting',
+				'id'       => 'use_order_number',
+				'title'    => __( 'Use order number', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback' => 'checkbox',
+				'section'  => 'packing_slip',
+				'args'     => array(
+					'option_name' => $option_name,
+					'id'          => 'use_order_number',
+					'default'     => 1,
+					'description' => __( 'When checked, the packing slip number will use the order number instead of a sequential number. The number format (prefix/suffix) will still be applied.', 'woocommerce-pdf-invoices-packing-slips' ),
+				),
+			),
+			array(
+				'type'     => 'setting',
 				'id'       => 'next_packing_slip_number',
 				'title'    => __( 'Next packing slip number (without prefix/suffix etc.)', 'woocommerce-pdf-invoices-packing-slips' ),
 				'callback' => 'next_number_edit',
@@ -187,6 +203,10 @@ class Palafito_Packing_Slip_Settings {
 					'store_callback' => array( $this, 'get_sequential_number_store' ),
 					'size'           => '10',
 					'description'    => __( 'This is the number that will be used for the next document. By default, numbering starts from 1 and increases for every new document. Note that if you override this and set it lower than the current/highest number, this could create duplicate numbers!', 'woocommerce-pdf-invoices-packing-slips' ),
+					'disabled_when'  => array(
+						'field' => 'use_order_number',
+						'value' => 1,
+					),
 				),
 			),
 			array(
@@ -380,6 +400,49 @@ class Palafito_Packing_Slip_Settings {
 	public function add_entregado_email_to_list( $emails ) {
 		$emails['entregado'] = __( 'Pedido entregado', 'woocommerce-pdf-invoices-packing-slips' );
 		return $emails;
+	}
+
+	/**
+	 * Add JavaScript to the admin footer.
+	 */
+	public function add_packing_slip_js() {
+		// Only add JavaScript on the PDF settings page.
+		if ( ! isset( $_GET['page'] ) || 'wpo_wcpdf_options_page' !== $_GET['page'] ) {
+			return;
+		}
+
+		?>
+		<script type="text/javascript">
+		jQuery(document).ready(function($) {
+			// Function to toggle next packing slip number field.
+			function toggleNextPackingSlipNumber() {
+				var useOrderNumber = $('#wpo_wcpdf_documents_settings_packing-slip_use_order_number');
+				var nextNumberField = $('#wpo_wcpdf_documents_settings_packing-slip_next_packing_slip_number');
+				
+				if (useOrderNumber.is(':checked')) {
+					nextNumberField.prop('disabled', true);
+					nextNumberField.closest('.form-field').addClass('disabled');
+				} else {
+					nextNumberField.prop('disabled', false);
+					nextNumberField.closest('.form-field').removeClass('disabled');
+				}
+			}
+
+			// Initial state.
+			toggleNextPackingSlipNumber();
+
+			// Listen for changes on the checkbox.
+			$('#wpo_wcpdf_documents_settings_packing-slip_use_order_number').on('change', function() {
+				toggleNextPackingSlipNumber();
+			});
+		});
+		</script>
+		<style>
+		.form-field.disabled {
+			opacity: 0.6;
+		}
+		</style>
+		<?php
 	}
 }
 

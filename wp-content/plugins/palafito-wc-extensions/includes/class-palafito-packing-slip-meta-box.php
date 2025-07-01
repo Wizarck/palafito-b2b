@@ -195,13 +195,26 @@ class Palafito_Packing_Slip_Meta_Box {
 			return;
 		}
 
-		// Use order number as packing slip number (as requested).
-		$order_number = $order->get_order_number();
+		// Get packing slip settings.
+		$settings         = get_option( 'wpo_wcpdf_documents_settings_packing-slip', array() );
+		$use_order_number = ! empty( $settings['use_order_number'] );
+
+		// Determine the base number based on settings.
+		if ( $use_order_number ) {
+			// Use order number as base.
+			$base_number = $order->get_order_number();
+		} else {
+			// Use sequential number.
+			$base_number = $this->get_next_sequential_number();
+		}
+
+		// Apply number format if configured.
+		$formatted_number = $this->apply_number_format( $base_number, $order, $settings );
 
 		// Create a number object like the PRO does.
 		$number_data = array(
-			'number'           => $order_number,
-			'formatted_number' => $order_number,
+			'number'           => $base_number,
+			'formatted_number' => $formatted_number,
 		);
 
 		// Set the number using the PRO method.
@@ -211,11 +224,80 @@ class Palafito_Packing_Slip_Meta_Box {
 		// Add order note.
 		$order->add_order_note(
 			sprintf(
-				/* translators: %s: order number */
-				__( 'Número de albarán generado automáticamente: %s', 'palafito-wc-extensions' ),
-				$order_number
+				/* translators: %s: formatted number */
+				__( 'Packing slip number generated automatically: %s', 'palafito-wc-extensions' ),
+				$formatted_number
 			)
 		);
+	}
+
+	/**
+	 * Get next sequential number for packing slip.
+	 *
+	 * @return int
+	 */
+	private function get_next_sequential_number() {
+		$settings    = get_option( 'wpo_wcpdf_documents_settings_packing-slip', array() );
+		$next_number = ! empty( $settings['next_packing_slip_number'] ) ? (int) $settings['next_packing_slip_number'] : 1;
+
+		// Increment the number for next use.
+		$settings['next_packing_slip_number'] = $next_number + 1;
+		update_option( 'wpo_wcpdf_documents_settings_packing-slip', $settings );
+
+		return $next_number;
+	}
+
+	/**
+	 * Apply number format to the base number.
+	 *
+	 * @param string   $base_number Base number.
+	 * @param WC_Order $order Order object.
+	 * @param array    $settings Packing slip settings.
+	 * @return string
+	 */
+	private function apply_number_format( $base_number, $order, $settings ) {
+		$formatted_number = $base_number;
+
+		// Get number format settings.
+		$number_format = ! empty( $settings['number_format'] ) ? $settings['number_format'] : array();
+
+		if ( ! empty( $number_format ) ) {
+			$prefix  = ! empty( $number_format['prefix'] ) ? $number_format['prefix'] : '';
+			$suffix  = ! empty( $number_format['suffix'] ) ? $number_format['suffix'] : '';
+			$padding = ! empty( $number_format['padding'] ) ? (int) $number_format['padding'] : 0;
+
+			// Apply padding if configured.
+			if ( $padding > 0 ) {
+				$formatted_number = str_pad( $base_number, $padding, '0', STR_PAD_LEFT );
+			}
+
+			// Apply prefix and suffix.
+			$formatted_number = $prefix . $formatted_number . $suffix;
+
+			// Replace placeholders.
+			$formatted_number = $this->replace_placeholders( $formatted_number, $order );
+		}
+
+		return $formatted_number;
+	}
+
+	/**
+	 * Replace placeholders in the formatted number.
+	 *
+	 * @param string   $formatted_number Formatted number with placeholders.
+	 * @param WC_Order $order Order object.
+	 * @return string
+	 */
+	private function replace_placeholders( $formatted_number, $order ) {
+		$replacements = array(
+			'[packing_slip_year]'  => date( 'Y' ),
+			'[packing_slip_month]' => date( 'm' ),
+			'[order_number]'       => $order->get_order_number(),
+			'[order_date]'         => $order->get_date_created()->format( 'Y-m-d' ),
+			'[order_date_i18n]'    => $order->get_date_created()->date_i18n( 'Y-m-d' ),
+		);
+
+		return str_replace( array_keys( $replacements ), array_values( $replacements ), $formatted_number );
 	}
 
 	/**
