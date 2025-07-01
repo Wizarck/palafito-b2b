@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Reorganiza las opciones del Packing Slip para que coincidan con la estructura de la factura.
+ * Reorganiza las opciones del Packing Slip para que coincidan exactamente con la estructura de la factura.
  */
 class Palafito_Packing_Slip_Settings {
 
@@ -19,141 +19,61 @@ class Palafito_Packing_Slip_Settings {
 	 * Constructor.
 	 */
 	public function __construct() {
-		// Hook para reorganizar las opciones del packing slip.
-		add_filter( 'wpo_wcpdf_settings_fields_documents_packing_slip', array( $this, 'reorganize_packing_slip_settings' ), 20, 1 );
+		// Hook para reemplazar completamente las opciones del packing slip.
+		add_filter( 'wpo_wcpdf_settings_fields_documents_packing_slip', array( $this, 'replace_packing_slip_settings' ), 999, 1 );
 
-		// Hook para agregar las opciones faltantes al packing slip.
-		add_filter( 'wpo_wcpdf_settings_fields_documents_packing_slip', array( $this, 'add_missing_packing_slip_options' ), 30, 1 );
+		// Hook para agregar "Pedido entregado" a la lista de emails.
+		add_filter( 'wpo_wcpdf_wc_emails', array( $this, 'add_entregado_email_to_list' ) );
 	}
 
 	/**
-	 * Reorganiza las opciones del packing slip para que coincidan con la estructura de la factura.
+	 * Reemplaza completamente las opciones del packing slip para que coincidan exactamente con la factura.
 	 *
 	 * @param array $settings_fields Campos de configuración actuales.
 	 * @return array
 	 */
-	public function reorganize_packing_slip_settings( $settings_fields ) {
+	public function replace_packing_slip_settings( $settings_fields ) {
 		// Solo reorganizar si el plugin PDF está disponible.
 		if ( ! class_exists( 'WPO_WCPDF' ) ) {
 			return $settings_fields;
 		}
 
-		// Buscar y extraer las opciones que necesitamos reorganizar.
-		$reorganized_fields = array();
-		$remaining_fields   = array();
-
-		// Primera pasada: extraer las opciones en el orden correcto (igual que factura).
-		foreach ( $settings_fields as $field ) {
-			if ( ! isset( $field['id'] ) ) {
-				$remaining_fields[] = $field;
-				continue;
-			}
-
-			// Orden exacto como en factura (Invoice.php).
-			// General: enabled, attach_to_email_ids, disable_for_statuses.
-			// Document details: display_shipping_address (display_billing_address para packing slip), display_email, display_phone, display_customer_notes, display_number, next_packing_slip_number, number_format, display_date.
-			// My Account: my_account_buttons.
-			// Admin: packing_slip_number_column, packing_slip_date_column.
-			// Advanced: reset_number_yearly, mark_printed, unmark_printed.
-
-			switch ( $field['id'] ) {
-				// General section (como en factura).
-				case 'enabled':
-					$reorganized_fields[0] = $field;
-					break;
-				case 'attach_to_email_ids':
-					$reorganized_fields[1] = $field;
-					break;
-				case 'disable_for_statuses':
-					$reorganized_fields[2] = $field;
-					break;
-
-				// Document details section (como en factura).
-				case 'display_billing_address': // Equivalente a display_shipping_address en factura.
-					$reorganized_fields[3] = $field;
-					break;
-				case 'display_email':
-					$reorganized_fields[4] = $field;
-					break;
-				case 'display_phone':
-					$reorganized_fields[5] = $field;
-					break;
-				case 'display_customer_notes':
-					$reorganized_fields[6] = $field;
-					break;
-				case 'display_number':
-					$reorganized_fields[7] = $field;
-					break;
-				case 'next_packing_slip_number':
-					$reorganized_fields[8] = $field;
-					break;
-				case 'number_format':
-					$reorganized_fields[9] = $field;
-					break;
-				case 'display_date':
-					$reorganized_fields[10] = $field;
-					break;
-
-				// My Account section (como en factura).
-				case 'my_account_buttons':
-					$reorganized_fields[11] = $field;
-					break;
-
-				// Admin section (como en factura).
-				case 'packing_slip_number_column':
-					$reorganized_fields[12] = $field;
-					break;
-				case 'packing_slip_date_column':
-					$reorganized_fields[13] = $field;
-					break;
-
-				// Advanced section (como en factura).
-				case 'reset_number_yearly':
-					$reorganized_fields[14] = $field;
-					break;
-				case 'mark_printed':
-					$reorganized_fields[15] = $field;
-					break;
-				case 'unmark_printed':
-					$reorganized_fields[16] = $field;
-					break;
-
-				default:
-					$remaining_fields[] = $field;
-					break;
-			}
-		}
-
-		// Ordenar por índice y agregar los campos restantes.
-		ksort( $reorganized_fields );
-		$final_fields = array_merge( $reorganized_fields, $remaining_fields );
-
-		return $final_fields;
-	}
-
-	/**
-	 * Agrega las opciones faltantes al packing slip para que coincida con la factura.
-	 *
-	 * @param array $settings_fields Campos de configuración actuales.
-	 * @return array
-	 */
-	public function add_missing_packing_slip_options( $settings_fields ) {
 		$option_name = 'wpo_wcpdf_documents_settings_packing-slip';
 
-		// Verificar si ya existen las opciones para no duplicarlas.
-		$existing_ids = array();
-		foreach ( $settings_fields as $field ) {
-			if ( isset( $field['id'] ) ) {
-				$existing_ids[] = $field['id'];
-			}
-		}
-
-		// Agregar opciones faltantes que están en factura pero no en packing slip.
-		$missing_options = array();
-
-		// disable_for_statuses (General section).
-		if ( ! in_array( 'disable_for_statuses', $existing_ids, true ) ) {
-			$missing_options[] = array(
+		// Reemplazar completamente con el orden exacto de la factura.
+		$new_settings_fields = array(
+			array(
+				'type'     => 'section',
+				'id'       => 'packing_slip',
+				'title'    => '',
+				'callback' => 'section',
+			),
+			array(
+				'type'     => 'setting',
+				'id'       => 'enabled',
+				'title'    => __( 'Enable', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback' => 'checkbox',
+				'section'  => 'packing_slip',
+				'args'     => array(
+					'option_name' => $option_name,
+					'id'          => 'enabled',
+				),
+			),
+			array(
+				'type'     => 'setting',
+				'id'       => 'attach_to_email_ids',
+				'title'    => __( 'Attach to:', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback' => 'multiple_checkboxes',
+				'section'  => 'packing_slip',
+				'args'     => array(
+					'option_name'     => $option_name,
+					'id'              => 'attach_to_email_ids',
+					'fields_callback' => array( $this, 'get_wc_emails' ),
+					/* translators: directory path */
+					'description'     => ! WPO_WCPDF()->file_system->is_writable( WPO_WCPDF()->main->get_tmp_path( 'attachments' ) ) ? '<span class="wpo-warning">' . sprintf( __( 'It looks like the temp folder (<code>%s</code>) is not writable, check the permissions for this folder! Without having write access to this folder, the plugin will not be able to email packing slips.', 'woocommerce-pdf-invoices-packing-slips' ), WPO_WCPDF()->main->get_tmp_path( 'attachments' ) ) . '</span>' : '',
+				),
+			),
+			array(
 				'type'     => 'setting',
 				'id'       => 'disable_for_statuses',
 				'title'    => __( 'Disable for:', 'woocommerce-pdf-invoices-packing-slips' ),
@@ -167,66 +87,59 @@ class Palafito_Packing_Slip_Settings {
 					'enhanced_select'  => true,
 					'placeholder'      => __( 'Select one or more statuses', 'woocommerce-pdf-invoices-packing-slips' ),
 				),
-			);
-		}
-
-		// display_number (Document details section).
-		if ( ! in_array( 'display_number', $existing_ids, true ) ) {
-			$missing_options[] = array(
+			),
+			array(
 				'type'     => 'setting',
-				'id'       => 'display_number',
-				'title'    => __( 'Display packing slip number', 'woocommerce-pdf-invoices-packing-slips' ),
+				'id'       => 'display_billing_address',
+				'title'    => __( 'Display billing address', 'woocommerce-pdf-invoices-packing-slips' ),
 				'callback' => 'select',
 				'section'  => 'packing_slip',
 				'args'     => array(
 					'option_name' => $option_name,
-					'id'          => 'display_number',
+					'id'          => 'display_billing_address',
 					'options'     => array(
-						''                    => __( 'No', 'woocommerce-pdf-invoices-packing-slips' ),
-						'packing_slip_number' => __( 'Packing Slip Number', 'woocommerce-pdf-invoices-packing-slips' ),
-						'order_number'        => __( 'Order Number', 'woocommerce-pdf-invoices-packing-slips' ),
+						''               => __( 'No', 'woocommerce-pdf-invoices-packing-slips' ),
+						'when_different' => __( 'Only when different from shipping address', 'woocommerce-pdf-invoices-packing-slips' ),
+						'always'         => __( 'Always', 'woocommerce-pdf-invoices-packing-slips' ),
 					),
 				),
-			);
-		}
-
-		// next_packing_slip_number (Document details section).
-		if ( ! in_array( 'next_packing_slip_number', $existing_ids, true ) ) {
-			$missing_options[] = array(
+			),
+			array(
 				'type'     => 'setting',
-				'id'       => 'next_packing_slip_number',
-				'title'    => __( 'Next packing slip number', 'woocommerce-pdf-invoices-packing-slips' ),
-				'callback' => 'next_number_edit',
+				'id'       => 'display_email',
+				'title'    => __( 'Display email address', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback' => 'checkbox',
 				'section'  => 'packing_slip',
 				'args'     => array(
 					'option_name' => $option_name,
-					'id'          => 'next_packing_slip_number',
-					'size'        => '10',
-					'description' => __( 'This is the number that will be used for the next document. By default, numbering starts from 1 and increases for every new document. Note that if you override this and set it to a number that has already been used, this could create duplicate numbers!', 'woocommerce-pdf-invoices-packing-slips' ),
+					'id'          => 'display_email',
 				),
-			);
-		}
-
-		// number_format (Document details section).
-		if ( ! in_array( 'number_format', $existing_ids, true ) ) {
-			$missing_options[] = array(
+			),
+			array(
 				'type'     => 'setting',
-				'id'       => 'number_format',
-				'title'    => __( 'Number format', 'woocommerce-pdf-invoices-packing-slips' ),
-				'callback' => 'text_input',
+				'id'       => 'display_phone',
+				'title'    => __( 'Display phone number', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback' => 'checkbox',
 				'section'  => 'packing_slip',
 				'args'     => array(
 					'option_name' => $option_name,
-					'id'          => 'number_format',
-					'size'        => '20',
-					'description' => __( 'Available placeholders: {order_number}, {order_date}, {order_date_i18n}, {document_date}, {document_date_i18n}, {Y}, {y}, {m}, {n}, {j}, {d}.<br><strong>Note:</strong> The {document_date} and {document_date_i18n} placeholders will use the document date (if set) or fall back to the order date.', 'woocommerce-pdf-invoices-packing-slips' ),
+					'id'          => 'display_phone',
 				),
-			);
-		}
-
-		// display_date (Document details section).
-		if ( ! in_array( 'display_date', $existing_ids, true ) ) {
-			$missing_options[] = array(
+			),
+			array(
+				'type'     => 'setting',
+				'id'       => 'display_customer_notes',
+				'title'    => __( 'Display customer notes', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback' => 'checkbox',
+				'section'  => 'packing_slip',
+				'args'     => array(
+					'option_name'     => $option_name,
+					'id'              => 'display_customer_notes',
+					'store_unchecked' => true,
+					'default'         => 1,
+				),
+			),
+			array(
 				'type'     => 'setting',
 				'id'       => 'display_date',
 				'title'    => __( 'Display packing slip date', 'woocommerce-pdf-invoices-packing-slips' ),
@@ -241,11 +154,232 @@ class Palafito_Packing_Slip_Settings {
 						'order_date'    => __( 'Order Date', 'woocommerce-pdf-invoices-packing-slips' ),
 					),
 				),
-			);
-		}
+			),
+			array(
+				'type'     => 'setting',
+				'id'       => 'display_number',
+				'title'    => __( 'Display packing slip number', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback' => 'select',
+				'section'  => 'packing_slip',
+				'args'     => array(
+					'option_name' => $option_name,
+					'id'          => 'display_number',
+					'options'     => array(
+						''                    => __( 'No', 'woocommerce-pdf-invoices-packing-slips' ),
+						'packing_slip_number' => __( 'Packing Slip Number', 'woocommerce-pdf-invoices-packing-slips' ),
+						'order_number'        => __( 'Order Number', 'woocommerce-pdf-invoices-packing-slips' ),
+					),
+					'description' => sprintf(
+						'<strong>%s</strong> %s <a href="https://docs.wpovernight.com/woocommerce-pdf-invoices-packing-slips/invoice-numbers-explained/#why-is-the-pdf-invoice-number-different-from-the-woocommerce-order-number">%s</a>',
+						__( 'Warning!', 'woocommerce-pdf-invoices-packing-slips' ),
+						__( 'Using the Order Number as packing slip number is not recommended as this may lead to gaps in the packing slip number sequence (even when order numbers are sequential).', 'woocommerce-pdf-invoices-packing-slips' ),
+						__( 'More information', 'woocommerce-pdf-invoices-packing-slips' )
+					),
+				),
+			),
+			array(
+				'type'     => 'setting',
+				'id'       => 'next_packing_slip_number',
+				'title'    => __( 'Next packing slip number (without prefix/suffix etc.)', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback' => 'next_number_edit',
+				'section'  => 'packing_slip',
+				'args'     => array(
+					'store_callback' => array( $this, 'get_sequential_number_store' ),
+					'size'           => '10',
+					'description'    => __( 'This is the number that will be used for the next document. By default, numbering starts from 1 and increases for every new document. Note that if you override this and set it lower than the current/highest number, this could create duplicate numbers!', 'woocommerce-pdf-invoices-packing-slips' ),
+				),
+			),
+			array(
+				'type'     => 'setting',
+				'id'       => 'number_format',
+				'title'    => __( 'Number format', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback' => 'multiple_text_input',
+				'section'  => 'packing_slip',
+				'args'     => array(
+					'option_name' => $option_name,
+					'id'          => 'number_format',
+					'fields'      => array(
+						'prefix'  => array(
+							'label'       => __( 'Prefix', 'woocommerce-pdf-invoices-packing-slips' ),
+							'size'        => 20,
+							'description' => __( 'If set, this value will be used as number prefix.', 'woocommerce-pdf-invoices-packing-slips' ) . ' ' . sprintf(
+								/* translators: 1. document type, 2-3 placeholders */
+								__( 'You can use the %1$s year and/or month with the %2$s or %3$s placeholders respectively.', 'woocommerce-pdf-invoices-packing-slips' ),
+								strtolower( __( 'Packing Slip', 'woocommerce-pdf-invoices-packing-slips' ) ),
+								'<strong>[packing_slip_year]</strong>',
+								'<strong>[packing_slip_month]</strong>'
+							) . ' ' . __( 'Check the Docs article below to see all the available placeholders for prefix/suffix.', 'woocommerce-pdf-invoices-packing-slips' ),
+						),
+						'suffix'  => array(
+							'label'       => __( 'Suffix', 'woocommerce-pdf-invoices-packing-slips' ),
+							'size'        => 20,
+							'description' => __( 'If set, this value will be used as number suffix.', 'woocommerce-pdf-invoices-packing-slips' ) . ' ' . sprintf(
+								/* translators: 1. document type, 2-3 placeholders */
+								__( 'You can use the %1$s year and/or month with the %2$s or %3$s placeholders respectively.', 'woocommerce-pdf-invoices-packing-slips' ),
+								strtolower( __( 'Packing Slip', 'woocommerce-pdf-invoices-packing-slips' ) ),
+								'<strong>[packing_slip_year]</strong>',
+								'<strong>[packing_slip_month]</strong>'
+							) . ' ' . __( 'Check the Docs article below to see all the available placeholders for prefix/suffix.', 'woocommerce-pdf-invoices-packing-slips' ),
+						),
+						'padding' => array(
+							'label'       => __( 'Padding', 'woocommerce-pdf-invoices-packing-slips' ),
+							'size'        => 20,
+							'type'        => 'number',
+							/* translators: document type */
+							'description' => sprintf( __( 'Enter the number of digits you want to use as padding. For instance, enter <code>6</code> to display the %s number <code>123</code> as <code>000123</code>, filling it with zeros until the number set as padding is reached.', 'woocommerce-pdf-invoices-packing-slips' ), strtolower( __( 'Packing Slip', 'woocommerce-pdf-invoices-packing-slips' ) ) ),
+						),
+					),
+					/* translators: document type */
+					'description' => __( 'For more information about setting up the number format and see the available placeholders for the prefix and suffix, check this article:', 'woocommerce-pdf-invoices-packing-slips' ) . sprintf( ' <a href="https://docs.wpovernight.com/woocommerce-pdf-invoices-packing-slips/number-format-explained/" target="_blank">%s</a>', __( 'Number format explained', 'woocommerce-pdf-invoices-packing-slips' ) ) . '.<br><br>' . sprintf( __( '<strong>Note</strong>: Changes made to the number format will only be reflected on new orders. Also, if you have already created a custom %s number format with a filter, the above settings will be ignored.', 'woocommerce-pdf-invoices-packing-slips' ), strtolower( __( 'Packing Slip', 'woocommerce-pdf-invoices-packing-slips' ) ) ),
+				),
+			),
+			array(
+				'type'     => 'setting',
+				'id'       => 'reset_number_yearly',
+				'title'    => __( 'Reset packing slip number yearly', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback' => 'checkbox',
+				'section'  => 'packing_slip',
+				'args'     => array(
+					'option_name' => $option_name,
+					'id'          => 'reset_number_yearly',
+				),
+			),
+			array(
+				'type'     => 'setting',
+				'id'       => 'my_account_buttons',
+				'title'    => __( 'Allow My Account packing slip download', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback' => 'select',
+				'section'  => 'packing_slip',
+				'args'     => array(
+					'option_name' => $option_name,
+					'id'          => 'my_account_buttons',
+					'options'     => array(
+						'available' => __( 'Only when a packing slip is already created/emailed', 'woocommerce-pdf-invoices-packing-slips' ),
+						'custom'    => __( 'Only for specific order statuses (define below)', 'woocommerce-pdf-invoices-packing-slips' ),
+						'always'    => __( 'Always', 'woocommerce-pdf-invoices-packing-slips' ),
+						'never'     => __( 'Never', 'woocommerce-pdf-invoices-packing-slips' ),
+					),
+					'custom'      => array(
+						'type' => 'multiple_checkboxes',
+						'args' => array(
+							'option_name'     => $option_name,
+							'id'              => 'my_account_restrict',
+							'fields_callback' => array( $this, 'get_wc_order_status_list' ),
+						),
+					),
+				),
+			),
+			array(
+				'type'     => 'setting',
+				'id'       => 'packing_slip_number_column',
+				'title'    => __( 'Enable packing slip number column in the orders list', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback' => 'checkbox',
+				'section'  => 'packing_slip',
+				'args'     => array(
+					'option_name' => $option_name,
+					'id'          => 'packing_slip_number_column',
+				),
+			),
+			array(
+				'type'     => 'setting',
+				'id'       => 'packing_slip_date_column',
+				'title'    => __( 'Enable packing slip date column in the orders list', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback' => 'checkbox',
+				'section'  => 'packing_slip',
+				'args'     => array(
+					'option_name' => $option_name,
+					'id'          => 'packing_slip_date_column',
+				),
+			),
+			array(
+				'type'     => 'setting',
+				'id'       => 'mark_printed',
+				'title'    => __( 'Mark as printed', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback' => 'select',
+				'section'  => 'packing_slip',
+				'args'     => array(
+					'option_name'     => $option_name,
+					'id'              => 'mark_printed',
+					'options'         => array_merge(
+						array(
+							'manually' => __( 'Manually', 'woocommerce-pdf-invoices-packing-slips' ),
+						),
+						apply_filters(
+							'wpo_wcpdf_document_triggers',
+							array(
+								'single'           => __( 'On single order action', 'woocommerce-pdf-invoices-packing-slips' ),
+								'bulk'             => __( 'On bulk order action', 'woocommerce-pdf-invoices-packing-slips' ),
+								'my_account'       => __( 'On my account', 'woocommerce-pdf-invoices-packing-slips' ),
+								'email_attachment' => __( 'On email attachment', 'woocommerce-pdf-invoices-packing-slips' ),
+								'document_data'    => __( 'On order document data (number and/or date set manually)', 'woocommerce-pdf-invoices-packing-slips' ),
+							)
+						)
+					),
+					'multiple'        => true,
+					'enhanced_select' => true,
+					'description'     => __( 'Allows you to mark the document as printed, manually (in the order page) or automatically (based on the document creation context you have selected).', 'woocommerce-pdf-invoices-packing-slips' ),
+				),
+			),
+			array(
+				'type'     => 'setting',
+				'id'       => 'unmark_printed',
+				'title'    => __( 'Unmark as printed', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback' => 'checkbox',
+				'section'  => 'packing_slip',
+				'args'     => array(
+					'option_name' => $option_name,
+					'id'          => 'unmark_printed',
+					'description' => __( 'Adds a link in the order page to allow to remove the printed mark.', 'woocommerce-pdf-invoices-packing-slips' ),
+				),
+			),
+		);
 
-		// Agregar las opciones faltantes al final.
-		return array_merge( $settings_fields, $missing_options );
+		return $new_settings_fields;
+	}
+
+	/**
+	 * Get WooCommerce emails for the attach to dropdown.
+	 *
+	 * @return array
+	 */
+	public function get_wc_emails() {
+		$emails    = array();
+		$wc_emails = WC()->mailer()->get_emails();
+		if ( ! empty( $wc_emails ) ) {
+			foreach ( $wc_emails as $email ) {
+				$emails[ $email->id ] = $email->get_title();
+			}
+		}
+		return $emails;
+	}
+
+	/**
+	 * Get WooCommerce order status list.
+	 *
+	 * @return array
+	 */
+	public function get_wc_order_status_list() {
+		return wc_get_order_statuses();
+	}
+
+	/**
+	 * Get sequential number store callback.
+	 *
+	 * @return array
+	 */
+	public function get_sequential_number_store() {
+		return array( 'WPO_WCPDF', 'get_sequential_number_store' );
+	}
+
+	/**
+	 * Add "Pedido entregado" to the list of emails.
+	 *
+	 * @param array $emails List of emails.
+	 * @return array
+	 */
+	public function add_entregado_email_to_list( $emails ) {
+		$emails['entregado'] = __( 'Pedido entregado', 'woocommerce-pdf-invoices-packing-slips' );
+		return $emails;
 	}
 }
 
