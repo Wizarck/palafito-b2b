@@ -256,6 +256,7 @@ final class Palafito_WC_Extensions {
 			require_once plugin_dir_path( __FILE__ ) . 'includes/class-palafito-admin-pdf-actions.php';
 			require_once plugin_dir_path( __FILE__ ) . 'includes/class-palafito-email-attachments.php';
 			require_once plugin_dir_path( __FILE__ ) . 'includes/class-palafito-packing-slip-settings.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/class-palafito-packing-slip-meta-box.php';
 		}
 	}
 
@@ -269,6 +270,7 @@ final class Palafito_WC_Extensions {
 		// Initialize email attachments if PDF plugin is available.
 		if ( class_exists( 'WPO_WCPDF' ) ) {
 			new Palafito_Email_Attachments();
+			new Palafito_Packing_Slip_Meta_Box();
 		}
 	}
 
