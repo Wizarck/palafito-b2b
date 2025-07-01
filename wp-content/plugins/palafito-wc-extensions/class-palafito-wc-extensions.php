@@ -37,9 +37,18 @@ final class Palafito_WC_Extensions {
 		// Registrar nuevos estados personalizados de pedido.
 		add_filter( 'woocommerce_register_shop_order_post_statuses', array( __CLASS__, 'register_custom_order_statuses' ) );
 		add_filter( 'wc_order_statuses', array( __CLASS__, 'add_custom_order_statuses_to_list' ) );
+
+		// Acciones masivas para interfaz clásica (edit-shop_order).
 		add_filter( 'bulk_actions-edit-shop_order', array( __CLASS__, 'add_custom_order_statuses_to_bulk_actions' ) );
-		// Manejar acciones masivas de estados personalizados.
 		add_filter( 'handle_bulk_actions-edit-shop_order', array( __CLASS__, 'handle_bulk_order_status_actions' ), 10, 3 );
+
+		// Acciones masivas para nueva interfaz HPOS (woocommerce_page_wc-orders).
+		add_filter( 'woocommerce_admin_order_list_bulk_actions', array( __CLASS__, 'add_custom_order_statuses_to_bulk_actions' ) );
+		add_filter( 'woocommerce_admin_order_list_handle_bulk_actions', array( __CLASS__, 'handle_bulk_order_status_actions' ), 10, 3 );
+
+		// Acciones individuales para nueva interfaz HPOS.
+		add_filter( 'woocommerce_admin_order_actions', array( __CLASS__, 'add_custom_order_actions' ), 10, 2 );
+
 		// Registrar post status personalizados en el hook init.
 		add_action( 'init', array( __CLASS__, 'register_custom_post_statuses' ), 1 );
 
@@ -220,6 +229,35 @@ final class Palafito_WC_Extensions {
 		$order_statuses['entregado'] = _x( 'Entregado', 'Order status', 'palafito-wc-extensions' );
 		$order_statuses['facturado'] = _x( 'Facturado', 'Order status', 'palafito-wc-extensions' );
 		return $order_statuses;
+	}
+
+	/**
+	 * Añadir acciones individuales para la nueva interfaz HPOS.
+	 *
+	 * @param array    $actions Acciones disponibles.
+	 * @param WC_Order $order   Objeto del pedido.
+	 * @return array
+	 */
+	public static function add_custom_order_actions( $actions, $order ) {
+		// Añadir acción "Entregado" si el pedido está en procesamiento.
+		if ( $order->has_status( array( 'processing' ) ) ) {
+			$actions['entregado'] = array(
+				'url'    => wp_nonce_url( admin_url( 'admin-ajax.php?action=woocommerce_mark_order_status&status=entregado&order_id=' . $order->get_id() ), 'woocommerce-mark-order-status' ),
+				'name'   => __( 'Entregado', 'palafito-wc-extensions' ),
+				'action' => 'entregado',
+			);
+		}
+
+		// Añadir acción "Facturado" si el pedido está entregado.
+		if ( $order->has_status( array( 'entregado' ) ) ) {
+			$actions['facturado'] = array(
+				'url'    => wp_nonce_url( admin_url( 'admin-ajax.php?action=woocommerce_mark_order_status&status=facturado&order_id=' . $order->get_id() ), 'woocommerce-mark-order-status' ),
+				'name'   => __( 'Facturado', 'palafito-wc-extensions' ),
+				'action' => 'facturado',
+			);
+		}
+
+		return $actions;
 	}
 
 	/**
