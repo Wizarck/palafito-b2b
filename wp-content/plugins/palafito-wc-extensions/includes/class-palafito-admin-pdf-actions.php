@@ -36,8 +36,8 @@ class Palafito_Admin_PDF_Actions {
 	public function add_custom_status_actions( $actions, $order ) {
 		$order_status = $order->get_status();
 		$order_id     = $order->get_id();
-		// Obtener el referer de forma segura para la redirección.
-		$referer = isset( $_SERVER['REQUEST_URI'] ) ? rawurlencode( esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) ) : '';
+		// Forzar el referer a la URL estándar de WooCommerce para máxima compatibilidad.
+		$referer = rawurlencode( admin_url( 'edit.php?post_type=shop_order' ) );
 
 		// Botón para cambiar a Entregado si está en procesando.
 		if ( 'processing' === $order_status ) {
