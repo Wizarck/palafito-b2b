@@ -21,6 +21,13 @@ class Palafito_Admin_PDF_Actions {
 	public function __construct() {
 		// Agregar acciones personalizadas de cambio de estado.
 		add_filter( 'woocommerce_admin_order_actions', array( $this, 'add_custom_status_actions' ), 30, 2 );
+
+		// Modificar la lógica de WooCommerce para incluir nuestros estados personalizados.
+		add_filter( 'woocommerce_valid_order_statuses_for_payment_complete', array( $this, 'add_custom_statuses_to_payment_complete' ) );
+		add_filter( 'woocommerce_order_is_paid_statuses', array( $this, 'add_custom_statuses_to_paid_statuses' ) );
+
+		// Modificar las acciones después de que WooCommerce las genere.
+		add_filter( 'woocommerce_admin_order_actions', array( $this, 'modify_complete_button_visibility' ), 40, 2 );
 	}
 
 	/**
@@ -49,6 +56,47 @@ class Palafito_Admin_PDF_Actions {
 				'name'   => __( 'Facturado', 'palafito-wc-extensions' ),
 				'action' => 'palafito-mark-facturado',
 			);
+		}
+
+		return $actions;
+	}
+
+	/**
+	 * Agrega nuestros estados personalizados a la lista de estados para completar el pago.
+	 *
+	 * @param array $statuses Lista de estados para completar el pago.
+	 * @return array
+	 */
+	public function add_custom_statuses_to_payment_complete( $statuses ) {
+		$statuses[] = 'entregado';
+		return $statuses;
+	}
+
+	/**
+	 * Agrega nuestros estados personalizados a la lista de estados pagados.
+	 *
+	 * @param array $statuses Lista de estados pagados.
+	 * @return array
+	 */
+	public function add_custom_statuses_to_paid_statuses( $statuses ) {
+		$statuses[] = 'entregado';
+		return $statuses;
+	}
+
+	/**
+	 * Modifica la visibilidad del botón Complete después de que WooCommerce las genere.
+	 *
+	 * @param array    $actions Acciones disponibles.
+	 * @param WC_Order $order Objeto del pedido.
+	 * @return array
+	 */
+	public function modify_complete_button_visibility( $actions, $order ) {
+		$order_status = $order->get_status();
+		$order_id     = $order->get_id();
+
+		// Si el pedido está en estado de procesamiento, ocultar el botón Complete.
+		if ( 'processing' === $order_status ) {
+			unset( $actions['complete'] );
 		}
 
 		return $actions;
