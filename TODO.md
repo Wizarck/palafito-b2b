@@ -16,6 +16,26 @@
 - [ ] Tests de integración/end-to-end (opcional)
 - [ ] **Investigar y documentar la posibilidad de que varios AI (agentes) se comuniquen entre sí para tareas colaborativas.**
 - [ ] **Crear scripts automáticos (pre-push hook o npm/composer script) que ejecuten todos los checks y fixes de linting antes de cada push.**
+- [ ] **Implementar pre-push hook para Composer:**
+    - Usar el script `prepush` de composer para ejecutar automáticamente `composer fix:all && composer lint:all` antes de cada push.
+    - Ejemplo de hook:
+      ```bash
+      # .git/hooks/pre-push
+      #!/bin/bash
+      composer prepush
+      RESULT=$?
+      if [ $RESULT -ne 0 ]; then
+        echo "Pre-push hook: Lint or fix failed. Push aborted."
+        exit 1
+      fi
+      ```
+    - Dar permisos: `chmod +x .git/hooks/pre-push`
+    - Así ningún push pasará si hay errores de linting.
+
+- [ ] **AI colaborativo:**
+    - Investigar frameworks como AutoGen, CrewAI, LangChain Agents, etc. para orquestar varios agentes AI colaborando en tareas de desarrollo, QA o documentación.
+    - Probar flujos de comunicación entre agentes usando archivos de coordinación, mensajes en GitHub, o APIs.
+    - Documentar casos de uso y posibles integraciones para el equipo.
 
 ### 3. 🔁 Flujo completo de desarrollo
 - [ ] Definir branch strategy (main, develop, feature/*, release/*, hotfix/*)
