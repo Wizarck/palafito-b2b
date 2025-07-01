@@ -264,6 +264,15 @@ final class Palafito_WC_Extensions {
 			);
 		}
 
+		// Añadir acción "Completado" si el pedido está en procesamiento o facturado.
+		if ( $order->has_status( array( 'processing', 'facturado' ) ) ) {
+			$actions['complete'] = array(
+				'url'    => wp_nonce_url( admin_url( 'admin-ajax.php?action=woocommerce_mark_order_status&status=completed&order_id=' . $order->get_id() ), 'woocommerce-mark-order-status' ),
+				'name'   => __( 'Complete', 'woocommerce' ),
+				'action' => 'complete',
+			);
+		}
+
 		return $actions;
 	}
 
