@@ -49,11 +49,11 @@ class Palafito_Packing_Slip_Settings {
 				continue;
 			}
 
-			// Orden exacto como en factura:
-			// General: enabled, attach_to_email_ids, disable_for_statuses, my_account_buttons
-			// Document details: display_email, display_phone, display_customer_notes, display_billing_address, display_number, next_packing_slip_number, number_format, display_date
-			// Admin: packing_slip_number_column, packing_slip_date_column
-			// Advanced: next_packing_slip_number, reset_number_yearly, mark_printed, unmark_printed
+			// Orden exacto como en factura.
+			// General: enabled, attach_to_email_ids, disable_for_statuses, my_account_buttons.
+			// Document details: display_email, display_phone, display_customer_notes, display_billing_address, display_number, next_packing_slip_number, number_format, display_date.
+			// Admin: packing_slip_number_column, packing_slip_date_column.
+			// Advanced: next_packing_slip_number, reset_number_yearly, mark_printed, unmark_printed.
 
 			switch ( $field['id'] ) {
 				// General section (como en factura).
