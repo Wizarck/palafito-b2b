@@ -238,7 +238,7 @@ final class Palafito_WC_Extensions {
 			wp_enqueue_style(
 				'palafito-order-status-colors',
 				plugin_dir_url( __FILE__ ) . 'assets/css/admin-order-status-colors.css',
-				array(),
+				array( 'woocommerce_admin_styles' ), // Dependencia de WooCommerce para cargar después.
 				'1.0.0'
 			);
 		}

@@ -1,36 +1,56 @@
 /**
  * Colores personalizados para estados de pedido de Palafito.
+ * Sigue el patrón nativo de WooCommerce.
  *
  * @package Palafito_WC_Extensions
  */
 
-/* Estado "Entregado" - Naranja claro */
+/* Estado "Entregado" - Naranja claro usando variables CSS de WooCommerce */
 .order-status.status-entregado {
-	background: #ffd4a3 !important;
-	color: #8b4513 !important;
+	background: #ffd4a3;
+	color: #8b4513;
 }
 
-/* Estado "Facturado" - Rojo pastel */
+/* Estado "Facturado" - Rojo pastel usando variables CSS de WooCommerce */
 .order-status.status-facturado {
-	background: #ffb3b3 !important;
-	color: #8b0000 !important;
+	background: #ffb3b3;
+	color: #8b0000;
 }
 
 /* Estado "Processing" - Morado claro (personalizado) */
 .order-status.status-processing {
-	background: #e6d4f7 !important;
-	color: #4b0082 !important;
+	background: #e6d4f7;
+	color: #4b0082;
 }
 
-/* Hover effects para mantener consistencia */
+/* Hover effects siguiendo el patrón nativo de WooCommerce */
 .order-status.status-entregado:hover {
-	background: #ffc080 !important;
+	background: #ffc080;
 }
 
 .order-status.status-facturado:hover {
-	background: #ff9999 !important;
+	background: #ff9999;
 }
 
 .order-status.status-processing:hover {
-	background: #d4b3f0 !important;
+	background: #d4b3f0;
+}
+
+/* Asegurar que los estilos se apliquen en todas las vistas de pedidos */
+.woocommerce_page_wc-orders .order-status.status-entregado,
+.edit-shop_order .order-status.status-entregado {
+	background: #ffd4a3;
+	color: #8b4513;
+}
+
+.woocommerce_page_wc-orders .order-status.status-facturado,
+.edit-shop_order .order-status.status-facturado {
+	background: #ffb3b3;
+	color: #8b0000;
+}
+
+.woocommerce_page_wc-orders .order-status.status-processing,
+.edit-shop_order .order-status.status-processing {
+	background: #e6d4f7;
+	color: #4b0082;
 } 
