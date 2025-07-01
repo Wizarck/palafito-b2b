@@ -97,3 +97,27 @@ add_filter(
 		return $email_classes;
 	}
 );
+
+// Forzar la generación del albarán (packing slip) al cambiar a Entregado.
+add_action(
+	'woocommerce_order_status_entregado',
+	function ( $order_id, $order = null ) {
+		if ( ! $order ) {
+			$order = wc_get_order( $order_id );
+		}
+		if ( ! $order ) {
+			return;
+		}
+		if ( function_exists( 'wcpdf_get_document' ) ) {
+			$packing_slip = wcpdf_get_document( 'packing-slip', $order, true );
+			if ( $packing_slip && $packing_slip->is_allowed() ) {
+				$packing_slip->get_pdf( 'path' );
+				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					error_log( 'Palafito WC Extensions: Packing slip generated for order ' . $order->get_id() );
+				}
+			}
+		}
+	},
+	10,
+	2
+);
