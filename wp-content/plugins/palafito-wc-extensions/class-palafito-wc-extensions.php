@@ -564,10 +564,10 @@ final class Palafito_WC_Extensions {
 				break;
 
 			case 'notes':
-				// Mostrar notas de factura del metabox de PDF.
-				$invoice_notes = $order->get_meta( '_wcpdf_invoice_notes' );
-				if ( $invoice_notes ) {
-					$notes_text = wp_strip_all_tags( $invoice_notes );
+				// Mostrar nota de cliente (customer note) en vez de notas de factura.
+				$customer_note = $order->get_customer_note();
+				if ( $customer_note ) {
+					$notes_text = wp_strip_all_tags( $customer_note );
 					$notes_text = strlen( $notes_text ) > 50 ? substr( $notes_text, 0, 50 ) . '...' : $notes_text;
 					echo esc_html( $notes_text );
 				} else {
