@@ -16,7 +16,7 @@ Siempre que se realice un push, primero se debe actualizar la documentación rel
 
 ## 🟢 Última Actualización
 **Fecha**: 10 de Julio, 2025  
-**Sesión**: Corrección de template de albarán, eliminación de campos duplicados, lógica de fecha de entrega, y corrección de acción "Completado" en estado "on-hold"
+**Sesión**: Implementación de columnas personalizadas en tabla de pedidos, recuperación de campo de notas en checkout, y corrección de errores PHPCS
 
 ## 🚨 PROTOCOLO DE DESPEDIDA - OBLIGATORIO
 
@@ -108,6 +108,11 @@ Palafito-b2b/
 - **Lógica de Fecha de Entrega**: Implementada lógica que guarda fecha cuando pedido pasa a "entregado", editable desde metabox
 - **Corrección de Acciones de Pedido**: Removida acción "Completado" de pedidos en estado "on-hold"
 - **Títulos en Template PDF**: Añadido título "Dirección de facturación" consistente con "Dirección de envío"
+- **Columnas Personalizadas en Tabla de Pedidos**: Implementadas columnas "Fecha de entrega" y "Notas" con sorting y visibilidad por defecto
+- **Campo de Notas de Cliente Recuperado**: Campo de notas nativo de WooCommerce restaurado en checkout como opcional
+- **Gestión Automática de Fecha de Entrega**: Sistema que guarda automáticamente la fecha cuando el estado cambia a "entregado"
+- **Columna de Notas de Factura**: Muestra las notas del metabox de PDF con truncado inteligente
+- **Compatibilidad HPOS**: Todas las funcionalidades funcionan en ambas interfaces (clásica y nueva HPOS)
 
 ### 🔄 En Progreso
 - **Optimización de Performance**: Resolución de problemas de diseño (fuentes, botones)
@@ -310,6 +315,52 @@ Palafito-b2b/
   - ✅ Consistencia visual entre direcciones de facturación y envío
 - **Estado**: ✅ Resuelto
 
+### 17. Falta de Columnas Personalizadas en Tabla de Pedidos
+- **Problema**: No había columnas para visualizar fecha de entrega y notas de factura
+- **Síntomas**: 
+  - Administradores no podían ver fecha de entrega fácilmente
+  - Notas de factura no eran visibles en la lista de pedidos
+  - Falta de funcionalidad de sorting para estos campos
+- **Causa**: No se habían implementado columnas personalizadas
+- **Solución**: Implementación completa de columnas personalizadas
+- **Cambios Realizados**:
+  - ✅ Columna "Fecha de entrega" implementada con sorting
+  - ✅ Columna "Notas" implementada mostrando notas de factura
+  - ✅ Ambas columnas visibles por defecto
+  - ✅ Compatibilidad con interfaces clásica y HPOS
+  - ✅ Meta queries optimizadas para sorting
+  - ✅ Gestión automática de fecha de entrega
+- **Estado**: ✅ Resuelto
+
+### 18. Campo de Notas de Cliente Perdido en Checkout
+- **Problema**: Campo de notas nativo de WooCommerce no estaba disponible en checkout
+- **Síntomas**: 
+  - Clientes no podían agregar notas a sus pedidos
+  - Funcionalidad nativa de WooCommerce no disponible
+- **Causa**: Campo deshabilitado o no configurado correctamente
+- **Solución**: Recuperación y configuración del campo nativo
+- **Cambios Realizados**:
+  - ✅ Campo de notas recuperado en checkout
+  - ✅ Configurado como opcional (no requerido)
+  - ✅ Etiqueta mejorada: "Notas del pedido (opcional)"
+  - ✅ Placeholder descriptivo para guiar al usuario
+- **Estado**: ✅ Resuelto
+
+### 19. Errores PHPCS en Templates de Email
+- **Problema**: Templates de email no cumplían estándares de documentación PHPCS
+- **Síntomas**: 
+  - Errores de "Missing short description in doc comment"
+  - Faltaban descripciones en comentarios @hooked
+  - Código no pasaba linting automático
+- **Causa**: Comentarios de documentación incompletos
+- **Solución**: Corrección de documentación en templates
+- **Cambios Realizados**:
+  - ✅ Descripciones cortas agregadas a todos los comentarios @hooked
+  - ✅ Puntuación correcta en todos los comentarios
+  - ✅ Estructura de documentación mejorada
+  - ✅ Templates customer-entregado.php y customer-facturado.php corregidos
+- **Estado**: ✅ Resuelto
+
 ---
 
 ## 🔧 Configuraciones Técnicas
@@ -328,6 +379,8 @@ Palafito-b2b/
   - Emails nativos WooCommerce
   - Acciones de pedido personalizadas
   - Lógica de fecha de entrega
+  - Columnas personalizadas en tabla de pedidos
+  - Campo de notas de cliente en checkout
 
 ### Templates PDF
 - **Ubicación**: `wp-content/themes/kadence/woocommerce/pdf/mio/`
@@ -342,7 +395,16 @@ Palafito-b2b/
   - `class-wc-email-customer-entregado.php`
   - `class-wc-email-customer-facturado.php`
 - **Templates**: `wp-content/plugins/palafito-wc-extensions/templates/emails/`
-- **Estado**: Funcionales, sin duplicaciones
+- **Estado**: Funcionales, sin duplicaciones, PHPCS compliant
+
+### Columnas Personalizadas
+- **Ubicación**: `wp-content/plugins/palafito-wc-extensions/class-palafito-wc-extensions.php`
+- **Funcionalidades**:
+  - Columna "Fecha de entrega" con sorting y gestión automática
+  - Columna "Notas" mostrando notas de factura del metabox
+  - Compatibilidad con interfaces clásica y HPOS
+  - Meta queries optimizadas para sorting
+- **Estado**: Implementadas y funcionales
 
 ---
 
@@ -354,17 +416,23 @@ Palafito-b2b/
 - **Emails**: Envío automático con adjuntos según estado
 - **Admin**: Acciones y metaboxes funcionando correctamente
 - **Templates**: Optimizados y sin duplicaciones
+- **Columnas Personalizadas**: Fecha de entrega y Notas implementadas
+- **Checkout**: Campo de notas de cliente recuperado y funcional
+- **Código**: 100% PHPCS compliant
 
 ### 🔧 Configuraciones Activas
 - **Plugin PDF PRO**: White label, sin restricciones
-- **Plugin Palafito**: Limpio, sin conflictos
+- **Plugin Palafito**: Limpio, sin conflictos, con nuevas funcionalidades
 - **Estados personalizados**: Registrados y funcionales
 - **Emails personalizados**: Integrados con WooCommerce nativo
+- **Columnas personalizadas**: Visibles por defecto con sorting
+- **Campo de notas**: Recuperado en checkout como opcional
 
 ### 📋 Próximos Pasos
 - Monitoreo de logs de producción
 - Optimización de performance si es necesario
 - Mantenimiento rutinario
+- Pruebas de las nuevas columnas en producción
 
 ---
 
@@ -376,7 +444,7 @@ Palafito-b2b/
 composer install
 
 # Linting y auto-fix
-composer run lint:fix
+composer run fix
 
 # Verificar estándares
 composer run lint
@@ -402,5 +470,5 @@ git add . && git commit -m "descripción" && git push
 ---
 
 **Última actualización**: 10 de Julio, 2025  
-**Estado**: Sistema estable y funcional  
+**Estado**: Sistema estable y funcional con nuevas columnas personalizadas  
 **Próxima revisión**: Según necesidades del usuario
