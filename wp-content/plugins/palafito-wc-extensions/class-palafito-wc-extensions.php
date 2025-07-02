@@ -334,15 +334,15 @@ final class Palafito_WC_Extensions {
 
 		// Guardar fecha de entrega cuando el pedido se marca como "entregado".
 		if ( 'entregado' === $new_status ) {
-			if ( ! $order->get_meta( '_entregado_date' ) ) {
-				$order->update_meta_data( '_entregado_date', time() );
+			if ( ! $order->get_meta( '_wcpdf_packing-slip_date' ) ) {
+				$order->update_meta_data( '_wcpdf_packing-slip_date', time() );
 				$order->save_meta_data();
 			}
 		}
 
 		// Limpiar fecha de entrega si el estado cambia de "entregado" a otro estado.
 		if ( 'entregado' === $old_status && 'entregado' !== $new_status ) {
-			$order->delete_meta_data( '_entregado_date' );
+			$order->delete_meta_data( '_wcpdf_packing-slip_date' );
 			$order->save_meta_data();
 		}
 	}
@@ -553,7 +553,7 @@ final class Palafito_WC_Extensions {
 
 		switch ( $column ) {
 			case 'entregado_date':
-				$entregado_date = $order->get_meta( '_entregado_date' );
+				$entregado_date = $order->get_meta( '_wcpdf_packing-slip_date' );
 				if ( $entregado_date ) {
 					$date = is_numeric( $entregado_date ) ? $entregado_date : strtotime( $entregado_date );
 					echo esc_html( date_i18n( 'd/m/Y', $date ) );
@@ -635,7 +635,7 @@ final class Palafito_WC_Extensions {
 
 		$orderby = $query->get( 'orderby' );
 		if ( 'entregado_date' === $orderby ) {
-			$query->set( 'meta_key', '_entregado_date' );
+			$query->set( 'meta_key', '_wcpdf_packing-slip_date' );
 			$query->set( 'orderby', 'meta_value_num' );
 		} elseif ( 'notes' === $orderby ) {
 			$query->set( 'meta_key', '_wcpdf_invoice_notes' );
@@ -659,7 +659,7 @@ final class Palafito_WC_Extensions {
 		if ( 'entregado_date' === $args['orderby'] ) {
 			$args['meta_query'] = array(
 				'entregado_date' => array(
-					'key'     => '_entregado_date',
+					'key'     => '_wcpdf_packing-slip_date',
 					'compare' => 'EXISTS',
 				),
 			);

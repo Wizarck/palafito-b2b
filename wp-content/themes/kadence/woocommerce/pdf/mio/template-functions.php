@@ -33,11 +33,11 @@ add_filter('wpo_wcpdf_filename', function($filename, $document_type, $order_ids,
     return $filename;
 }, 20, 5);
 
-// Forzar que la fecha del albarán (packing slip) sea siempre la de entrega (_entregado_date)
+// Forzar que la fecha del albarán (packing slip) sea siempre la de entrega (_wcpdf_packing-slip_date)
 add_filter('wpo_wcpdf_packing-slip_date', function($date, $document_type, $order, $context, $formatted, $document) {
     if ($order && is_object($order)) {
         $order_id = is_callable([$order, 'get_id']) ? $order->get_id() : $order->ID;
-        $meta_date = get_post_meta($order_id, '_entregado_date', true);
+        $meta_date = get_post_meta($order_id, '_wcpdf_packing-slip_date', true);
         if (defined('WP_DEBUG') && WP_DEBUG) {
             error_log('[PALAFITO][packing-slip-date] order_id: ' . $order_id . ' | meta_date: ' . print_r($meta_date, true) . ' | formatted: ' . print_r($formatted, true));
         }
@@ -65,13 +65,13 @@ add_filter('wpo_wcpdf_packing-slip_date', function($date, $document_type, $order
     return $date;
 }, 10, 6);
 
-// Sincronizar la fecha del albarán del metabox/AJAX con _entregado_date
+// Sincronizar la fecha del albarán del metabox/AJAX con _wcpdf_packing-slip_date
 add_action('wpo_wcpdf_save_document', function($document, $order) {
     if ($document->get_type() === 'packing-slip') {
         $date_obj = $document->get_date();
         if ($date_obj instanceof WC_DateTime) {
             $timestamp = $date_obj->getTimestamp();
-            update_post_meta($order->get_id(), '_entregado_date', $timestamp);
+            update_post_meta($order->get_id(), '_wcpdf_packing-slip_date', $timestamp);
         }
     }
 }, 10, 2);
