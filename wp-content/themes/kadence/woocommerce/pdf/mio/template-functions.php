@@ -38,12 +38,22 @@ add_filter('wpo_wcpdf_packing-slip_date', function($date, $document_type, $order
     if ($order && is_object($order)) {
         $order_id = is_callable([$order, 'get_id']) ? $order->get_id() : $order->ID;
         $meta_date = get_post_meta($order_id, '_wcpdf_packing_slip_date', true);
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('[PALAFITO][packing-slip-date] order_id: ' . $order_id . ' | meta_date: ' . print_r($meta_date, true) . ' | formatted: ' . print_r($formatted, true));
+        }
         if ($meta_date) {
             if (class_exists('WC_DateTime')) {
                 try {
                     $date_obj = new WC_DateTime($meta_date);
-                    return $formatted ? $date_obj->date_i18n(wc_date_format()) : $date_obj;
+                    $result = $formatted ? $date_obj->date_i18n(wc_date_format()) : $date_obj;
+                    if (defined('WP_DEBUG') && WP_DEBUG) {
+                        error_log('[PALAFITO][packing-slip-date] returning: ' . print_r($result, true));
+                    }
+                    return $result;
                 } catch (Exception $e) {
+                    if (defined('WP_DEBUG') && WP_DEBUG) {
+                        error_log('[PALAFITO][packing-slip-date] Exception: ' . $e->getMessage());
+                    }
                     return $meta_date;
                 }
             }
