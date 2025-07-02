@@ -600,7 +600,7 @@ class Merge_Handler {
 		return $note;
 	}
 	private function is_feria($note) {
-		return preg_match('/feria\b/', $note);
+		return preg_match('/ferias?\b/', $note);
 	}
 	private function is_obrador($note) {
 		return preg_match('/obrador\b/', $note);
