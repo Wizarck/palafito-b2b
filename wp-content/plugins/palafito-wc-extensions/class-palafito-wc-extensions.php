@@ -77,6 +77,9 @@ final class Palafito_WC_Extensions {
 
 		// Cargar estilos personalizados para colores de estados.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
+
+		// Hook para Kadence WooCommerce Email Designer.
+		add_action( 'kadence_woomail_designer_email_details', array( $this, 'kadence_email_main_content' ), 10, 4 );
 	}
 
 	/**
@@ -425,6 +428,35 @@ final class Palafito_WC_Extensions {
 				array( 'woocommerce_admin_styles' ), // Dependencia de WooCommerce para cargar después.
 				'1.0.0'
 			);
+		}
+	}
+
+	/**
+	 * Hook para Kadence WooCommerce Email Designer.
+	 *
+	 * @param WC_Order $order Order object.
+	 * @param bool     $sent_to_admin Whether the email is sent to admin.
+	 * @param bool     $plain_text Whether the email is plain text.
+	 * @param WC_Email $email Email object.
+	 */
+	public function kadence_email_main_content( $order, $sent_to_admin, $plain_text, $email ) {
+		// Solo procesar para nuestros emails personalizados.
+		if ( ! in_array( $email->id, array( 'customer_entregado', 'customer_facturado' ), true ) ) {
+			return;
+		}
+
+		// Obtener el contenido principal del email.
+		$main_content = '';
+
+		if ( 'customer_entregado' === $email->id ) {
+			$main_content = __( '¡Tu pedido ha sido entregado exitosamente! Nos complace informarte que tu pedido ha sido entregado. A continuación encontrarás un resumen completo de tu compra.', 'palafito-wc-extensions' );
+		} elseif ( 'customer_facturado' === $email->id ) {
+			$main_content = __( '¡Tu pedido ha sido facturado exitosamente! Nos complace informarte que tu pedido ha sido facturado. A continuación encontrarás un resumen completo de tu compra junto con tu factura adjunta.', 'palafito-wc-extensions' );
+		}
+
+		// Mostrar el contenido principal.
+		if ( ! empty( $main_content ) ) {
+			echo wp_kses_post( wpautop( wptexturize( $main_content ) ) );
 		}
 	}
 }
