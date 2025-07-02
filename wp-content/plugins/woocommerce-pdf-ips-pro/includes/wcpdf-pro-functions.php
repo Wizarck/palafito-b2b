@@ -721,7 +721,19 @@ class Functions {
 					?>
 					<tr class="delivery-date">
 						<th><?php esc_html_e( 'Fecha de entrega:', 'palafito-wc-extensions' ); ?></th>
-						<td><?php echo $delivery_date->date_i18n( apply_filters( 'wpo_wcpdf_date_format', wc_date_format(), $packing_slip ) ); ?></td>
+						<td><?php
+							if (is_object($delivery_date)) {
+								if (class_exists('WC_DateTime') && $delivery_date instanceof \WC_DateTime) {
+									echo $delivery_date->date_i18n( apply_filters( 'wpo_wcpdf_date_format', wc_date_format(), $packing_slip ) );
+								} elseif ($delivery_date instanceof \DateTime) {
+									echo date_i18n( apply_filters( 'wpo_wcpdf_date_format', wc_date_format(), $packing_slip ), $delivery_date->getTimestamp() );
+								} else {
+									echo esc_html( (string) $delivery_date );
+								}
+							} else {
+								echo esc_html( (string) $delivery_date );
+							}
+						?></td>
 					</tr>
 					<?php
 				}
