@@ -495,3 +495,30 @@ git add . && git commit -m "descripción" && git push
 - El resultado se concatena en la nueva nota de factura del pedido final.
 - Si durante el merge se detectan CXXXXX duplicados (en cualquier bloque), se añade una nota interna al pedido (visible solo para admin) informando de este detalle:
   Atención: Se detectaron CXXXXX duplicados en la nota de factura durante el merge: C00262, C00270
+
+## 🧠 LECCIONES APRENDIDAS Y NORMAS DE COLABORACIÓN (LESSONS LEARNED)
+
+- **CONTEXT.md es el cerebro externo del proyecto:** Siempre debe estar actualizado y es lo primero que cualquier IA debe leer para entender el estado, reglas, decisiones y convenciones del proyecto.
+- **Comunicación con el usuario:**
+  - Todas las preguntas para afinar requisitos o resolver ambigüedades deben presentarse siempre con opciones claras (A, B, C, ...), con ejemplos concretos. Esto facilita respuestas rápidas y sin malentendidos.
+  - Nunca hacer preguntas abiertas o ambiguas. Si hay que decidir entre varios comportamientos, siempre dar ejemplos y opciones.
+- **Documentación y flujo de trabajo:**
+  - Antes de cada push, actualizar CONTEXT.md y README.md con todos los cambios, decisiones y convenciones nuevas.
+  - El commit y push solo se hacen después de documentar y validar que la documentación refleja el estado real del código.
+  - Las decisiones importantes, edge cases y convenciones de formato (por ejemplo, cómo se agrupan y formatean las notas de cliente/factura en el merge) deben estar documentadas aquí.
+- **Gestión de edge cases y reglas de negocio:**
+  - Si una funcionalidad tiene reglas complejas (como el merge de notas de factura y cliente), documentar ejemplos de input y output, y detallar la prioridad de fuentes de datos (por ejemplo, si hay nota de factura, se ignora la de cliente).
+  - Si hay duplicados relevantes para el negocio (como CXXXXX en notas), documentar cómo se gestionan y cómo se informa al admin.
+- **Colaboración entre IAs o sesiones:**
+  - Cualquier IA que retome el proyecto debe leer este archivo completo antes de interactuar con el usuario o modificar código.
+  - Si el usuario pide que "leas el contexto", es obligatorio leer este archivo completo antes de cualquier acción.
+  - Si el usuario pide que "actualices el contexto", es obligatorio documentar todas las decisiones, convenciones y lessons learned de la sesión.
+- **Ejemplo de decisión documentada:**
+  - Si el usuario pide: "¿Qué hago si hay duplicados?", la IA debe responder con opciones (A: eliminar duplicados, B: permitir duplicados, etc.) y documentar la decisión tomada y el ejemplo de output esperado.
+- **Convenciones de formato y UX:**
+  - Siempre priorizar la claridad y la lógica de negocio sobre la implementación técnica.
+  - Si hay formatos especiales (como Feria: CXXXXX - Nombre), documentar ejemplos y edge cases.
+- **Flujo de rollback y errores:**
+  - Si una operación crítica falla (por ejemplo, un merge), dejar el sistema en estado consistente y documentar el error en una nota interna visible solo para admin.
+- **Actualización de lessons learned:**
+  - Al final de cada sesión, revisar si hay nuevas lecciones, convenciones o edge cases y documentarlas aquí.
