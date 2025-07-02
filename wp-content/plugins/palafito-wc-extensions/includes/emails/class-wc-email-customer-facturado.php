@@ -39,7 +39,7 @@ if ( ! class_exists( 'WC_Email_Customer_Facturado' ) ) :
 			$this->template_base  = get_template_directory() . '/woocommerce/';
 
 			$this->subject = __( 'Tu pedido #{order_number} ha sido facturado', 'palafito-wc-extensions' );
-			$this->heading = __( '¡Tu pedido ha sido facturado!', 'palafito-wc-extensions' );
+			$this->heading = __( 'Pedido facturado', 'palafito-wc-extensions' );
 
 			// Triggers for this email.
 			add_action( 'woocommerce_order_status_facturado_notification', array( $this, 'trigger' ), 10, 2 );
