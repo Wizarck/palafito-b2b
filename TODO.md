@@ -115,6 +115,7 @@
 - [x] **PHPCS**: Todo el código relevante cumple los estándares WordPress/WooCommerce
 - [x] **Emails nativos**: Implementados y documentados para "Entregado" y "Facturado"
 - [x] **Push/documentación**: Flujo de push actualizado y documentado
+- [x] Columna de nota de cliente en tabla de pedidos de Mi Cuenta (WooCommerce), truncada a 25 caracteres, tooltip nativo, celda vacía si no hay nota. Ejemplo visual y decisión documentados en CONTEXT.md y README.md (11/07/2025)
 
 ## 🔄 En Progreso
 - [ ] Próxima funcionalidad a implementar

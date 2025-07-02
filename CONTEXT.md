@@ -522,3 +522,30 @@ git add . && git commit -m "descripción" && git push
   - Si una operación crítica falla (por ejemplo, un merge), dejar el sistema en estado consistente y documentar el error en una nota interna visible solo para admin.
 - **Actualización de lessons learned:**
   - Al final de cada sesión, revisar si hay nuevas lecciones, convenciones o edge cases y documentarlas aquí.
+
+## 🆕 11 de Julio, 2025 - Columna de Nota de Cliente en Pedidos (Mi Cuenta)
+
+### Decisión y opciones elegidas
+- **¿Qué columna mostrar?** A) Nota de cliente (customer note)
+- **¿Dónde?** A) En la tabla de pedidos de Mi Cuenta (WooCommerce)
+- **¿Cuántos caracteres?** 25 caracteres (truncado con puntos suspensivos si excede)
+- **¿Tooltip?** Sí, nativo (title), solo si hay nota
+- **¿Qué mostrar si no hay nota?** Celda vacía
+- **¿Forzar ancho?** No, solo truncar y puntos suspensivos
+
+### Ejemplo visual
+
+| Pedido | Nota de cliente           | Fecha      | Estado    | Total   | Acciones |
+|--------|---------------------------|------------|-----------|---------|----------|
+| #1234  | "Por favor entregar..."   | 10/07/2025 | Procesando| $500 MXN| [Ver]    |
+| #1235  |                           | 10/07/2025 | Entregado | $200 MXN| [Ver]    |
+| #1236  | "Llamar antes de salir"   | 09/07/2025 | Facturado | $800 MXN| [Ver]    |
+
+- Al hacer hover sobre "Por favor entregar..." se muestra el texto completo en un tooltip.
+- Si la nota tiene menos de 25 caracteres, se muestra completa.
+- Si no hay nota, la celda queda vacía.
+
+### Implementación
+- Override en `wp-content/themes/palafito-child/woocommerce/myaccount/orders.php`
+- Cumple PHPCS y flujo de push/documentación
+- Documentado en CONTEXT.md, TODO.md y README.md

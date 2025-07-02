@@ -169,6 +169,26 @@ woocommerce_after_shop_loop_item_title
   - Email: [Email de contacto]
 - El formato es limpio, sin repeticiones, y con los prefijos 'NIF:', 'Teléfono:' y 'Email:' donde corresponde. El nombre de la empresa no se repite en la dirección de tienda.
 
+### Tabla de pedidos personalizada en Mi Cuenta
+
+- **Columna "Nota de cliente"**: Añadida a la tabla de pedidos de la sección "Mi cuenta".
+    - Muestra la nota de cliente (customer note) asociada al pedido.
+    - Truncada a 25 caracteres, con puntos suspensivos si excede.
+    - Tooltip nativo (title) con el texto completo al hacer hover.
+    - Si no hay nota, la celda queda vacía.
+    - No se fuerza ancho extra, solo truncado visual.
+
+**Ejemplo visual:**
+
+| Pedido | Nota de cliente           | Fecha      | Estado    | Total   | Acciones |
+|--------|---------------------------|------------|-----------|---------|----------|
+| #1234  | "Por favor entregar..."   | 10/07/2025 | Procesando| $500 MXN| [Ver]    |
+| #1235  |                           | 10/07/2025 | Entregado | $200 MXN| [Ver]    |
+| #1236  | "Llamar antes de salir"   | 09/07/2025 | Facturado | $800 MXN| [Ver]    |
+
+- Hover sobre la nota muestra el texto completo.
+- Lógica y decisión documentadas en CONTEXT.md y TODO.md.
+
 ## 🔧 Configuración de producción
 
 ### Variables de entorno
