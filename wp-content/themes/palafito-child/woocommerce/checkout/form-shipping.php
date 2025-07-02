@@ -23,8 +23,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 			} elseif ( 'shipping_country' === $key ) {
 				$field['required'] = true;
 				$field['label']    = __( 'País', 'woocommerce' );
-			} elseif ( in_array( $key, array( 'shipping_company', 'shipping_last_name' ), true ) ) {
+			} elseif ( in_array( $key, array( 'shipping_first_name', 'shipping_last_name' ), true ) ) {
+				$field['type'] = 'hidden';
 				$field['required'] = false;
+				$field['label'] = '';
+			} elseif ( 'shipping_company' === $key ) {
+				$field['required'] = true;
 			} else {
 				$field['required'] = true;
 			}
