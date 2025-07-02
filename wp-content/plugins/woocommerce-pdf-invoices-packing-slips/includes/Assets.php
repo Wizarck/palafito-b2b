@@ -86,14 +86,7 @@ class Assets {
 				)
 			);
 
-			// Script de debug para el metabox
-			wp_enqueue_script(
-				'wpo-wcpdf-debug-metabox',
-				WPO_WCPDF()->plugin_url() . '/assets/js/debug-metabox.js',
-				array( 'jquery', 'wpo-wcpdf' ),
-				WPO_WCPDF_VERSION,
-				true
-			);
+
 		}
 
 		// only load on our own settings page

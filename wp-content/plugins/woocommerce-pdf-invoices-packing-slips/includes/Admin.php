@@ -197,14 +197,14 @@ class Admin {
 
 	public function get_invoice_count() {
 		global $wpdb;
-		
+
 		$invoice_count = $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
 			$wpdb->prepare(
 				"SELECT count(*) FROM {$wpdb->postmeta} WHERE meta_key = %s",
 				'_wcpdf_invoice_number'
 			)
 		);
-		
+
 		return (int) $invoice_count;
 	}
 
@@ -771,36 +771,29 @@ class Admin {
 	public function data_input_box_content( $post_or_order_object ) {
 		$order = ( $post_or_order_object instanceof \WP_Post ) ? wc_get_order( $post_or_order_object->ID ) : $post_or_order_object;
 		$this->disable_storing_document_settings();
-		?>
-		<div class="palafito-pdf-metabox-group">
-			<h3 style="margin-top:0;">Factura</h3>
-			<?php
-			$invoice = wcpdf_get_document( 'invoice', $order );
-			if ( $invoice ) {
-				$data = array(
-					'number' => array('label' => __( 'Número de factura:', 'woocommerce-pdf-invoices-packing-slips' )),
-					'date'   => array('label' => __( 'Fecha de factura:', 'woocommerce-pdf-invoices-packing-slips' )),
-					'display_date' =>  array('label' => __( 'Mostrar fecha:', 'woocommerce-pdf-invoices-packing-slips' )),
-					'creation_trigger' =>  array('label' => __( 'Creada vía:', 'woocommerce-pdf-invoices-packing-slips' )),
-					'notes' => array('label' => __( 'Notas (impresas en la factura):', 'woocommerce-pdf-invoices-packing-slips' )),
-				);
-				$this->output_number_date_edit_fields( $invoice, $data );
-			}
-			?>
-			<hr style="margin:2em 0;">
-			<h3>Albarán</h3>
-			<?php
-			$packing_slip = wcpdf_get_document( 'packing-slip', $order );
-			if ( $packing_slip ) {
-				$data = array(
-					'number' => array('label' => __( 'Número de albarán:', 'woocommerce-pdf-invoices-packing-slips' )),
-					'date'   => array('label' => __( 'Fecha de albarán:', 'woocommerce-pdf-invoices-packing-slips' )),
-				);
-				$this->output_number_date_edit_fields( $packing_slip, $data );
-			}
-			?>
-		</div>
-		<?php
+
+		// Mostrar metabox de factura
+		$invoice = wcpdf_get_document( 'invoice', $order );
+		if ( $invoice ) {
+			$data = array(
+				'number' => array('label' => __( 'Número de factura:', 'woocommerce-pdf-invoices-packing-slips' )),
+				'date'   => array('label' => __( 'Fecha de factura:', 'woocommerce-pdf-invoices-packing-slips' )),
+				'display_date' =>  array('label' => __( 'Mostrar fecha:', 'woocommerce-pdf-invoices-packing-slips' )),
+				'creation_trigger' =>  array('label' => __( 'Creada vía:', 'woocommerce-pdf-invoices-packing-slips' )),
+				'notes' => array('label' => __( 'Notas (impresas en la factura):', 'woocommerce-pdf-invoices-packing-slips' )),
+			);
+			$this->output_number_date_edit_fields( $invoice, $data );
+		}
+
+		// Mostrar metabox de albarán
+		$packing_slip = wcpdf_get_document( 'packing-slip', $order );
+		if ( $packing_slip ) {
+			$data = array(
+				'number' => array('label' => __( 'Número de albarán:', 'woocommerce-pdf-invoices-packing-slips' )),
+				'date'   => array('label' => __( 'Fecha de albarán:', 'woocommerce-pdf-invoices-packing-slips' )),
+			);
+			$this->output_number_date_edit_fields( $packing_slip, $data );
+		}
 	}
 
 	public function get_current_values_for_document( $document, $data ) {
@@ -1348,14 +1341,14 @@ class Admin {
 
 		if ( isset( $form_data['_wcpdf_' . $document_slug . '_number'] ) ) {
 			$document_number = absint( $form_data['_wcpdf_' . $document_slug . '_number'] );
-			
+
 			if ( $document_number !== 0 ) {
 				$data['number'] = $document_number;
-			}			
+			}
 		}
 
 		$date_entered = ! empty( $form_data['_wcpdf_' . $document_slug . '_date'] ) && ! empty( $form_data['_wcpdf_' . $document_slug . '_date']['date'] );
-		
+
 		if ( $date_entered ) {
 			$date         = $form_data['_wcpdf_' . $document_slug . '_date']['date'];
 			$hour         = ! empty( $form_data['_wcpdf_' . $document_slug . '_date']['hour'] ) ? $form_data['_wcpdf_' . $document_slug . '_date']['hour'] : '00';
