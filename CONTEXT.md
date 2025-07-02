@@ -15,8 +15,8 @@
 Siempre que se realice un push, primero se debe actualizar la documentación relevante (`README.md`, `CONTEXT.md`, etc.) y luego hacer el commit y push de código y documentación juntos. Así, la documentación en el repositorio reflejará siempre el estado real del código y se evitan confusiones.
 
 ## 🟢 Última Actualización
-**Fecha**: 10 de Julio, 2025  
-**Sesión**: Implementación de columnas personalizadas en tabla de pedidos, recuperación de campo de notas en checkout, y corrección de errores PHPCS
+**Fecha**: 10 de Julio, 2025
+**Sesión**: Corrección de metabox unificado que causaba conflictos con JavaScript del plugin PDF
 
 ## 🚨 PROTOCOLO DE DESPEDIDA - OBLIGATORIO
 
@@ -113,6 +113,7 @@ Palafito-b2b/
 - **Gestión Automática de Fecha de Entrega**: Sistema que guarda automáticamente la fecha cuando el estado cambia a "entregado"
 - **Columna de Notas de Factura**: Muestra las notas del metabox de PDF con truncado inteligente
 - **Compatibilidad HPOS**: Todas las funcionalidades funcionan en ambas interfaces (clásica y nueva HPOS)
+- **Metaboxes Separados**: Revertido a metaboxes separados para factura y albarán para evitar conflictos JavaScript
 
 ### 🔄 En Progreso
 - **Optimización de Performance**: Resolución de problemas de diseño (fuentes, botones)
@@ -155,7 +156,7 @@ Palafito-b2b/
 
 ### 6. Problema de Carga de CSS del Tema Padre
 - **Problema**: Archivos CSS de Kadence no accesibles públicamente (error 405)
-- **Archivos afectados**: 
+- **Archivos afectados**:
   - `wp-content/themes/kadence/style.css` (no accesible)
   - `wp-content/themes/kadence/assets/css/all.min.css` (no accesible)
 - **Diagnóstico**: Hosting bloquea acceso directo a archivos CSS
@@ -164,12 +165,12 @@ Palafito-b2b/
 
 ### 7. Content Security Policy (CSP) Bloqueando CSS Dinámico
 - **Problema**: Console errors sobre CSP bloqueando inline styles
-- **Síntomas**: 
+- **Síntomas**:
   - `Refused to apply inline style because it violates the following Content Security Policy directive`
   - CSS dinámico de Kadence bloqueado
   - Diseño roto en producción
 - **Causa**: Hosting 1&1 IONOS tiene CSP estricto que bloquea `style` attributes
-- **Investigación**: 
+- **Investigación**:
   - No hay plugins de seguridad configurando CSP
   - No hay configuraciones en `.htaccess` o `wp-config.php`
   - CSP está configurado a nivel de hosting/servidor
@@ -184,7 +185,7 @@ Palafito-b2b/
 
 ### 8. Mixed Content Warnings (HTTP → HTTPS)
 - **Problema**: Console warnings sobre Mixed Content
-- **Síntomas**: 
+- **Síntomas**:
   - `Mixed Content: The page was loaded over HTTPS, but requested an insecure element`
   - Imágenes y recursos cargando por HTTP
 - **Causa**: URLs en base de datos con protocolo HTTP
@@ -194,10 +195,20 @@ Palafito-b2b/
 
 ### 9. Refactor de Albarán para Estructura PRO
 - **Problema**: Código custom de albarán no era consistente con la PRO
-- **Síntomas**: 
+- **Síntomas**:
   - Meta keys custom (`_albaran_number`, `_albaran_delivery_date`)
   - UI diferente entre factura y albarán
   - Lógica duplicada en lugar de reutilizar PRO
+
+### 10. Metabox Unificado Causando Conflictos JavaScript
+- **Problema**: Metabox unificado para factura y albarán causaba conflictos con JavaScript del plugin
+- **Síntomas**:
+  - Fechas no se actualizaban al editar desde el metabox
+  - JavaScript no encontraba elementos correctamente
+  - Conflictos entre múltiples documentos en el mismo contenedor
+- **Causa**: Estructura HTML unificada interfería con la lógica del plugin
+- **Solución**: Revertido a metaboxes separados para factura y albarán
+- **Estado**: ✅ Resuelto
 - **Causa**: Implementación inicial desde cero en lugar de extender la PRO
 - **Solución**: Refactor completo para usar estructura nativa de la PRO
 - **Cambios Realizados**:
@@ -216,7 +227,7 @@ Palafito-b2b/
 
 ### 10. Emails Duplicados en Estados Personalizados
 - **Problema**: Emails se enviaban múltiples veces por triggers manuales duplicados
-- **Síntomas**: 
+- **Síntomas**:
   - Emails duplicados al cambiar estado
   - Triggers manuales en lugar de usar sistema nativo de WooCommerce
 - **Causa**: Implementación inicial con triggers manuales
@@ -229,7 +240,7 @@ Palafito-b2b/
 
 ### 11. Plugin PDF PRO con Restricciones de Licencia
 - **Problema**: Plugin PRO mostraba avisos de licencia y funcionalidad limitada
-- **Síntomas**: 
+- **Síntomas**:
   - Mensajes de "Manage License" en admin
   - Funcionalidad bloqueada por checks de licencia
   - Código promocional visible
@@ -244,7 +255,7 @@ Palafito-b2b/
 
 ### 12. Conflictos entre Plugin Palafito y Plugin PRO
 - **Problema**: Funcionalidades duplicadas causando conflictos
-- **Síntomas**: 
+- **Síntomas**:
   - Archivos duplicados en plugin Palafito
   - Funcionalidad PRO interferida por código custom
 - **Causa**: Implementación inicial duplicaba funcionalidad PRO
@@ -263,7 +274,7 @@ Palafito-b2b/
 
 ### 13. Template de Albarán con Campos Duplicados
 - **Problema**: Template mostraba información duplicada y mal ordenada
-- **Síntomas**: 
+- **Síntomas**:
   - "Número del albarán" y "Número de albarán" duplicados
   - "Fecha del albarán" y "Fecha de entrega" duplicados
   - Orden incorrecto de campos
@@ -278,7 +289,7 @@ Palafito-b2b/
 
 ### 14. Lógica de Fecha de Entrega
 - **Problema**: Campo "Fecha de entrega" no seguía lógica de negocio
-- **Síntomas**: 
+- **Síntomas**:
   - Fecha siempre mostraba fecha actual
   - No se guardaba fecha real de entrega
 - **Causa**: No había lógica para guardar fecha cuando pedido se marcaba como "entregado"
@@ -292,7 +303,7 @@ Palafito-b2b/
 
 ### 15. Acción "Completado" en Estado "on-hold"
 - **Problema**: Acción "Completado" aparecía en pedidos con estado "En espera"
-- **Síntomas**: 
+- **Síntomas**:
   - Acción "Complete" visible en pedidos on-hold
   - Comportamiento incorrecto según workflow B2B
 - **Causa**: WooCommerce nativo añade acción "Complete" para estados `pending`, `on-hold`, `processing`
@@ -305,7 +316,7 @@ Palafito-b2b/
 
 ### 16. Template PDF sin Título de Dirección de Facturación
 - **Problema**: Template de albarán no mostraba título para dirección de facturación
-- **Síntomas**: 
+- **Síntomas**:
   - Solo dirección de envío tenía título
   - Inconsistencia visual en PDF
 - **Causa**: Template no incluía título para dirección de facturación
@@ -317,7 +328,7 @@ Palafito-b2b/
 
 ### 17. Falta de Columnas Personalizadas en Tabla de Pedidos
 - **Problema**: No había columnas para visualizar fecha de entrega y notas de factura
-- **Síntomas**: 
+- **Síntomas**:
   - Administradores no podían ver fecha de entrega fácilmente
   - Notas de factura no eran visibles en la lista de pedidos
   - Falta de funcionalidad de sorting para estos campos
@@ -334,7 +345,7 @@ Palafito-b2b/
 
 ### 18. Campo de Notas de Cliente Perdido en Checkout
 - **Problema**: Campo de notas nativo de WooCommerce no estaba disponible en checkout
-- **Síntomas**: 
+- **Síntomas**:
   - Clientes no podían agregar notas a sus pedidos
   - Funcionalidad nativa de WooCommerce no disponible
 - **Causa**: Campo deshabilitado o no configurado correctamente
@@ -348,7 +359,7 @@ Palafito-b2b/
 
 ### 19. Errores PHPCS en Templates de Email
 - **Problema**: Templates de email no cumplían estándares de documentación PHPCS
-- **Síntomas**: 
+- **Síntomas**:
   - Errores de "Missing short description in doc comment"
   - Faltaban descripciones en comentarios @hooked
   - Código no pasaba linting automático
@@ -469,8 +480,8 @@ git add . && git commit -m "descripción" && git push
 
 ---
 
-**Última actualización**: 10 de Julio, 2025  
-**Estado**: Sistema estable y funcional con nuevas columnas personalizadas  
+**Última actualización**: 10 de Julio, 2025
+**Estado**: Sistema estable y funcional con nuevas columnas personalizadas
 **Próxima revisión**: Según necesidades del usuario
 
 ---
@@ -566,7 +577,7 @@ git add . && git commit -m "descripción" && git push
 
 - Al hacer merge de pedidos, la nota de cliente (`customer_note`) del pedido resultante se reemplaza por la nota final generada (la misma que la nota de factura).
 - Si el pedido resultante tenía una nota de cliente previa, se añade como postfijo, precedida por una línea en blanco y el texto:
-  
+
   Nota original: [NOTA VIEJA]
 - Si no había nota previa, solo se muestra la nota final generada.
 - Las notas de cliente de los pedidos originales NO se modifican.
