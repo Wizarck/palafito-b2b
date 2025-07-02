@@ -178,6 +178,8 @@ woocommerce_after_shop_loop_item_title
     - Si no hay nota, la celda queda vacía.
     - No se fuerza ancho extra, solo truncado visual.
 
+- **Columna de acciones más ancha**: La columna de acciones en la tabla de pedidos de Mi Cuenta tiene un ancho mínimo suficiente para que los botones de Factura y Albarán siempre se vean en la misma línea, sin saltos ni desbordes. Mejora la experiencia visual y la usabilidad.
+
 **Ejemplo visual:**
 
 | Pedido | Nota de cliente           | Fecha      | Estado    | Total   | Acciones |

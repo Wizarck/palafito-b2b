@@ -549,3 +549,15 @@ git add . && git commit -m "descripción" && git push
 - Override en `wp-content/themes/palafito-child/woocommerce/myaccount/orders.php`
 - Cumple PHPCS y flujo de push/documentación
 - Documentado en CONTEXT.md, TODO.md y README.md
+
+## 🆕 11 de Julio, 2025 - Ajuste visual: columna de acciones más ancha en pedidos
+
+- Se aumentó el ancho mínimo de la columna de acciones en la tabla de pedidos de Mi Cuenta (WooCommerce) para que los botones de Factura y Albarán siempre se vean en la misma línea, sin saltos ni desbordes.
+- Selector CSS: `.woocommerce-orders-table .woocommerce-orders-table__cell-order-actions { min-width: 210px; }`
+- Ejemplo visual:
+
+| Pedido | ... | Acciones                |
+|--------|-----|-------------------------|
+| #1234  | ... | [Factura] [Albarán]     |
+
+- Cambio documentado y pusheado el 11/07/2025.
