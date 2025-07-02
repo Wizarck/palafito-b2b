@@ -75,3 +75,19 @@ add_action('wpo_wcpdf_save_document', function($document, $order) {
         }
     }
 }, 10, 2);
+
+// Sincronización robusta: cada vez que se guarda un pedido, si cambia la fecha del albarán, actualiza _entregado_date
+add_action('save_post_shop_order', function($post_id, $post, $update) {
+    // Evitar autosaves, revisiones, etc.
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+    if ($post->post_type !== 'shop_order') return;
+    // Obtener la fecha del albarán (packing slip)
+    $packing_slip_date = get_post_meta($post_id, '_wcpdf_packing-slip_date', true);
+    if ($packing_slip_date) {
+        $entregado_date = get_post_meta($post_id, '_entregado_date', true);
+        // Si son diferentes, actualiza
+        if ($entregado_date != $packing_slip_date) {
+            update_post_meta($post_id, '_entregado_date', $packing_slip_date);
+        }
+    }
+}, 10, 3);
