@@ -209,6 +209,9 @@ C00270
 Nota original: Por favor entregar antes de las 12h.
 ```
 
+### Fecha de entrega en albarán (packing slip)
+- **Fecha de entrega en albarán (packing slip)**: La fecha de entrega que aparece en el PDF de albarán se obtiene del meta personalizado `_wcpdf_packing_slip_date`. Si no existe, se muestra la fecha actual (d/m/Y) y se guarda automáticamente en el meta para futuras visualizaciones. Así, la fecha de entrega siempre queda sincronizada entre el PDF y el metabox de edición de pedido.
+
 ## 🔧 Configuración de producción
 
 ### Variables de entorno
