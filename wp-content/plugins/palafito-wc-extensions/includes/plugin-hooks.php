@@ -66,82 +66,143 @@ function palafito_wc_extensions_handle_order_status_change( $order_id, $old_stat
 /**
  * Save packing slip data when order is saved.
  *
- * The base PDF plugin only saves invoice data during regular order saves.
- * This hook ensures packing slip data is also saved during order save operations.
+ * Uses a more reliable hook that fires for all order saves, not just invoice contexts.
+ * The 'wpo_wcpdf_on_save_invoice_order_data' hook is unreliable for packing slip data.
  *
- * @param array  $form_data     Form data from the order save.
- * @param object $order         WooCommerce order object.
- * @param object $admin_instance PDF plugin admin instance.
+ * @param int $order_id Order ID being saved.
+ * @param WP_Post $order Order post object.
  */
-add_action( 'wpo_wcpdf_on_save_invoice_order_data', 'palafito_save_packing_slip_data_on_order_save', 10, 3 );
+add_action( 'woocommerce_process_shop_order_meta', 'palafito_save_packing_slip_data_on_order_save', 36, 2 );
 
 /**
  * Save packing slip data during order save operations.
  *
- * @param array  $form_data     Form data.
- * @param object $order         WooCommerce order object.
- * @param object $admin_instance PDF plugin admin instance.
+ * @param int     $order_id   Order ID.
+ * @param WP_Post|null $order_post Order post object (unused).
  */
-function palafito_save_packing_slip_data_on_order_save( $form_data, $order, $admin_instance ) {
-	// ALWAYS log for debugging - we need to see what's happening.
-	error_log( '=== PALAFITO DEBUG: Hook fired ===' );
-	error_log( 'Order ID: ' . ( $order ? $order->get_id() : 'NULL' ) );
-	error_log( 'Admin Instance: ' . ( $admin_instance ? 'EXISTS' : 'NULL' ) );
-	error_log( 'Form Data Keys: ' . ( is_array( $form_data ) ? implode( ', ', array_keys( $form_data ) ) : 'NOT ARRAY' ) );
-
+function palafito_save_packing_slip_data_on_order_save( $order_id, $order_post = null ) {
 	// Validate inputs.
-	if ( ! $admin_instance || ! $order || ! is_array( $form_data ) ) {
-		error_log( 'PALAFITO DEBUG: Validation failed - exiting early' );
+	if ( empty( $order_id ) || empty( $_POST ) ) {
 		return;
 	}
 
-	// Get packing slip document.
-	$packing_slip = wcpdf_get_document( 'packing-slip', $order );
-	if ( empty( $packing_slip ) ) {
-		error_log( 'PALAFITO DEBUG: No packing slip document found' );
+	// Get order object.
+	$order = wc_get_order( $order_id );
+	if ( ! $order ) {
 		return;
 	}
 
-	error_log( 'PALAFITO DEBUG: Packing slip document exists, slug: ' . $packing_slip->slug );
+	// Debug logging.
+	error_log( '=== PALAFITO DEBUG: Order save hook fired ===' );
+	error_log( 'Order ID: ' . $order_id );
 
-	// Look for packing slip fields in form data.
-	$packing_slip_fields = array();
-	foreach ( $form_data as $key => $value ) {
-		if ( strpos( $key, 'packing-slip' ) !== false || strpos( $key, 'packing_slip' ) !== false ) {
-			$packing_slip_fields[ $key ] = $value;
+	// Check nonce for security.
+	if ( empty( $_POST['woocommerce_meta_nonce'] ) ||
+		! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['woocommerce_meta_nonce'] ) ), 'woocommerce_save_data' ) ) {
+		error_log( 'PALAFITO DEBUG: Nonce verification failed' );
+		return;
+	}
+
+	// Check user permissions.
+	if ( ! current_user_can( 'edit_shop_orders' ) && ! current_user_can( 'manage_woocommerce' ) ) {
+		error_log( 'PALAFITO DEBUG: User lacks permissions' );
+		return;
+	}
+
+	// Look for packing slip date field in POST data.
+	$packing_slip_date_field   = null;
+	$packing_slip_number_field = null;
+
+	// Check for both possible field name formats.
+	$possible_date_keys = array(
+		'_wcpdf_packing-slip_date',
+		'_wcpdf_packing_slip_date',
+	);
+
+	$possible_number_keys = array(
+		'_wcpdf_packing-slip_number',
+		'_wcpdf_packing_slip_number',
+	);
+
+	foreach ( $possible_date_keys as $key ) {
+		if ( isset( $_POST[ $key ] ) ) {
+			$packing_slip_date_field = wp_unslash( $_POST[ $key ] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			error_log( 'PALAFITO DEBUG: Found packing slip date field with key: ' . $key );
+			break;
 		}
 	}
 
-	error_log( 'PALAFITO DEBUG: Packing slip fields found: ' . print_r( $packing_slip_fields, true ) );
-
-	// Process packing slip form data.
-	$document_data = $admin_instance->process_order_document_form_data( $form_data, $packing_slip->slug );
-
-	error_log( 'PALAFITO DEBUG: Processed document data: ' . print_r( $document_data, true ) );
-
-	// Only save if we have data to save.
-	if ( ! empty( $document_data ) ) {
-		error_log( 'PALAFITO DEBUG: Attempting to save packing slip data...' );
-		$packing_slip->set_data( $document_data, $order );
-		$packing_slip->save();
-		error_log( 'PALAFITO DEBUG: Packing slip data saved successfully!' );
-
-		// Verify the meta was actually saved.
-		$saved_date = $order->get_meta( '_wcpdf_packing-slip_date', true );
-		error_log( 'PALAFITO DEBUG: Saved meta _wcpdf_packing-slip_date: ' . $saved_date );
-	} else {
-		error_log( 'PALAFITO DEBUG: No document data to save - form data may not contain packing slip fields' );
+	foreach ( $possible_number_keys as $key ) {
+		if ( isset( $_POST[ $key ] ) ) {
+			$packing_slip_number_field = wp_unslash( $_POST[ $key ] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			error_log( 'PALAFITO DEBUG: Found packing slip number field with key: ' . $key );
+			break;
+		}
 	}
 
-	// EMERGENCY TEST: Force set the meta field directly to see if that works.
-	$test_timestamp = time();
-	$order->update_meta_data( '_wcpdf_packing-slip_date', $test_timestamp );
-	$order->save_meta_data();
-	error_log( 'PALAFITO DEBUG: EMERGENCY TEST - Force set _wcpdf_packing-slip_date to: ' . $test_timestamp );
+	// Log what we found in POST data.
+	$packing_slip_keys = array();
+	foreach ( $_POST as $key => $value ) {
+		if ( strpos( $key, 'packing' ) !== false || strpos( $key, 'slip' ) !== false ) {
+			$packing_slip_keys[] = $key;
+		}
+	}
+	error_log( 'PALAFITO DEBUG: All packing slip related keys in POST: ' . implode( ', ', $packing_slip_keys ) );
 
-	// Verify it was saved.
-	$verification = $order->get_meta( '_wcpdf_packing-slip_date', true );
-	error_log( 'PALAFITO DEBUG: EMERGENCY TEST - Verification read: ' . $verification );
+	// If we found packing slip date data, process it.
+	if ( ! empty( $packing_slip_date_field ) && is_array( $packing_slip_date_field ) ) {
+		error_log( 'PALAFITO DEBUG: Processing packing slip date field: ' . print_r( $packing_slip_date_field, true ) );
 
-	error_log( '=== PALAFITO DEBUG: Hook completed ===' );
+		// Get packing slip document.
+		$packing_slip = wcpdf_get_document( 'packing-slip', $order );
+		if ( ! $packing_slip ) {
+			error_log( 'PALAFITO DEBUG: Could not get packing slip document' );
+			return;
+		}
+
+		// Process date from form field.
+		$date_data = array();
+		if ( ! empty( $packing_slip_date_field['date'] ) ) {
+			$date   = sanitize_text_field( $packing_slip_date_field['date'] );
+			$hour   = ! empty( $packing_slip_date_field['hour'] ) ? sanitize_text_field( $packing_slip_date_field['hour'] ) : '00';
+			$minute = ! empty( $packing_slip_date_field['minute'] ) ? sanitize_text_field( $packing_slip_date_field['minute'] ) : '00';
+
+			// Create properly formatted date string.
+			$date        = gmdate( 'Y-m-d', strtotime( $date ) );
+			$hour        = sprintf( '%02d', intval( $hour ) );
+			$minute      = sprintf( '%02d', intval( $minute ) );
+			$date_string = "{$date} {$hour}:{$minute}:00";
+
+			$date_data['date'] = $date_string;
+			error_log( 'PALAFITO DEBUG: Processed date string: ' . $date_string );
+		}
+
+		// Process number if provided.
+		if ( ! empty( $packing_slip_number_field ) ) {
+			$date_data['number'] = absint( $packing_slip_number_field );
+			error_log( 'PALAFITO DEBUG: Processed number: ' . $date_data['number'] );
+		}
+
+		// Save the data if we have any.
+		if ( ! empty( $date_data ) ) {
+			error_log( 'PALAFITO DEBUG: Attempting to save packing slip data...' );
+
+			try {
+				$packing_slip->set_data( $date_data, $order );
+				$packing_slip->save();
+				error_log( 'PALAFITO DEBUG: Packing slip data saved successfully!' );
+
+				// Verify the meta was actually saved.
+				$saved_date = $order->get_meta( '_wcpdf_packing-slip_date', true );
+				error_log( 'PALAFITO DEBUG: Verified saved meta _wcpdf_packing-slip_date: ' . $saved_date );
+
+			} catch ( Exception $e ) {
+				error_log( 'PALAFITO DEBUG: Error saving packing slip data: ' . $e->getMessage() );
+			}
+		}
+	} else {
+		error_log( 'PALAFITO DEBUG: No packing slip date field found in POST data' );
+	}
+
+	error_log( '=== PALAFITO DEBUG: Order save hook completed ===' );
 }
