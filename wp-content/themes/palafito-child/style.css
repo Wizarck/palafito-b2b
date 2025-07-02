@@ -33,26 +33,49 @@
   text-decoration: none;
 }
 
-/* Forzar ancho de columna de acciones y tabla para que los botones quepan siempre en una línea */
-.woocommerce-orders-table .woocommerce-orders-table__cell-order-actions,
-.woocommerce-orders-table td.woocommerce-orders-table__cell-order-actions {
+/* --- FORZAR ANCHO DE COLUMNA DE ACCIONES Y TABLA DE PEDIDOS (ROBUSTO) --- */
+.woocommerce-orders-table__cell-order-actions,
+td.woocommerce-orders-table__cell-order-actions {
   min-width: 260px !important;
-  max-width: 320px;
-  white-space: nowrap;
+  max-width: 320px !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
 }
 
-.woocommerce-orders-table {
+.woocommerce-orders-table,
+.woocommerce-MyAccount-orders,
+.my_account_orders,
+.account-orders-table {
   min-width: 900px !important;
-  width: 100%;
-  table-layout: auto;
+  width: auto !important;
+  table-layout: auto !important;
+  overflow: visible !important;
+}
+
+.woocommerce-orders-table__cell-order-actions .woocommerce-button.button {
+  display: inline-block !important;
+  margin-right: 6px !important;
+  margin-bottom: 0 !important;
+  white-space: nowrap !important;
+  min-width: 80px;
+  max-width: 140px;
+  padding: 4px 14px;
+  font-size: 14px;
 }
 
 @media (max-width: 1024px) {
-  .woocommerce-orders-table {
+  .woocommerce-orders-table,
+  .woocommerce-MyAccount-orders,
+  .my_account_orders,
+  .account-orders-table {
     min-width: 100% !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    display: block !important;
   }
-  .woocommerce-orders-table .woocommerce-orders-table__cell-order-actions {
+  .woocommerce-orders-table__cell-order-actions,
+  td.woocommerce-orders-table__cell-order-actions {
     min-width: 180px !important;
-    max-width: 100%;
+    max-width: 100% !important;
   }
 }
