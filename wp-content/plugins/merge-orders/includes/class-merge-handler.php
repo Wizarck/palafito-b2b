@@ -495,23 +495,57 @@ class Merge_Handler {
 		$feria = [];
 		$obrador = [];
 		$otras = [];
-		$pedido_map = [];
-		foreach ($this->orders as $order) {
+		$all_orders = array_merge([$this->target], $this->orders);
+		foreach ($all_orders as $order) {
 			$note = $order->get_customer_note();
 			if (!$note) continue;
-			$pedido_num = $order->get_order_number();
-			$normalized = $this->normalize_note($note);
-			if ($this->is_feria($normalized)) {
-				$feria[] = $pedido_num;
-			} elseif ($this->is_obrador($normalized)) {
-				$obrador[] = $pedido_num;
-			} else {
-				$otras[] = trim($note);
+			$lines = preg_split('/\r?\n/', $note);
+			$last_c = null;
+			for ($i = 0; $i < count($lines); $i++) {
+				$line = trim($lines[$i]);
+				if (preg_match('/C\d{5}/i', $line, $match)) {
+					$last_c = strtoupper($match[0]);
+				}
+				// Detectar bloque Feria
+				if ($this->is_feria($this->normalize_note($line)) && $last_c) {
+					// Buscar la primera línea no vacía después de "Feria"
+					$feria_name = '';
+					for ($j = $i + 1; $j < count($lines); $j++) {
+						$next_line = trim($lines[$j]);
+						if ($next_line !== '') {
+							$feria_name = $next_line;
+							break;
+						}
+					}
+					if ($feria_name) {
+						$feria[] = $last_c . ' - ' . $feria_name;
+					} else {
+						$feria[] = $last_c;
+					}
+					$last_c = null;
+				}
+				// Detectar bloque Obrador
+				if ($this->is_obrador($this->normalize_note($line)) && $last_c) {
+					$obrador[] = $last_c;
+					$last_c = null;
+				}
+			}
+			// Si hay un CXXXXX que no fue asociado a Feria/Obrador
+			if ($last_c) {
+				$otras[] = $last_c;
 			}
 		}
+		// Ordenar los CXXXXX ascendentemente
+		sort($feria, SORT_NATURAL);
+		sort($obrador, SORT_NATURAL);
+		sort($otras, SORT_NATURAL);
 		$lines = [];
 		if ($feria) {
-			$lines[] = 'Feria: ' . implode(', ', $feria);
+			if (count($feria) == 1) {
+				$lines[] = 'Feria: ' . $feria[0];
+			} else {
+				$lines[] = "Feria:\n" . implode("\n", $feria);
+			}
 		}
 		if ($obrador) {
 			$lines[] = 'Obrador: ' . implode(', ', $obrador);
