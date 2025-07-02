@@ -13,7 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <?php echo esc_html( $email_heading ) . "\n\n"; ?>
-<?php esc_html_e( '¡Tu pedido ha sido entregado! A continuación encontrarás un resumen de tu compra.', 'palafito-wc-extensions' ); ?>
+<?php esc_html_e( '¡Tu pedido ha sido entregado exitosamente!', 'palafito-wc-extensions' ); ?>
+
+<?php esc_html_e( 'Nos complace informarte que tu pedido ha sido entregado. A continuación encontrarás un resumen completo de tu compra.', 'palafito-wc-extensions' ); ?>
 
 <?php
 /**
@@ -22,3 +24,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 do_action( 'woocommerce_email_order_details', $order, $sent_to_admin, $plain_text, $email );
 do_action( 'woocommerce_email_order_meta', $order, $sent_to_admin, $plain_text, $email );
 do_action( 'woocommerce_email_customer_details', $order, $sent_to_admin, $plain_text, $email );
+?>
+
+<?php esc_html_e( '¡Gracias por confiar en nosotros!', 'palafito-wc-extensions' ); ?>

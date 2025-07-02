@@ -13,9 +13,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <?php echo esc_html( $email_heading ) . "\n\n"; ?>
-<?php esc_html_e( '¡Tu pedido ha sido facturado! A continuación encontrarás un resumen de tu compra y tu factura adjunta si está configurado.', 'palafito-wc-extensions' ); ?>
+<?php esc_html_e( '¡Tu pedido ha sido facturado exitosamente!', 'palafito-wc-extensions' ); ?>
+
+<?php esc_html_e( 'Nos complace informarte que tu pedido ha sido facturado. A continuación encontrarás un resumen completo de tu compra junto con tu factura adjunta si está configurado.', 'palafito-wc-extensions' ); ?>
 
 <?php
 do_action( 'woocommerce_email_order_details', $order, $sent_to_admin, $plain_text, $email );
 do_action( 'woocommerce_email_order_meta', $order, $sent_to_admin, $plain_text, $email );
 do_action( 'woocommerce_email_customer_details', $order, $sent_to_admin, $plain_text, $email );
+?>
+
+<?php esc_html_e( '¡Gracias por tu compra!', 'palafito-wc-extensions' ); ?>

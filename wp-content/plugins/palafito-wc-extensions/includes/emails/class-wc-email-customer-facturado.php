@@ -36,7 +36,7 @@ if ( ! class_exists( 'WC_Email_Customer_Facturado' ) ) :
 
 			$this->template_html  = 'emails/customer-facturado.php';
 			$this->template_plain = 'emails/plain/customer-facturado.php';
-			$this->template_base  = plugin_dir_path( __DIR__ ) . 'templates/';
+			$this->template_base  = plugin_dir_path( dirname( dirname( __FILE__ ) ) ) . 'templates/';
 
 			$this->subject = __( 'Tu pedido #{order_number} ha sido facturado', 'palafito-wc-extensions' );
 			$this->heading = __( '¡Tu pedido ha sido facturado!', 'palafito-wc-extensions' );
