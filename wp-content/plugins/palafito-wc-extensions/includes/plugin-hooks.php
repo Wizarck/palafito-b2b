@@ -77,7 +77,7 @@ add_action( 'woocommerce_process_shop_order_meta', 'palafito_save_packing_slip_d
 /**
  * Save packing slip data during order save operations.
  *
- * @param int     $order_id   Order ID.
+ * @param int          $order_id   Order ID.
  * @param WP_Post|null $order_post Order post object (unused).
  */
 function palafito_save_packing_slip_data_on_order_save( $order_id, $order_post = null ) {
