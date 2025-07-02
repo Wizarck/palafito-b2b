@@ -7,3 +7,33 @@
 */
 
 /* Deja este archivo vacío. Todas las personalizaciones deben hacerse con clases muy específicas y solo si es necesario. */
+
+/* Botones de acción en la tabla de pedidos de Mi Cuenta (WooCommerce) */
+.woocommerce-orders-table .woocommerce-button.button {
+  font-size: 14px; /* Igual que el texto de la tabla */
+  padding: 4px 14px;
+  line-height: 1.4;
+  border-radius: 5px;
+  margin: 2px 4px;
+  min-width: 0;
+  height: auto;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border: none;
+  box-shadow: none;
+  font-weight: 500;
+  transition: background 0.2s, box-shadow 0.2s;
+  display: inline-block;
+  vertical-align: middle;
+}
+.woocommerce-orders-table .woocommerce-button.button:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(102,126,234,0.10);
+  text-decoration: none;
+}
+
+/* Ajuste para que no sobresalgan de la celda */
+.woocommerce-orders-table .woocommerce-orders-table__cell-order-actions {
+  white-space: nowrap;
+}
