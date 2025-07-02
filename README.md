@@ -406,8 +406,10 @@ Este proyecto es privado y propietario. Todos los derechos reservados.
 - Exporta las personalizaciones desde el parent e impórtalas en el child usando Apariencia > Personalizar > Import/Export.
 - Así el child hereda exactamente el mismo diseño, fuentes y colores que el parent.
 
-## Albarán (Packing Slip): Fecha de entrega
-- Por defecto, la fecha de entrega del albarán es la fecha en la que el pedido pasa a 'Entregado'.
-- Si editas la fecha manualmente en el metabox del pedido, esa fecha será la que se muestre en el PDF, el metabox y la columna de la lista de pedidos.
-- La fecha solo se sobrescribe si eliminas el documento y lo generas de nuevo desde cero.
-- Así puedes corregir o ajustar la fecha de entrega según la operativa real del negocio.
+## Fecha de entrega (albarán): única fuente de verdad
+
+- El sistema usa únicamente `_wcpdf_packing-slip_date` como meta para la fecha de entrega del albarán.
+- El metabox de edición de pedido, la tabla de pedidos y el PDF leen y escriben solo en este campo.
+- No existe sincronización ni lógica cruzada con otros campos.
+- Si la columna aparece vacía, editar y guardar la fecha desde el metabox para crear el meta.
+- Para pedidos antiguos, se recomienda forzar la creación del meta si es necesario.

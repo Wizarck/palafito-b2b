@@ -119,6 +119,10 @@
 
 ## 🔄 En Progreso
 - [ ] Próxima funcionalidad a implementar
+- [x] Migrar toda la lógica de fecha de entrega a _wcpdf_packing-slip_date
+- [x] Eliminar referencias y sincronización con _entregado_date
+- [x] Validar que el metabox, tabla y PDF usan solo _wcpdf_packing-slip_date
+- [ ] Revisar pedidos antiguos y forzar la creación del meta _wcpdf_packing-slip_date si falta
 
 ---
 *Última actualización: 10 de Julio, 2025 - Cumplimiento total PHPCS, emails nativos, checkout y push documentado* 

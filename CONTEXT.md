@@ -589,3 +589,12 @@ Nota original: Por favor entregar antes de las 12h.
 - Si el meta no existe, se muestra la fecha actual (formato d/m/Y) y se guarda automáticamente en el meta para futuras visualizaciones/ediciones.
 - Así, la fecha de entrega siempre queda sincronizada entre el PDF y el metabox de edición de pedido.
 - Lógica implementada y documentada el 12/07/2025.
+
+## Fecha de entrega (albarán): fuente de verdad única
+
+- Desde julio 2025, la única fuente de verdad para la fecha de entrega de albarán es el meta `_wcpdf_packing-slip_date`.
+- El campo "Fecha de albarán" en el metabox de edición de pedido (modal y tradicional) lee y guarda directamente en este meta.
+- La columna "Fecha de entrega" en la tabla de pedidos, el PDF del albarán y cualquier lógica personalizada usan solo este campo.
+- Se eliminaron todas las referencias y sincronizaciones con `_entregado_date`.
+- Si la columna aparece vacía, es porque el pedido nunca ha generado el albarán y no existe el meta. Editar y guardar la fecha desde el metabox lo crea automáticamente.
+- Recomendación: revisar pedidos antiguos y forzar la creación del meta si es necesario.
