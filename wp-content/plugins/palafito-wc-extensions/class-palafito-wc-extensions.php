@@ -678,7 +678,7 @@ final class Palafito_WC_Extensions {
 	public static function modify_checkout_order_notes_field( $fields ) {
 		if ( isset( $fields['order']['order_comments'] ) ) {
 			$fields['order']['order_comments']['required']    = false;
-			$fields['order']['order_comments']['label']       = __( 'Notas del pedido (opcional)', 'palafito-wc-extensions' );
+			$fields['order']['order_comments']['label']       = __( 'Notas del pedido', 'palafito-wc-extensions' );
 			$fields['order']['order_comments']['placeholder'] = __( 'Notas sobre tu pedido, por ejemplo, notas especiales para la entrega.', 'palafito-wc-extensions' );
 		}
 		return $fields;
