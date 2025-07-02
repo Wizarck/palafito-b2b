@@ -9,5 +9,5 @@ declare (strict_types=1);
 namespace WooCommerce\PayPalCommerce\PayPalSubscriptions;
 
 return static function (): \WooCommerce\PayPalCommerce\PayPalSubscriptions\PayPalSubscriptionsModule {
-    return new \WooCommerce\PayPalCommerce\PayPalSubscriptions\PayPalSubscriptionsModule();
+	return new \WooCommerce\PayPalCommerce\PayPalSubscriptions\PayPalSubscriptionsModule();
 };

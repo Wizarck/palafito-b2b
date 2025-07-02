@@ -9,6 +9,6 @@ use Traversable;
  *
  * @since 0.2
  */
-interface SetInterface extends Traversable, \WooCommerce\PayPalCommerce\Vendor\Dhii\Collection\HasItemCapableInterface
-{
+interface SetInterface extends Traversable, \WooCommerce\PayPalCommerce\Vendor\Dhii\Collection\HasItemCapableInterface {
+
 }

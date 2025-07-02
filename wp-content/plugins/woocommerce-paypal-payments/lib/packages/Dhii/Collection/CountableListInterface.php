@@ -10,6 +10,6 @@ use Countable;
  *
  * @since 0.2
  */
-interface CountableListInterface extends Traversable, Countable
-{
+interface CountableListInterface extends Traversable, Countable {
+
 }

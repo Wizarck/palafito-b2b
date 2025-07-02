@@ -14,17 +14,17 @@ use WooCommerce\PayPalCommerce\Vendor\Psr\Log\LoggerTrait;
 /**
  * Class NullLogger
  */
-class NullLogger implements LoggerInterface
-{
-    use LoggerTrait;
-    /**
-     * Logs a message. Since its a NullLogger, it does not log at all.
-     *
-     * @param mixed  $level The logging level.
-     * @param string $message The message.
-     * @param array  $context The context.
-     */
-    public function log($level, $message, array $context = array())
-    {
-    }
+class NullLogger implements LoggerInterface {
+
+	use LoggerTrait;
+
+	/**
+	 * Logs a message. Since its a NullLogger, it does not log at all.
+	 *
+	 * @param mixed  $level The logging level.
+	 * @param string $message The message.
+	 * @param array  $context The context.
+	 */
+	public function log( $level, $message, array $context = array() ) {
+	}
 }

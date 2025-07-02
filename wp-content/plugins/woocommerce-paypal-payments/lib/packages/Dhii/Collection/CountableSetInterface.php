@@ -10,6 +10,6 @@ namespace WooCommerce\PayPalCommerce\Vendor\Dhii\Collection;
  *
  * @psalm-suppress UnusedClass
  */
-interface CountableSetInterface extends \WooCommerce\PayPalCommerce\Vendor\Dhii\Collection\CountableListInterface, \WooCommerce\PayPalCommerce\Vendor\Dhii\Collection\SetInterface
-{
+interface CountableSetInterface extends \WooCommerce\PayPalCommerce\Vendor\Dhii\Collection\CountableListInterface, \WooCommerce\PayPalCommerce\Vendor\Dhii\Collection\SetInterface {
+
 }

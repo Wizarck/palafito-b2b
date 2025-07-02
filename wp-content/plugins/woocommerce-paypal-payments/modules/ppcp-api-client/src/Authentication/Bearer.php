@@ -12,12 +12,12 @@ use WooCommerce\PayPalCommerce\ApiClient\Entity\Token;
 /**
  * Interface Bearer
  */
-interface Bearer
-{
-    /**
-     * Returns the bearer.
-     *
-     * @return Token
-     */
-    public function bearer(): Token;
+interface Bearer {
+
+	/**
+	 * Returns the bearer.
+	 *
+	 * @return Token
+	 */
+	public function bearer(): Token;
 }

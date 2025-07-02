@@ -9,20 +9,20 @@ use RuntimeException;
  *
  * @since 0.2
  */
-interface HasItemCapableInterface
-{
-    /**
-     * Checks whether this instance has the given item.
-     *
-     * @since 0.2
-     *
-     * @param mixed $item The item to check for.
-     *
-     * @return bool True if the item exists; false otherwise.
-     *
-     * @throws RuntimeException If the existence of the item could not be verified.
-     *
-     * @psalm-suppress PossiblyUnusedMethod
-     */
-    public function hasItem($item): bool;
+interface HasItemCapableInterface {
+
+	/**
+	 * Checks whether this instance has the given item.
+	 *
+	 * @since 0.2
+	 *
+	 * @param mixed $item The item to check for.
+	 *
+	 * @return bool True if the item exists; false otherwise.
+	 *
+	 * @throws RuntimeException If the existence of the item could not be verified.
+	 *
+	 * @psalm-suppress PossiblyUnusedMethod
+	 */
+	public function hasItem( $item ): bool;
 }

@@ -16,28 +16,26 @@ use WooCommerce\PayPalCommerce\Vendor\Psr\Container\ContainerInterface;
 /**
  * Class WooCommerceLoggingModule
  */
-class WooCommerceLoggingModule implements ServiceModule, ExtendingModule, ExecutableModule
-{
-    use ModuleClassNameIdTrait;
-    /**
-     * {@inheritDoc}
-     */
-    public function services(): array
-    {
-        return require __DIR__ . '/../services.php';
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public function extensions(): array
-    {
-        return require __DIR__ . '/../extensions.php';
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public function run(ContainerInterface $c): bool
-    {
-        return \true;
-    }
+class WooCommerceLoggingModule implements ServiceModule, ExtendingModule, ExecutableModule {
+
+	use ModuleClassNameIdTrait;
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function services(): array {
+		return require __DIR__ . '/../services.php';
+	}
+	/**
+	 * {@inheritDoc}
+	 */
+	public function extensions(): array {
+		return require __DIR__ . '/../extensions.php';
+	}
+	/**
+	 * {@inheritDoc}
+	 */
+	public function run( ContainerInterface $c ): bool {
+		return \true;
+	}
 }

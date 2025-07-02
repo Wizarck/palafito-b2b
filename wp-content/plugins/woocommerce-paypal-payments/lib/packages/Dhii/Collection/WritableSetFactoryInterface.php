@@ -8,12 +8,12 @@ namespace WooCommerce\PayPalCommerce\Vendor\Dhii\Collection;
  *
  * @psalm-suppress UnusedClass
  */
-interface WritableSetFactoryInterface extends \WooCommerce\PayPalCommerce\Vendor\Dhii\Collection\SetFactoryInterface
-{
-    /**
-     * @inheritDoc
-     *
-     * @return WritableSetInterface The new writable set.
-     */
-    public function createSetFromList(array $list): \WooCommerce\PayPalCommerce\Vendor\Dhii\Collection\SetInterface;
+interface WritableSetFactoryInterface extends \WooCommerce\PayPalCommerce\Vendor\Dhii\Collection\SetFactoryInterface {
+
+	/**
+	 * @inheritDoc
+	 *
+	 * @return WritableSetInterface The new writable set.
+	 */
+	public function createSetFromList( array $list ): \WooCommerce\PayPalCommerce\Vendor\Dhii\Collection\SetInterface;
 }

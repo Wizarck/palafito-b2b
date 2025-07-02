@@ -29,20 +29,19 @@ use WooCommerce\PayPalCommerce\WcGateway\Processor\RefundProcessor;
  * @throws InvalidArgumentException When the argument cannot be used for retrieving the order.
  * @throws Exception When the operation fails.
  */
-function ppcp_get_paypal_order($paypal_id_or_wc_order): Order
-{
-    if ($paypal_id_or_wc_order instanceof WC_Order) {
-        $paypal_id_or_wc_order = $paypal_id_or_wc_order->get_meta(PayPalGateway::ORDER_ID_META_KEY);
-        if (!$paypal_id_or_wc_order) {
-            throw new InvalidArgumentException('PayPal order ID not found in meta.');
-        }
-    }
-    if (!is_string($paypal_id_or_wc_order)) {
-        throw new InvalidArgumentException('Invalid PayPal order ID, string expected.');
-    }
-    $order_endpoint = PPCP::container()->get('api.endpoint.order');
-    assert($order_endpoint instanceof OrderEndpoint);
-    return $order_endpoint->order($paypal_id_or_wc_order);
+function ppcp_get_paypal_order( $paypal_id_or_wc_order ): Order {
+	if ( $paypal_id_or_wc_order instanceof WC_Order ) {
+		$paypal_id_or_wc_order = $paypal_id_or_wc_order->get_meta( PayPalGateway::ORDER_ID_META_KEY );
+		if ( ! $paypal_id_or_wc_order ) {
+			throw new InvalidArgumentException( 'PayPal order ID not found in meta.' );
+		}
+	}
+	if ( ! is_string( $paypal_id_or_wc_order ) ) {
+		throw new InvalidArgumentException( 'Invalid PayPal order ID, string expected.' );
+	}
+	$order_endpoint = PPCP::container()->get( 'api.endpoint.order' );
+	assert( $order_endpoint instanceof OrderEndpoint );
+	return $order_endpoint->order( $paypal_id_or_wc_order );
 }
 /**
  * Creates a PayPal order for the given WC order.
@@ -50,11 +49,10 @@ function ppcp_get_paypal_order($paypal_id_or_wc_order): Order
  * @param WC_Order $wc_order The WC order.
  * @throws Exception When the operation fails.
  */
-function ppcp_create_paypal_order_for_wc_order(WC_Order $wc_order): Order
-{
-    $order_processor = PPCP::container()->get('wcgateway.order-processor');
-    assert($order_processor instanceof OrderProcessor);
-    return $order_processor->create_order($wc_order);
+function ppcp_create_paypal_order_for_wc_order( WC_Order $wc_order ): Order {
+	$order_processor = PPCP::container()->get( 'wcgateway.order-processor' );
+	assert( $order_processor instanceof OrderProcessor );
+	return $order_processor->create_order( $wc_order );
 }
 /**
  * Captures the PayPal order.
@@ -63,21 +61,20 @@ function ppcp_create_paypal_order_for_wc_order(WC_Order $wc_order): Order
  * @throws InvalidArgumentException When the order cannot be captured.
  * @throws Exception When the operation fails.
  */
-function ppcp_capture_order(WC_Order $wc_order): void
-{
-    $intent = strtoupper((string) $wc_order->get_meta(PayPalGateway::INTENT_META_KEY));
-    if ($intent !== 'AUTHORIZE') {
-        throw new InvalidArgumentException('Only orders with "authorize" intent can be captured.');
-    }
-    $captured = wc_string_to_bool($wc_order->get_meta(AuthorizedPaymentsProcessor::CAPTURED_META_KEY));
-    if ($captured) {
-        throw new InvalidArgumentException('The order is already captured.');
-    }
-    $authorized_payment_processor = PPCP::container()->get('wcgateway.processor.authorized-payments');
-    assert($authorized_payment_processor instanceof AuthorizedPaymentsProcessor);
-    if (!$authorized_payment_processor->capture_authorized_payment($wc_order)) {
-        throw new RuntimeException('Capture failed.');
-    }
+function ppcp_capture_order( WC_Order $wc_order ): void {
+	$intent = strtoupper( (string) $wc_order->get_meta( PayPalGateway::INTENT_META_KEY ) );
+	if ( $intent !== 'AUTHORIZE' ) {
+		throw new InvalidArgumentException( 'Only orders with "authorize" intent can be captured.' );
+	}
+	$captured = wc_string_to_bool( $wc_order->get_meta( AuthorizedPaymentsProcessor::CAPTURED_META_KEY ) );
+	if ( $captured ) {
+		throw new InvalidArgumentException( 'The order is already captured.' );
+	}
+	$authorized_payment_processor = PPCP::container()->get( 'wcgateway.processor.authorized-payments' );
+	assert( $authorized_payment_processor instanceof AuthorizedPaymentsProcessor );
+	if ( ! $authorized_payment_processor->capture_authorized_payment( $wc_order ) ) {
+		throw new RuntimeException( 'Capture failed.' );
+	}
 }
 /**
  * Reauthorizes the PayPal order.
@@ -86,21 +83,20 @@ function ppcp_capture_order(WC_Order $wc_order): void
  * @throws InvalidArgumentException When the order cannot be captured.
  * @throws Exception When the operation fails.
  */
-function ppcp_reauthorize_order(WC_Order $wc_order): void
-{
-    $intent = strtoupper((string) $wc_order->get_meta(PayPalGateway::INTENT_META_KEY));
-    if ($intent !== 'AUTHORIZE') {
-        throw new InvalidArgumentException('Only orders with "authorize" intent can be reauthorized.');
-    }
-    $captured = wc_string_to_bool($wc_order->get_meta(AuthorizedPaymentsProcessor::CAPTURED_META_KEY));
-    if ($captured) {
-        throw new InvalidArgumentException('The order is already captured.');
-    }
-    $authorized_payment_processor = PPCP::container()->get('wcgateway.processor.authorized-payments');
-    assert($authorized_payment_processor instanceof AuthorizedPaymentsProcessor);
-    if ($authorized_payment_processor->reauthorize_payment($wc_order) !== AuthorizedPaymentsProcessor::SUCCESSFUL) {
-        throw new RuntimeException($authorized_payment_processor->reauthorization_failure_reason() ?: 'Reauthorization failed.');
-    }
+function ppcp_reauthorize_order( WC_Order $wc_order ): void {
+	$intent = strtoupper( (string) $wc_order->get_meta( PayPalGateway::INTENT_META_KEY ) );
+	if ( $intent !== 'AUTHORIZE' ) {
+		throw new InvalidArgumentException( 'Only orders with "authorize" intent can be reauthorized.' );
+	}
+	$captured = wc_string_to_bool( $wc_order->get_meta( AuthorizedPaymentsProcessor::CAPTURED_META_KEY ) );
+	if ( $captured ) {
+		throw new InvalidArgumentException( 'The order is already captured.' );
+	}
+	$authorized_payment_processor = PPCP::container()->get( 'wcgateway.processor.authorized-payments' );
+	assert( $authorized_payment_processor instanceof AuthorizedPaymentsProcessor );
+	if ( $authorized_payment_processor->reauthorize_payment( $wc_order ) !== AuthorizedPaymentsProcessor::SUCCESSFUL ) {
+		throw new RuntimeException( $authorized_payment_processor->reauthorization_failure_reason() ?: 'Reauthorization failed.' );
+	}
 }
 /**
  * Refunds the PayPal order.
@@ -113,12 +109,11 @@ function ppcp_reauthorize_order(WC_Order $wc_order): void
  * @throws InvalidArgumentException When the order cannot be refunded.
  * @throws Exception When the operation fails.
  */
-function ppcp_refund_order(WC_Order $wc_order, float $amount, string $reason = ''): string
-{
-    $order = ppcp_get_paypal_order($wc_order);
-    $refund_processor = PPCP::container()->get('wcgateway.processor.refunds');
-    assert($refund_processor instanceof RefundProcessor);
-    return $refund_processor->refund($order, $wc_order, $amount, $reason);
+function ppcp_refund_order( WC_Order $wc_order, float $amount, string $reason = '' ): string {
+	$order            = ppcp_get_paypal_order( $wc_order );
+	$refund_processor = PPCP::container()->get( 'wcgateway.processor.refunds' );
+	assert( $refund_processor instanceof RefundProcessor );
+	return $refund_processor->refund( $order, $wc_order, $amount, $reason );
 }
 /**
  * Voids the authorization.
@@ -127,21 +122,19 @@ function ppcp_refund_order(WC_Order $wc_order, float $amount, string $reason = '
  * @throws InvalidArgumentException When the order cannot be voided.
  * @throws Exception When the operation fails.
  */
-function ppcp_void_order(WC_Order $wc_order): void
-{
-    $order = ppcp_get_paypal_order($wc_order);
-    $refund_processor = PPCP::container()->get('wcgateway.processor.refunds');
-    assert($refund_processor instanceof RefundProcessor);
-    $refund_processor->void($order);
+function ppcp_void_order( WC_Order $wc_order ): void {
+	$order            = ppcp_get_paypal_order( $wc_order );
+	$refund_processor = PPCP::container()->get( 'wcgateway.processor.refunds' );
+	assert( $refund_processor instanceof RefundProcessor );
+	$refund_processor->void( $order );
 }
 /**
  * Updates the PayPal refund fees totals on an order.
  *
  * @param WC_Order $wc_order The WC order.
  */
-function ppcp_update_order_refund_fees(WC_Order $wc_order): void
-{
-    $updater = PPCP::container()->get('wcgateway.helper.refund-fees-updater');
-    assert($updater instanceof RefundFeesUpdater);
-    $updater->update($wc_order);
+function ppcp_update_order_refund_fees( WC_Order $wc_order ): void {
+	$updater = PPCP::container()->get( 'wcgateway.helper.refund-fees-updater' );
+	assert( $updater instanceof RefundFeesUpdater );
+	$updater->update( $wc_order );
 }

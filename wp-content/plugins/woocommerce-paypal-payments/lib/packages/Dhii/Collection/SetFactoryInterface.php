@@ -9,20 +9,20 @@ use Exception;
  *
  * @since [*next-version*]
  */
-interface SetFactoryInterface
-{
-    /**
-     * Creates a set based on data in a list.
-     *
-     * @since [*next-version*]
-     *
-     * @param array<mixed> $list The list to base the set on.
-     *
-     * @return SetInterface The new set.
-     *
-     * @throws Exception If problem creating.
-     *
-     * @psalm-suppress PossiblyUnusedMethod
-     */
-    public function createSetFromList(array $list): \WooCommerce\PayPalCommerce\Vendor\Dhii\Collection\SetInterface;
+interface SetFactoryInterface {
+
+	/**
+	 * Creates a set based on data in a list.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param array<mixed> $list The list to base the set on.
+	 *
+	 * @return SetInterface The new set.
+	 *
+	 * @throws Exception If problem creating.
+	 *
+	 * @psalm-suppress PossiblyUnusedMethod
+	 */
+	public function createSetFromList( array $list ): \WooCommerce\PayPalCommerce\Vendor\Dhii\Collection\SetInterface;
 }

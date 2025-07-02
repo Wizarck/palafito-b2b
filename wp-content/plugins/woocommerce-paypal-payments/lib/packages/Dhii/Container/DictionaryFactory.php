@@ -8,13 +8,12 @@ use WooCommerce\PayPalCommerce\Vendor\Psr\Container\ContainerInterface;
 /**
  * @inheritDoc
  */
-class DictionaryFactory implements WritableMapFactoryInterface
-{
-    /**
-     * @inheritDoc
-     */
-    public function createContainerFromArray(array $data): ContainerInterface
-    {
-        return new \WooCommerce\PayPalCommerce\Vendor\Dhii\Container\Dictionary($data);
-    }
+class DictionaryFactory implements WritableMapFactoryInterface {
+
+	/**
+	 * @inheritDoc
+	 */
+	public function createContainerFromArray( array $data ): ContainerInterface {
+		return new \WooCommerce\PayPalCommerce\Vendor\Dhii\Container\Dictionary( $data );
+	}
 }

@@ -9,5 +9,5 @@ declare (strict_types=1);
 namespace WooCommerce\PayPalCommerce\PayLaterConfigurator;
 
 return static function (): \WooCommerce\PayPalCommerce\PayLaterConfigurator\PayLaterConfiguratorModule {
-    return new \WooCommerce\PayPalCommerce\PayLaterConfigurator\PayLaterConfiguratorModule();
+	return new \WooCommerce\PayPalCommerce\PayLaterConfigurator\PayLaterConfiguratorModule();
 };

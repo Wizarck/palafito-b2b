@@ -13,6 +13,6 @@ use Exception;
 /**
  * Class NotFoundException
  */
-class NotFoundException extends Exception implements NotFoundExceptionInterface
-{
+class NotFoundException extends Exception implements NotFoundExceptionInterface {
+
 }

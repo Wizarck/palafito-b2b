@@ -11,6 +11,6 @@ namespace WooCommerce\PayPalCommerce\ApiClient\Exception;
 /**
  * Class RuntimeException
  */
-class RuntimeException extends \RuntimeException
-{
+class RuntimeException extends \RuntimeException {
+
 }

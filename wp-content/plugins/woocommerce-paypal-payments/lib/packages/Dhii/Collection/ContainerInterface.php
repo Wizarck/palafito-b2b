@@ -7,6 +7,6 @@ use WooCommerce\PayPalCommerce\Vendor\Psr\Container\ContainerInterface as BaseCo
 /**
  * Something that can retrieve and determine the existence of a value by key.
  */
-interface ContainerInterface extends \WooCommerce\PayPalCommerce\Vendor\Dhii\Collection\HasCapableInterface, BaseContainerInterface
-{
+interface ContainerInterface extends \WooCommerce\PayPalCommerce\Vendor\Dhii\Collection\HasCapableInterface, BaseContainerInterface {
+
 }

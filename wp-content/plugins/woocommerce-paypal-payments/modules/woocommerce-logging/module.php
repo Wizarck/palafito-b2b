@@ -9,5 +9,5 @@ declare (strict_types=1);
 namespace WooCommerce\WooCommerce\Logging;
 
 return function (): \WooCommerce\WooCommerce\Logging\WooCommerceLoggingModule {
-    return new \WooCommerce\WooCommerce\Logging\WooCommerceLoggingModule();
+	return new \WooCommerce\WooCommerce\Logging\WooCommerceLoggingModule();
 };

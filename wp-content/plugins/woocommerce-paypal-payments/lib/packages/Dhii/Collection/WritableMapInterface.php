@@ -8,6 +8,6 @@ namespace WooCommerce\PayPalCommerce\Vendor\Dhii\Collection;
  *
  * @since [*next-version*]
  */
-interface WritableMapInterface extends \WooCommerce\PayPalCommerce\Vendor\Dhii\Collection\MapInterface, \WooCommerce\PayPalCommerce\Vendor\Dhii\Collection\WritableContainerInterface
-{
+interface WritableMapInterface extends \WooCommerce\PayPalCommerce\Vendor\Dhii\Collection\MapInterface, \WooCommerce\PayPalCommerce\Vendor\Dhii\Collection\WritableContainerInterface {
+
 }

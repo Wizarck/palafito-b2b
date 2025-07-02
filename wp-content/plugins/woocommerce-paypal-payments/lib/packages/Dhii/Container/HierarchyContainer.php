@@ -34,51 +34,48 @@ use stdClass;
  *                      path-like keys.
  * @see   SegmentingContainer For an implementation that achieves a similar effect but for flat hierarchies.
  */
-class HierarchyContainer implements ContainerInterface
-{
-    /**
-     * @since [*next-version*]
-     *
-     * @var mixed[]
-     */
-    protected $data;
-    /**
-     * Constructor.
-     *
-     * @since [*next-version*]
-     *
-     * @param mixed[] $data The hierarchical data for which to create the container tree.
-     */
-    public function __construct(array $data)
-    {
-        $this->data = $data;
-    }
-    /**
-     * @inheritDoc
-     *
-     * @since [*next-version*]
-     */
-    public function get($key)
-    {
-        if (!array_key_exists($key, $this->data)) {
-            throw new NotFoundException("Key '{$key}' does not exist", 0, null);
-        }
-        $value = $this->data[$key];
-        if ($value instanceof stdClass) {
-            $value = get_object_vars($value);
-        }
-        if (is_array($value)) {
-            $value = $this->data[$key] = new self($value);
-        }
-        return $value;
-    }
-    /**
-     * @inheritDoc
-     *
-     * @since [*next-version*]
-     */
-    public function has($key)
-    {
-        return array_key_exists($key, $this->data);
-    }
+class HierarchyContainer implements ContainerInterface {
+
+	/**
+	 * @since [*next-version*]
+	 *
+	 * @var mixed[]
+	 */
+	protected $data;
+	/**
+	 * Constructor.
+	 *
+	 * @since [*next-version*]
+	 *
+	 * @param mixed[] $data The hierarchical data for which to create the container tree.
+	 */
+	public function __construct( array $data ) {
+		$this->data = $data;
+	}
+	/**
+	 * @inheritDoc
+	 *
+	 * @since [*next-version*]
+	 */
+	public function get( $key ) {
+		if ( ! array_key_exists( $key, $this->data ) ) {
+			throw new NotFoundException( "Key '{$key}' does not exist", 0, null );
+		}
+		$value = $this->data[ $key ];
+		if ( $value instanceof stdClass ) {
+			$value = get_object_vars( $value );
+		}
+		if ( is_array( $value ) ) {
+			$value = $this->data[ $key ] = new self( $value );
+		}
+		return $value;
+	}
+	/**
+	 * @inheritDoc
+	 *
+	 * @since [*next-version*]
+	 */
+	public function has( $key ) {
+		return array_key_exists( $key, $this->data );
+	}
 }

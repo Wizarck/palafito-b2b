@@ -19,17 +19,16 @@ use WooCommerce\PayPalCommerce\ApiClient\Exception\RuntimeException;
 /**
  * Class RefundPayerFactory
  */
-class RefundPayerFactory
-{
-    /**
-     * Returns a Refund Payer object based off a PayPal Response.
-     *
-     * @param \stdClass $data The JSON object.
-     *
-     * @return RefundPayer
-     */
-    public function from_paypal_response(\stdClass $data): RefundPayer
-    {
-        return new RefundPayer(isset($data->email_address) ? $data->email_address : '', isset($data->merchant_id) ? $data->merchant_id : '');
-    }
+class RefundPayerFactory {
+
+	/**
+	 * Returns a Refund Payer object based off a PayPal Response.
+	 *
+	 * @param \stdClass $data The JSON object.
+	 *
+	 * @return RefundPayer
+	 */
+	public function from_paypal_response( \stdClass $data ): RefundPayer {
+		return new RefundPayer( isset( $data->email_address ) ? $data->email_address : '', isset( $data->merchant_id ) ? $data->merchant_id : '' );
+	}
 }

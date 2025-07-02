@@ -9,6 +9,6 @@ use Traversable;
  *
  * @since 0.2
  */
-interface MapInterface extends Traversable, \WooCommerce\PayPalCommerce\Vendor\Dhii\Collection\ContainerInterface
-{
+interface MapInterface extends Traversable, \WooCommerce\PayPalCommerce\Vendor\Dhii\Collection\ContainerInterface {
+
 }

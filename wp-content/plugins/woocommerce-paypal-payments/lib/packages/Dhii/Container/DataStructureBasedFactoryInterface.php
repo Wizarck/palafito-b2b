@@ -10,16 +10,16 @@ use WooCommerce\PayPalCommerce\Vendor\Psr\Container\ContainerInterface as BaseCo
 /**
  * Creates a container hierarchy based on a traditional data structure.
  */
-interface DataStructureBasedFactoryInterface extends WritableMapFactoryInterface
-{
-    /**
-     * Based on a traditional data structure, creates a container hierarchy.
-     *
-     * @param mixed[] $structure The traditional data structure representation.
-     *
-     * @return WritableMapInterface A hierarchy of writable maps that reflects the data structure.
-     *
-     * @throws Exception If problem creating.
-     */
-    public function createContainerFromArray(array $structure): BaseContainerInterface;
+interface DataStructureBasedFactoryInterface extends WritableMapFactoryInterface {
+
+	/**
+	 * Based on a traditional data structure, creates a container hierarchy.
+	 *
+	 * @param mixed[] $structure The traditional data structure representation.
+	 *
+	 * @return WritableMapInterface A hierarchy of writable maps that reflects the data structure.
+	 *
+	 * @throws Exception If problem creating.
+	 */
+	public function createContainerFromArray( array $structure ): BaseContainerInterface;
 }

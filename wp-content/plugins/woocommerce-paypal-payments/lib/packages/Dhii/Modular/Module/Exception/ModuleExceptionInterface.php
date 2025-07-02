@@ -10,6 +10,6 @@ use Throwable;
  *
  * @since 0.2
  */
-interface ModuleExceptionInterface extends Throwable, ModuleAwareInterface
-{
+interface ModuleExceptionInterface extends Throwable, ModuleAwareInterface {
+
 }

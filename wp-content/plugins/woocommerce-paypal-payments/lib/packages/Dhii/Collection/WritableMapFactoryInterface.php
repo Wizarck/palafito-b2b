@@ -9,12 +9,12 @@ use WooCommerce\PayPalCommerce\Vendor\Psr\Container\ContainerInterface as BaseCo
  *
  * @psalm-suppress UnusedClass
  */
-interface WritableMapFactoryInterface extends \WooCommerce\PayPalCommerce\Vendor\Dhii\Collection\WritableContainerFactoryInterface, \WooCommerce\PayPalCommerce\Vendor\Dhii\Collection\MapFactoryInterface
-{
-    /**
-     * @inheritDoc
-     *
-     * @return WritableMapInterface The new map.
-     */
-    public function createContainerFromArray(array $data): BaseContainerInterface;
+interface WritableMapFactoryInterface extends \WooCommerce\PayPalCommerce\Vendor\Dhii\Collection\WritableContainerFactoryInterface, \WooCommerce\PayPalCommerce\Vendor\Dhii\Collection\MapFactoryInterface {
+
+	/**
+	 * @inheritDoc
+	 *
+	 * @return WritableMapInterface The new map.
+	 */
+	public function createContainerFromArray( array $data ): BaseContainerInterface;
 }

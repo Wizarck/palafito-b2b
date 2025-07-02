@@ -8,14 +8,13 @@ namespace WooCommerce\PayPalCommerce\Vendor\Inpsyde\Modularity\Module;
  *
  * @package WooCommerce\PayPalCommerce\Vendor\Inpsyde\Modularity\Module
  */
-trait ModuleClassNameIdTrait
-{
-    /**
-     * @return string
-     * @see Module::id()
-     */
-    public function id(): string
-    {
-        return __CLASS__;
-    }
+trait ModuleClassNameIdTrait {
+
+	/**
+	 * @return string
+	 * @see Module::id()
+	 */
+	public function id(): string {
+		return __CLASS__;
+	}
 }

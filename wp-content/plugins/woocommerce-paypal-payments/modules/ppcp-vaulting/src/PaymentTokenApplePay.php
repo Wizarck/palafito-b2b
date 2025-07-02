@@ -12,18 +12,18 @@ use WC_Payment_Token;
 /**
  * Class PaymentTokenApplePay
  */
-class PaymentTokenApplePay extends WC_Payment_Token
-{
-    /**
-     * Token Type String.
-     *
-     * @var string
-     */
-    protected $type = 'ApplePay';
-    /**
-     * Extra data.
-     *
-     * @var string[]
-     */
-    protected $extra_data = array();
+class PaymentTokenApplePay extends WC_Payment_Token {
+
+	/**
+	 * Token Type String.
+	 *
+	 * @var string
+	 */
+	protected $type = 'ApplePay';
+	/**
+	 * Extra data.
+	 *
+	 * @var string[]
+	 */
+	protected $extra_data = array();
 }

@@ -12,29 +12,27 @@ namespace WooCommerce\PayPalCommerce\ApiClient\Helper;
 /**
  * Class CurrencyGetter
  */
-class CurrencyGetter
-{
-    /**
-     * Returns the WC currency.
-     */
-    public function get(): string
-    {
-        $currency = get_woocommerce_currency();
-        if ($currency) {
-            return $currency;
-        }
-        $currency = get_option('woocommerce_currency');
-        if (!$currency) {
-            return 'NO_CURRENCY';
-            // Unlikely to happen.
-        }
-        return $currency;
-    }
-    /**
-     * Returns the WC currency.
-     */
-    public function __toString()
-    {
-        return $this->get();
-    }
+class CurrencyGetter {
+
+	/**
+	 * Returns the WC currency.
+	 */
+	public function get(): string {
+		$currency = get_woocommerce_currency();
+		if ( $currency ) {
+			return $currency;
+		}
+		$currency = get_option( 'woocommerce_currency' );
+		if ( ! $currency ) {
+			return 'NO_CURRENCY';
+			// Unlikely to happen.
+		}
+		return $currency;
+	}
+	/**
+	 * Returns the WC currency.
+	 */
+	public function __toString() {
+		return $this->get();
+	}
 }

@@ -11,6 +11,6 @@ namespace WooCommerce\PayPalCommerce\ApiClient\Exception;
 /**
  * Class AlreadyVaultedException
  */
-class AlreadyVaultedException extends \WooCommerce\PayPalCommerce\ApiClient\Exception\RuntimeException
-{
+class AlreadyVaultedException extends \WooCommerce\PayPalCommerce\ApiClient\Exception\RuntimeException {
+
 }
