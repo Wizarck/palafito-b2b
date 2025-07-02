@@ -566,6 +566,15 @@ class Merge_Handler {
 		if ($final_note) {
 			$this->target->update_meta_data('_wcpdf_invoice_notes', $final_note);
 			$this->target->save_meta_data();
+			// --- NUEVO: Actualizar nota de cliente del pedido resultante ---
+			$old_customer_note = $this->target->get_customer_note();
+			if ($old_customer_note) {
+				$new_customer_note = $final_note . "\n\nNota original: " . $old_customer_note;
+			} else {
+				$new_customer_note = $final_note;
+			}
+			$this->target->set_customer_note($new_customer_note);
+			$this->target->save();
 		}
 		// Duplicados: si hay CXXXXX repetidos en cualquier bloque, añadir nota interna
 		$dupes = array_unique(array_diff_assoc($c_all, array_unique($c_all)));
