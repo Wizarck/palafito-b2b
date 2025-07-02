@@ -33,7 +33,8 @@
   text-decoration: none;
 }
 
-/* Ajuste para que no sobresalgan de la celda */
+/* Aumentar ancho de columna de acciones para que los botones quepan en una sola línea */
 .woocommerce-orders-table .woocommerce-orders-table__cell-order-actions {
+  min-width: 210px; /* Suficiente para 2-3 botones compactos */
   white-space: nowrap;
 }
