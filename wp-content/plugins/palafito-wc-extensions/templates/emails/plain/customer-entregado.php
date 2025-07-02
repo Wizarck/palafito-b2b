@@ -13,9 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <?php echo esc_html( $email_heading ) . "\n\n"; ?>
-<?php esc_html_e( '¡Tu pedido ha sido entregado exitosamente!', 'palafito-wc-extensions' ); ?>
-
-<?php esc_html_e( 'Nos complace informarte que tu pedido ha sido entregado. A continuación encontrarás un resumen completo de tu compra.', 'palafito-wc-extensions' ); ?>
+<?php esc_html_e( 'Nos complace informarte que tu pedido ha sido entregado. A continuación encontrarás un resumen completo de tu compra junto con tu albarán adjunta.', 'palafito-wc-extensions' ); ?>
 
 <?php
 /**

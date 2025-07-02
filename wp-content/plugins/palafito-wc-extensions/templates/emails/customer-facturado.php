@@ -27,8 +27,6 @@ do_action( 'woocommerce_email_header', $email_heading, $email );
 do_action( 'kadence_woomail_designer_email_details', $order, $sent_to_admin, $plain_text, $email );
 ?>
 
-<p><?php esc_html_e( '¡Tu pedido ha sido facturado exitosamente!', 'palafito-wc-extensions' ); ?></p>
-
 <p><?php esc_html_e( 'Nos complace informarte que tu pedido ha sido facturado. A continuación encontrarás un resumen completo de tu compra junto con tu factura adjunta.', 'palafito-wc-extensions' ); ?></p>
 
 <?php

@@ -470,20 +470,7 @@ final class Palafito_WC_Extensions {
 		if ( ! in_array( $email->id, array( 'customer_entregado', 'customer_facturado' ), true ) ) {
 			return;
 		}
-
-		// Obtener el contenido principal del email.
-		$main_content = '';
-
-		if ( 'customer_entregado' === $email->id ) {
-			$main_content = __( '¡Tu pedido ha sido entregado exitosamente! Nos complace informarte que tu pedido ha sido entregado. A continuación encontrarás un resumen completo de tu compra.', 'palafito-wc-extensions' );
-		} elseif ( 'customer_facturado' === $email->id ) {
-			$main_content = __( '¡Tu pedido ha sido facturado exitosamente! Nos complace informarte que tu pedido ha sido facturado. A continuación encontrarás un resumen completo de tu compra junto con tu factura adjunta.', 'palafito-wc-extensions' );
-		}
-
-		// Mostrar el contenido principal.
-		if ( ! empty( $main_content ) ) {
-			echo wp_kses_post( wpautop( wptexturize( $main_content ) ) );
-		}
+		// No imprimir nada aquí para evitar duplicidad de contenido.
 	}
 
 	/**
@@ -493,27 +480,64 @@ final class Palafito_WC_Extensions {
 	 * @return array
 	 */
 	public static function add_custom_order_columns( $columns ) {
-		// Definir el orden deseado de las columnas.
-		$desired_order = array(
-			'cb'             => $columns['cb'], // Checkbox.
-			'order_number'   => $columns['order_number'], // Pedido.
-			'order_total'    => $columns['order_total'], // Total.
-			'notes'          => __( 'Notas', 'palafito-wc-extensions' ), // Notas.
-			'order_status'   => $columns['order_status'], // Estado.
-			'wc_actions'     => $columns['wc_actions'], // Acciones.
-			'entregado_date' => __( 'Fecha de entrega', 'palafito-wc-extensions' ), // Fecha de entrega.
-			'invoice_number' => __( 'Número de factura', 'palafito-wc-extensions' ), // Número de factura.
-			'invoice_date'   => __( 'Fecha de factura', 'palafito-wc-extensions' ), // Fecha de factura.
+		// Verificar si las columnas del plugin PRO ya están presentes.
+		$pro_invoice_number_exists = isset( $columns['invoice_number_column'] );
+		$pro_invoice_date_exists   = isset( $columns['invoice_date_column'] );
+
+		// Añadir nuestras columnas personalizadas.
+		$columns['entregado_date'] = __( 'Fecha de entrega', 'palafito-wc-extensions' );
+		$columns['notes']          = __( 'Notas', 'palafito-wc-extensions' );
+
+		// Si las columnas del plugin PRO no existen, añadir las nuestras.
+		if ( ! $pro_invoice_number_exists ) {
+			$columns['invoice_number'] = __( 'Número de factura', 'palafito-wc-extensions' );
+		}
+		if ( ! $pro_invoice_date_exists ) {
+			$columns['invoice_date'] = __( 'Fecha de factura', 'palafito-wc-extensions' );
+		}
+
+		// Reordenar las columnas para mantener el orden deseado.
+		$reordered_columns = array();
+
+		// Columnas que queremos al principio en orden específico.
+		$priority_columns = array(
+			'cb',
+			'order_number',
+			'order_total',
+			'notes',
+			'order_status',
+			'wc_actions',
+			'entregado_date',
 		);
 
-		// Añadir cualquier columna que no esté en el orden deseado al final.
-		foreach ( $columns as $key => $column ) {
-			if ( ! isset( $desired_order[ $key ] ) ) {
-				$desired_order[ $key ] = $column;
+		// Añadir columnas prioritarias en el orden deseado.
+		foreach ( $priority_columns as $column_key ) {
+			if ( isset( $columns[ $column_key ] ) ) {
+				$reordered_columns[ $column_key ] = $columns[ $column_key ];
 			}
 		}
 
-		return $desired_order;
+		// Añadir columnas de factura (PRO o nuestras) después de las prioritarias.
+		if ( $pro_invoice_number_exists ) {
+			$reordered_columns['invoice_number_column'] = $columns['invoice_number_column'];
+		} elseif ( isset( $columns['invoice_number'] ) ) {
+			$reordered_columns['invoice_number'] = $columns['invoice_number'];
+		}
+
+		if ( $pro_invoice_date_exists ) {
+			$reordered_columns['invoice_date_column'] = $columns['invoice_date_column'];
+		} elseif ( isset( $columns['invoice_date'] ) ) {
+			$reordered_columns['invoice_date'] = $columns['invoice_date'];
+		}
+
+		// Añadir el resto de columnas al final.
+		foreach ( $columns as $key => $column ) {
+			if ( ! isset( $reordered_columns[ $key ] ) ) {
+				$reordered_columns[ $key ] = $column;
+			}
+		}
+
+		return $reordered_columns;
 	}
 
 	/**
@@ -552,7 +576,7 @@ final class Palafito_WC_Extensions {
 				break;
 
 			case 'invoice_number':
-				// Mostrar número de factura del plugin PDF.
+				// Mostrar número de factura del plugin PDF (solo si no es columna PRO).
 				$invoice_number = $order->get_meta( '_wcpdf_invoice_number' );
 				if ( $invoice_number ) {
 					echo esc_html( $invoice_number );
@@ -562,7 +586,7 @@ final class Palafito_WC_Extensions {
 				break;
 
 			case 'invoice_date':
-				// Mostrar fecha de factura del plugin PDF.
+				// Mostrar fecha de factura del plugin PDF (solo si no es columna PRO).
 				$invoice_date = $order->get_meta( '_wcpdf_invoice_date' );
 				if ( $invoice_date ) {
 					$date = is_numeric( $invoice_date ) ? $invoice_date : strtotime( $invoice_date );
@@ -570,6 +594,11 @@ final class Palafito_WC_Extensions {
 				} else {
 					echo '&mdash;';
 				}
+				break;
+
+			case 'invoice_number_column':
+			case 'invoice_date_column':
+				// No hacer nada para las columnas del plugin PRO, ya que ellas mismas manejan su contenido.
 				break;
 		}
 	}
@@ -583,8 +612,15 @@ final class Palafito_WC_Extensions {
 	public static function add_custom_order_sortable_columns( $columns ) {
 		$columns['entregado_date'] = 'entregado_date';
 		$columns['notes']          = 'notes';
-		$columns['invoice_number'] = 'invoice_number';
-		$columns['invoice_date']   = 'invoice_date';
+
+		// Solo añadir nuestras columnas de factura si las del plugin PRO no existen.
+		if ( ! isset( $columns['invoice_number_column'] ) ) {
+			$columns['invoice_number'] = 'invoice_number';
+		}
+		if ( ! isset( $columns['invoice_date_column'] ) ) {
+			$columns['invoice_date'] = 'invoice_date';
+		}
+
 		return $columns;
 	}
 
