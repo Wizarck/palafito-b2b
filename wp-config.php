@@ -88,7 +88,7 @@ $table_prefix = 'pnsc_';
  * @link https://developer.wordpress.org/advanced-administration/debug/debug-wordpress/
  */
 // === CONFIGURACIÓN DE PRODUCCIÓN ===
-define( 'WP_DEBUG', false );
+define( 'WP_DEBUG', true );
 define( 'WP_DEBUG_LOG', true ); // Guarda errores en wp-content/debug.log
 define( 'WP_DEBUG_DISPLAY', false );
 @ini_set( 'display_errors', 0 );
