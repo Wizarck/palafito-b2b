@@ -122,58 +122,76 @@ class Merge_Handler {
 
 		Merge_Orders::logger()->log( "Using strategy '{$item_strategy}'" );
 
-		foreach ( $this->orders as &$order ) {
-			$this->merge_orders( $order, $this->target, $item_strategy );
+		try {
+			foreach ( $this->orders as &$order ) {
+				$this->merge_orders( $order, $this->target, $item_strategy );
+
+				/**
+				 * Allow changing the status orders that have been merged are assigned
+				 *
+				 * @param string $status Status to change the order to
+				 * @param WC_Order $order The order that has been merged and will have its status changed
+				 * @param WC_Order $target The order that was merged into
+				 *
+				 * @since 1.0.0
+				 */
+				$status = apply_filters(
+					Merge_Orders::hook_prefix( 'merged_order_status' ),
+					'merged',
+					$order,
+					$this->target
+				);
+
+				$order->set_status( $status );
+				$order->recalculate_coupons();
+				$order->calculate_shipping();
+				$order->update_taxes();
+				$order->calculate_totals( false );
+				$order->save();
+				$order->save_meta_data();
+			}
+
+			$this->target->calculate_shipping();
+
+			// --- INICIO LÓGICA PERSONALIZADA ---
+			$this->process_shipping_lines();
+			$this->process_invoice_notes();
+			// --- FIN LÓGICA PERSONALIZADA ---
+
+			// Update the tax totals without recalculating tax items
+			$this->target->update_taxes();
+			$this->target->calculate_totals(false);
+			$this->target->add_meta_data( Orders::MERGED_INTO_KEY, 'yes' );
+			$this->target->save_meta_data();
+
+			$this->add_merging_notes();
+
+			// Nota interna de merge
+			$merged_numbers = array_map(function($order) { return $order->get_order_number(); }, $this->orders);
+			$target_number = $this->target->get_order_number();
+			$note = sprintf('Merge realizado en el pedido %s de los pedidos: %s', $target_number, implode(', ', $merged_numbers));
+			$this->target->add_order_note($note, 0, true);
+
+			Merge_Orders::logger()->log( 'Orders merged successfully' );
 
 			/**
-			 * Allow changing the status orders that have been merged are assigned
+			 * Fired after orders have finished merging and merging notes have been added
 			 *
-			 * @param string $status Status to change the order to
-			 * @param WC_Order $order The order that has been merged and will have its status changed
+			 * @param WC_Order $target
 			 * @param WC_Order $target The order that was merged into
+			 * @param WC_Order[] $orders The orders that were into the target order
 			 *
 			 * @since 1.0.0
 			 */
-			$status = apply_filters(
-				Merge_Orders::hook_prefix( 'merged_order_status' ),
-				'merged',
-				$order,
-				$this->target
-			);
+			do_action( Merge_Orders::hook_prefix( 'after_orders_merged' ), $this->target, $this->orders );
 
-			$order->set_status( $status );
-			$order->recalculate_coupons();
-			$order->calculate_shipping();
-			$order->update_taxes();
-			$order->calculate_totals( false );
-			$order->save();
-			$order->save_meta_data();
+			return true;
+		} catch (\Exception $e) {
+			// Rollback: dejar todo igual y añadir nota de error
+			$error_note = 'Error al intentar mergear pedidos: ' . $e->getMessage();
+			$this->target->add_order_note($error_note, 0, true);
+			throw $e;
 		}
-
-		$this->target->calculate_shipping();
-
-		// Update the tax totals without recalculating tax items
-		$this->target->update_taxes();
-		$this->target->calculate_totals(false);
-		$this->target->add_meta_data( Orders::MERGED_INTO_KEY, 'yes' );
-		$this->target->save_meta_data();
-
-		$this->add_merging_notes();
-
-		Merge_Orders::logger()->log( 'Orders merged successfully' );
-
-		/**
-		 * Fired after orders have finished merging and merging notes have been added
-		 *
-		 * @param WC_Order $target
-		 * @param WC_Order $target The order that was merged into
-		 * @param WC_Order[] $orders The orders that were into the target order
-		 *
-		 * @since 1.0.0
-		 */
-		do_action( Merge_Orders::hook_prefix( 'after_orders_merged' ), $this->target, $this->orders );
-
-		return true;
 	}
 
 	/**
@@ -426,5 +444,107 @@ class Merge_Handler {
 			$this->target->add_order_note( $message, 0, false );
 			$merged_order->add_order_note( $message_for_merged, 0, false );
 		}
+	}
+
+	/**
+	 * Procesa las líneas de envío según la lógica B2B: elimina duplicados de envío gratuito o los elimina si hay envíos de pago.
+	 */
+	private function process_shipping_lines() {
+		$shipping_items = $this->target->get_items('shipping');
+		$paid_shipping = [];
+		$free_shipping = [];
+
+		foreach (
+			$shipping_items as $item_id => $item
+		) {
+			$data = $item->get_data();
+			$method_id = isset($data['method_id']) ? strtolower($data['method_id']) : '';
+			$method_title = strtolower($item->get_name());
+			$total = isset($data['total']) ? floatval($data['total']) : 0.0;
+			// Considerar envío gratuito si el método contiene "free" o el total es 0
+			if (strpos($method_id, 'free') !== false || strpos($method_title, 'free') !== false || $total == 0.0) {
+				$free_shipping[$item_id] = $item;
+			} else {
+				$paid_shipping[$item_id] = $item;
+			}
+		}
+
+		if (count($paid_shipping) > 0) {
+			// Si hay envíos de pago, eliminar todos los gratuitos
+			foreach ($free_shipping as $item_id => $item) {
+				$this->target->remove_item($item_id);
+			}
+		} elseif (count($free_shipping) > 1) {
+			// Si solo hay gratuitos, dejar solo uno
+			$first = true;
+			foreach ($free_shipping as $item_id => $item) {
+				if ($first) {
+					$first = false;
+					continue;
+				}
+				$this->target->remove_item($item_id);
+			}
+		}
+		$this->target->save();
+	}
+
+	/**
+	 * Procesa las notas de cliente de los pedidos originales y las concatena en la nota de factura del pedido final.
+	 */
+	private function process_invoice_notes() {
+		$feria = [];
+		$obrador = [];
+		$otras = [];
+		$pedido_map = [];
+		foreach ($this->orders as $order) {
+			$note = $order->get_customer_note();
+			if (!$note) continue;
+			$pedido_num = $order->get_order_number();
+			$normalized = $this->normalize_note($note);
+			if ($this->is_feria($normalized)) {
+				$feria[] = $pedido_num;
+			} elseif ($this->is_obrador($normalized)) {
+				$obrador[] = $pedido_num;
+			} else {
+				$otras[] = trim($note);
+			}
+		}
+		$lines = [];
+		if ($feria) {
+			$lines[] = 'Feria: ' . implode(', ', $feria);
+		}
+		if ($obrador) {
+			$lines[] = 'Obrador: ' . implode(', ', $obrador);
+		}
+		if ($otras) {
+			$lines[] = implode(', ', $otras);
+		}
+		$final_note = implode("\n", $lines);
+		if ($final_note) {
+			$this->target->update_meta_data('_wcpdf_invoice_notes', $final_note);
+			$this->target->save_meta_data();
+		}
+	}
+
+	/**
+	 * Normaliza una nota para búsqueda flexible (case-insensitive, sin tildes, sin espacios extra, sin símbolos raros).
+	 */
+	private function normalize_note($note) {
+		$note = strtolower($note);
+		$note = preg_replace('/[áàäâ]/u', 'a', $note);
+		$note = preg_replace('/[éèëê]/u', 'e', $note);
+		$note = preg_replace('/[íìïî]/u', 'i', $note);
+		$note = preg_replace('/[óòöô]/u', 'o', $note);
+		$note = preg_replace('/[úùüû]/u', 'u', $note);
+		$note = preg_replace('/[^a-z0-9 c]/u', '', $note); // solo letras, números, espacios y c
+		$note = preg_replace('/\s+/', ' ', $note);
+		$note = trim($note);
+		return $note;
+	}
+	private function is_feria($note) {
+		return preg_match('/feria\b/', $note);
+	}
+	private function is_obrador($note) {
+		return preg_match('/obrador\b/', $note);
 	}
 }
