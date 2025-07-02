@@ -64,3 +64,14 @@ add_filter('wpo_wcpdf_packing-slip_date', function($date, $document_type, $order
     }
     return $date;
 }, 10, 6);
+
+// Sincronizar la fecha del albarán del metabox con _entregado_date
+add_action('wpo_wcpdf_save_document', function($document, $order) {
+    if ($document->get_type() === 'packing-slip') {
+        $date_obj = $document->get_date();
+        if ($date_obj instanceof WC_DateTime) {
+            $timestamp = $date_obj->getTimestamp();
+            update_post_meta($order->get_id(), '_entregado_date', $timestamp);
+        }
+    }
+}, 10, 2);
