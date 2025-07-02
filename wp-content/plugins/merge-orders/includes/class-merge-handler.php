@@ -496,15 +496,24 @@ class Merge_Handler {
 		$obrador = [];
 		$otras = [];
 		$all_orders = array_merge([$this->target], $this->orders);
+		$notas_a_procesar = [];
 		foreach ($all_orders as $order) {
-			$note = $order->get_customer_note();
-			if (!$note) continue;
-			$lines = preg_split('/\r?\n/', $note);
+			$factura = $order->get_meta('_wcpdf_invoice_notes');
+			if ($factura) {
+				$notas_a_procesar[] = $factura;
+			} elseif ($order->get_customer_note()) {
+				$notas_a_procesar[] = $order->get_customer_note();
+			}
+		}
+		$c_all = [];
+		foreach ($notas_a_procesar as $nota) {
+			$lines = preg_split('/\r?\n/', $nota);
 			$last_c = null;
 			for ($i = 0; $i < count($lines); $i++) {
 				$line = trim($lines[$i]);
 				if (preg_match('/C\d{5}/i', $line, $match)) {
 					$last_c = strtoupper($match[0]);
+					$c_all[] = $last_c;
 				}
 				// Detectar bloque Feria
 				if ($this->is_feria($this->normalize_note($line)) && $last_c) {
@@ -557,6 +566,12 @@ class Merge_Handler {
 		if ($final_note) {
 			$this->target->update_meta_data('_wcpdf_invoice_notes', $final_note);
 			$this->target->save_meta_data();
+		}
+		// Duplicados: si hay CXXXXX repetidos en cualquier bloque, añadir nota interna
+		$dupes = array_unique(array_diff_assoc($c_all, array_unique($c_all)));
+		if (!empty($dupes)) {
+			$msg = 'Atención: Se detectaron CXXXXX duplicados en la nota de factura durante el merge: ' . implode(', ', $dupes);
+			$this->target->add_order_note($msg, 0, true);
 		}
 	}
 
