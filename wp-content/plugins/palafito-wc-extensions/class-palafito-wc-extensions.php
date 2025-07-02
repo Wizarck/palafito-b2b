@@ -49,6 +49,9 @@ final class Palafito_WC_Extensions {
 		// Acciones individuales para nueva interfaz HPOS.
 		add_filter( 'woocommerce_admin_order_actions', array( __CLASS__, 'add_custom_order_actions' ), 10, 2 );
 
+		// Remover acción "Complete" de pedidos en estado "on-hold".
+		add_filter( 'woocommerce_admin_order_actions', array( __CLASS__, 'remove_complete_action_from_on_hold' ), 20, 2 );
+
 		// Registrar post status personalizados en el hook init.
 		add_action( 'init', array( __CLASS__, 'register_custom_post_statuses' ), 1 );
 
@@ -271,6 +274,22 @@ final class Palafito_WC_Extensions {
 				'name'   => __( 'Complete', 'woocommerce' ),
 				'action' => 'complete',
 			);
+		}
+
+		return $actions;
+	}
+
+	/**
+	 * Remover acción "Complete" de pedidos en estado "on-hold".
+	 *
+	 * @param array    $actions Acciones disponibles.
+	 * @param WC_Order $order   Objeto del pedido.
+	 * @return array
+	 */
+	public static function remove_complete_action_from_on_hold( $actions, $order ) {
+		// Remover acción "Complete" si el pedido está en estado "on-hold".
+		if ( $order->has_status( array( 'on-hold' ) ) && isset( $actions['complete'] ) ) {
+			unset( $actions['complete'] );
 		}
 
 		return $actions;

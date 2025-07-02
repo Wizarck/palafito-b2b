@@ -57,6 +57,7 @@
 <table class="order-data-addresses">
 	<tr>
 		<td class="address billing-address">
+			<h3><?php $this->billing_address_title(); ?></h3>
 			<?php do_action( 'wpo_wcpdf_before_billing_address', $this->get_type(), $this->order ); ?>
 			<?php
 				// Dirección de facturación personalizada
