@@ -80,6 +80,26 @@ final class Palafito_WC_Extensions {
 
 		// Hook para Kadence WooCommerce Email Designer.
 		add_action( 'kadence_woomail_designer_email_details', array( $this, 'kadence_email_main_content' ), 10, 4 );
+
+		// Columnas personalizadas para la tabla de pedidos.
+		add_filter( 'manage_edit-shop_order_columns', array( __CLASS__, 'add_custom_order_columns' ), 20 );
+		add_action( 'manage_shop_order_posts_custom_column', array( __CLASS__, 'custom_order_columns_data' ), 10, 2 );
+		add_filter( 'manage_edit-shop_order_sortable_columns', array( __CLASS__, 'add_custom_order_sortable_columns' ) );
+		add_action( 'pre_get_posts', array( __CLASS__, 'sort_orders_by_custom_columns' ) );
+
+		// Columnas para nueva interfaz HPOS.
+		add_filter( 'manage_woocommerce_page_wc-orders_columns', array( __CLASS__, 'add_custom_order_columns' ), 20 );
+		add_action( 'manage_woocommerce_page_wc-orders_custom_column', array( __CLASS__, 'custom_order_columns_data' ), 10, 2 );
+		add_filter( 'manage_woocommerce_page_wc-orders_sortable_columns', array( __CLASS__, 'add_custom_order_sortable_columns' ) );
+		add_filter( 'woocommerce_shop_order_list_table_sortable_columns', array( __CLASS__, 'add_custom_order_sortable_columns' ) );
+		add_filter( 'woocommerce_order_list_table_prepare_items_query_args', array( __CLASS__, 'adjust_order_list_query_args' ) );
+
+		// Configurar columnas por defecto visibles.
+		add_filter( 'default_hidden_columns', array( __CLASS__, 'set_default_hidden_columns' ), 10, 2 );
+
+		// Recuperar campo de notas de cliente en checkout.
+		add_filter( 'woocommerce_enable_order_notes_field', '__return_true' );
+		add_filter( 'woocommerce_checkout_fields', array( __CLASS__, 'modify_checkout_order_notes_field' ) );
 	}
 
 	/**
@@ -318,6 +338,12 @@ final class Palafito_WC_Extensions {
 			$order->save_meta_data();
 		}
 
+		// Limpiar fecha de entrega si el estado cambia de "entregado" a otro estado.
+		if ( 'entregado' === $old_status && 'entregado' !== $new_status ) {
+			$order->delete_meta_data( '_entregado_date' );
+			$order->save_meta_data();
+		}
+
 		// Los emails se envían automáticamente por los hooks de WooCommerce.
 		// No necesitamos disparar manualmente las acciones aquí.
 	}
@@ -458,5 +484,149 @@ final class Palafito_WC_Extensions {
 		if ( ! empty( $main_content ) ) {
 			echo wp_kses_post( wpautop( wptexturize( $main_content ) ) );
 		}
+	}
+
+	/**
+	 * Añadir columnas personalizadas a la tabla de pedidos.
+	 *
+	 * @param array $columns Array de columnas de la tabla de pedidos.
+	 * @return array
+	 */
+	public static function add_custom_order_columns( $columns ) {
+		// Insertar después de la columna de fecha.
+		$new_columns = array();
+		foreach ( $columns as $key => $column ) {
+			$new_columns[ $key ] = $column;
+			if ( 'order_date' === $key ) {
+				$new_columns['entregado_date'] = __( 'Fecha de entrega', 'palafito-wc-extensions' );
+			}
+		}
+		// Añadir columna de notas al final.
+		$new_columns['notes'] = __( 'Notas', 'palafito-wc-extensions' );
+
+		return $new_columns;
+	}
+
+	/**
+	 * Mostrar datos en las columnas personalizadas.
+	 *
+	 * @param string $column Columna actual.
+	 * @param int    $post_id ID del pedido.
+	 */
+	public static function custom_order_columns_data( $column, $post_id ) {
+		$order = wc_get_order( $post_id );
+		if ( ! $order ) {
+			return;
+		}
+
+		switch ( $column ) {
+			case 'entregado_date':
+				$entregado_date = $order->get_meta( '_entregado_date' );
+				if ( $entregado_date ) {
+					$date = is_numeric( $entregado_date ) ? $entregado_date : strtotime( $entregado_date );
+					echo esc_html( date_i18n( 'd/m/Y', $date ) );
+				} else {
+					echo '&mdash;';
+				}
+				break;
+
+			case 'notes':
+				// Mostrar notas de factura del metabox de PDF.
+				$invoice_notes = $order->get_meta( '_wcpdf_invoice_notes' );
+				if ( $invoice_notes ) {
+					$notes_text = wp_strip_all_tags( $invoice_notes );
+					$notes_text = strlen( $notes_text ) > 50 ? substr( $notes_text, 0, 50 ) . '...' : $notes_text;
+					echo esc_html( $notes_text );
+				} else {
+					echo '&mdash;';
+				}
+				break;
+		}
+	}
+
+	/**
+	 * Hacer las columnas personalizadas ordenables.
+	 *
+	 * @param array $columns Array de columnas ordenables.
+	 * @return array
+	 */
+	public static function add_custom_order_sortable_columns( $columns ) {
+		$columns['entregado_date'] = 'entregado_date';
+		$columns['notes']          = 'notes';
+		return $columns;
+	}
+
+	/**
+	 * Ordenar pedidos por columnas personalizadas (interfaz clásica).
+	 *
+	 * @param WP_Query $query Query object.
+	 */
+	public static function sort_orders_by_custom_columns( $query ) {
+		if ( ! is_admin() || ! $query->is_main_query() || 'shop_order' !== $query->get( 'post_type' ) ) {
+			return;
+		}
+
+		$orderby = $query->get( 'orderby' );
+		if ( 'entregado_date' === $orderby ) {
+			$query->set( 'meta_key', '_entregado_date' );
+			$query->set( 'orderby', 'meta_value_num' );
+		} elseif ( 'notes' === $orderby ) {
+			$query->set( 'meta_key', '_wcpdf_invoice_notes' );
+			$query->set( 'orderby', 'meta_value' );
+		}
+	}
+
+	/**
+	 * Ajustar argumentos de consulta para la nueva interfaz HPOS.
+	 *
+	 * @param array $args Argumentos de consulta.
+	 * @return array
+	 */
+	public static function adjust_order_list_query_args( $args ) {
+		if ( 'entregado_date' === $args['orderby'] ) {
+			$args['meta_query'] = array(
+				'entregado_date' => array(
+					'key'     => '_entregado_date',
+					'compare' => 'EXISTS',
+				),
+			);
+			$args['orderby']    = 'meta_value_num';
+		} elseif ( 'notes' === $args['orderby'] ) {
+			$args['meta_query'] = array(
+				'notes' => array(
+					'key'     => '_wcpdf_invoice_notes',
+					'compare' => 'EXISTS',
+				),
+			);
+			$args['orderby']    = 'meta_value';
+		}
+		return $args;
+	}
+
+	/**
+	 * Configurar columnas por defecto visibles (ambas columnas visibles por defecto).
+	 *
+	 * @param array  $hidden Array de columnas ocultas por defecto.
+	 * @param string $screen Screen ID.
+	 * @return array
+	 */
+	public static function set_default_hidden_columns( $hidden, $screen ) {
+		// No ocultar las columnas por defecto, mantenerlas visibles.
+		return $hidden;
+	}
+
+	/**
+	 * Modificar campo de notas de cliente en checkout para hacerlo opcional.
+	 *
+	 * @param array $fields Array de campos de checkout.
+	 * @return array
+	 */
+	public static function modify_checkout_order_notes_field( $fields ) {
+		if ( isset( $fields['order']['order_comments'] ) ) {
+			$fields['order']['order_comments']['required']    = false;
+			$fields['order']['order_comments']['label']       = __( 'Notas del pedido (opcional)', 'palafito-wc-extensions' );
+			$fields['order']['order_comments']['placeholder'] = __( 'Notas sobre tu pedido, por ejemplo, notas especiales para la entrega.', 'palafito-wc-extensions' );
+		}
+		return $fields;
 	}
 }
