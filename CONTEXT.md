@@ -472,3 +472,10 @@ git add . && git commit -m "descripción" && git push
 **Última actualización**: 10 de Julio, 2025  
 **Estado**: Sistema estable y funcional con nuevas columnas personalizadas  
 **Próxima revisión**: Según necesidades del usuario
+
+---
+
+## 🛡️ Buenas Prácticas Técnicas
+
+- **Siempre usar bash en vez de PowerShell en Mac:**
+  Para ejecutar cualquier comando de terminal (git, composer, npm, etc.) en Mac, se debe usar bash y no PowerShell. PowerShell genera errores de entorno y compatibilidad, especialmente con scripts de Composer, Git y herramientas de desarrollo PHP. Esta norma es obligatoria y debe cumplirse en todo el flujo de trabajo.
