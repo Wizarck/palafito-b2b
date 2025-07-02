@@ -42,3 +42,13 @@ function palafito_remove_cross_sell_from_cart() {
 	remove_action( 'woocommerce_cart_collaterals', 'woocommerce_cross_sell_display' );
 }
 add_action( 'init', 'palafito_remove_cross_sell_from_cart' );
+
+/**
+ * Personalizar el campo de notas del pedido en el checkout para que tenga 14 líneas.
+ */
+add_filter( 'woocommerce_checkout_fields', function( $fields ) {
+	if ( isset( $fields['order']['order_comments'] ) ) {
+		$fields['order']['order_comments']['custom_attributes']['rows'] = 14;
+	}
+	return $fields;
+});
