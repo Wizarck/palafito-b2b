@@ -1,0 +1,92 @@
+#!/bin/bash
+
+# Script de debugging específico para Palafito B2B
+
+echo "🔍 Palafito B2B Debug Tool"
+echo "========================="
+
+case "${1:-help}" in
+    "logs")
+        echo "📋 Monitoring Palafito logs..."
+        tail -f /var/www/html/wp-content/debug.log | grep -i -E "(palafito|packing.*slip|entrega)" --color=always
+        ;;
+    "hooks")
+        echo "🔗 Active Palafito hooks:"
+        wp eval '
+        global $wp_filter;
+        foreach($wp_filter as $hook => $callbacks) {
+            foreach($callbacks as $priority => $functions) {
+                foreach($functions as $function) {
+                    if(is_string($function["function"]) && strpos($function["function"], "palafito") !== false) {
+                        echo "- $hook (priority $priority): " . $function["function"] . "\n";
+                    }
+                }
+            }
+        }'
+        ;;
+    "orders")
+        echo "📦 Order status analysis:"
+        wp eval '
+        echo "=== Custom Order Statuses ===\n";
+        foreach(wc_get_order_statuses() as $key => $label) {
+            if(in_array($key, ["wc-entregado", "wc-facturado"])) {
+                echo "✓ $key: $label\n";
+            }
+        }
+        
+        echo "\n=== Recent Orders with Custom Status ===\n";
+        $orders = wc_get_orders(array(
+            "limit" => 5,
+            "status" => array("entregado", "facturado"),
+            "orderby" => "date",
+            "order" => "DESC"
+        ));
+        
+        foreach($orders as $order) {
+            $entrega_date = $order->get_meta("_wcpdf_packing-slip_date");
+            echo "Order #" . $order->get_id() . " - Status: " . $order->get_status();
+            echo " - Entrega: " . ($entrega_date ? date("d/m/Y H:i", $entrega_date) : "No set") . "\n";
+        }
+        '
+        ;;
+    "test-sync")
+        echo "🧪 Testing packing slip sync..."
+        wp eval '
+        echo "Creating test order...\n";
+        $order = wc_create_order();
+        $order->set_status("processing");
+        $order->save();
+        $order_id = $order->get_id();
+        echo "Test Order #$order_id created\n";
+        
+        echo "Setting packing slip date...\n";
+        $timestamp = time();
+        $order->update_meta_data("_wcpdf_packing-slip_date", $timestamp);
+        $order->save_meta_data();
+        
+        echo "Verifying sync...\n";
+        $saved_date = $order->get_meta("_wcpdf_packing-slip_date");
+        echo "Result: " . ($saved_date ? "✓ Date saved: " . date("d/m/Y H:i", $saved_date) : "✗ Date not saved") . "\n";
+        echo "Test completed. Check order #$order_id in admin.\n";
+        '
+        ;;
+    "status")
+        echo "📊 Palafito system status:"
+        wp palafito-status
+        ;;
+    "clean")
+        echo "🧹 Cleaning logs and cache..."
+        wp clean-all
+        ;;
+    *)
+        echo "Usage: palafito-debug [COMMAND]"
+        echo ""
+        echo "Commands:"
+        echo "  logs       Monitor Palafito logs in real-time"
+        echo "  hooks      Show active Palafito hooks"
+        echo "  orders     Analyze order statuses and recent orders"
+        echo "  test-sync  Test packing slip date synchronization"
+        echo "  status     Show Palafito system status"
+        echo "  clean      Clean logs and cache"
+        ;;
+esac

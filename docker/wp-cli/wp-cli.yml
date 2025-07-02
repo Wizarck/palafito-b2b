@@ -1,0 +1,108 @@
+# WP-CLI configuration for Palafito B2B Docker environment
+
+path: /var/www/html
+
+# Database connection
+db:
+  host: mysql
+  user: palafito_user
+  password: palafito_pass
+  name: palafito_dev
+  prefix: wp_
+
+# Core settings
+core:
+  locale: es_ES
+  version: latest
+
+# Server settings for internal use
+server:
+  host: wordpress
+  port: 80
+
+# Development settings
+debug:
+  enabled: true
+  log: wp-content/debug.log
+
+# URL configuration
+url: http://localhost:8080
+
+# Package requirements
+require:
+  - wp-cli/doctor-command
+  - wp-cli/profile-command
+  - wp-cli/search-replace-command
+  - wp-cli/db-command
+  - wp-cli/media-command
+
+# Constants for development environment
+define:
+  WP_DEBUG: true
+  WP_DEBUG_LOG: true
+  WP_DEBUG_DISPLAY: false
+  SCRIPT_DEBUG: true
+  WP_ENVIRONMENT_TYPE: local
+  WP_CACHE: false
+
+# Useful aliases for Palafito development
+alias:
+  # Database operations
+  reset-db: |
+    db reset --yes
+    core install --url=http://localhost:8080 --title="Palafito B2B Dev" --admin_user=admin --admin_password=admin123 --admin_email=admin@palafito.local
+    plugin activate palafito-wc-extensions
+    plugin activate woocommerce
+    
+  # Backup operations
+  backup-dev: |
+    db export wp-content/backups/dev-backup-$(date +%Y%m%d-%H%M%S).sql
+    
+  # Development tools
+  dev-setup: |
+    plugin install query-monitor --activate
+    plugin install debug-bar --activate
+    config set WP_DEBUG true --type=constant
+    config set WP_DEBUG_LOG true --type=constant
+    config set WP_DEBUG_DISPLAY false --type=constant
+    rewrite structure '/%postname%/' --hard
+    
+  # Palafito specific commands
+  palafito-status: |
+    eval 'echo "=== Palafito WC Extensions Status ===\n";
+    echo "Plugin Active: " . (is_plugin_active("palafito-wc-extensions/palafito-wc-extensions.php") ? "YES" : "NO") . "\n";
+    echo "WooCommerce Active: " . (is_plugin_active("woocommerce/woocommerce.php") ? "YES" : "NO") . "\n";
+    echo "\n=== Custom Order Statuses ===\n";
+    foreach(wc_get_order_statuses() as $key => $label) {
+      if(in_array($key, ["wc-entregado", "wc-facturado"])) {
+        echo "- $key: $label\n";
+      }
+    }'
+    
+  palafito-test-orders: |
+    eval '
+    echo "=== Creating Test Orders ===\n";
+    for($i = 1; $i <= 3; $i++) {
+      $order = wc_create_order();
+      $order->set_status("processing");
+      $order->save();
+      echo "Order #" . $order->get_id() . " created\n";
+    }
+    echo "Test orders created successfully!\n";
+    '
+    
+  palafito-logs: |
+    shell: tail -f wp-content/debug.log | grep -i palafito
+    
+  # Cleanup operations
+  clean-all: |
+    cache flush
+    shell: rm -f wp-content/debug.log
+    shell: rm -f wp-content/cache/*
+    shell: echo "Cache and logs cleaned"
+    
+  # Health check
+  health: |
+    doctor check --all
+    core verify-checksums
+    plugin verify-checksums --all

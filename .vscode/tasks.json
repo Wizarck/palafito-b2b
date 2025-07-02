@@ -1,0 +1,127 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "🐳 Docker: Start Development",
+      "type": "shell",
+      "command": "./docker-dev.sh up",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🐳 Docker: Stop Development",
+      "type": "shell",
+      "command": "./docker-dev.sh down",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🧪 Run Tests",
+      "type": "shell",
+      "command": "./docker-dev.sh test",
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🔍 PHPCS Lint",
+      "type": "shell",
+      "command": "composer lint",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": [
+        {
+          "owner": "phpcs",
+          "fileLocation": "absolute",
+          "pattern": [
+            {
+              "regexp": "^FILE: (.*)$",
+              "file": 1
+            },
+            {
+              "regexp": "^\\s+(\\d+)\\s+\\|\\s+(ERROR|WARNING)\\s+\\|\\s+(.*)$",
+              "line": 1,
+              "severity": 2,
+              "message": 3,
+              "loop": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "🔧 PHPCS Fix",
+      "type": "shell",
+      "command": "composer fix",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🔍 Palafito Debug",
+      "type": "shell",
+      "command": "./docker-dev.sh debug",
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "📋 View Logs",
+      "type": "shell",
+      "command": "./docker-dev.sh wp exec wp-cli palafito-debug logs",
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "💾 Backup Database",
+      "type": "shell",
+      "command": "./docker-dev.sh backup",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

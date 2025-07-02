@@ -1,0 +1,52 @@
+# Docker Compose override para CI/CD
+services:
+  wordpress:
+    environment:
+      - WORDPRESS_DB_NAME=palafito_test
+      - WORDPRESS_CONFIG_EXTRA=|
+        define('WP_ENVIRONMENT_TYPE', 'testing');
+        define('WP_DEBUG', true);
+        define('WP_DEBUG_LOG', true);
+        define('WP_DEBUG_DISPLAY', false);
+        define('SCRIPT_DEBUG', false);
+        define('WP_CACHE', false);
+        define('AUTOMATIC_UPDATER_DISABLED', true);
+        define('DISALLOW_FILE_EDIT', true);
+        // CI specific settings
+        define('WP_TESTS_DOMAIN', 'localhost');
+        define('WP_TESTS_EMAIL', 'admin@test.com');
+        define('WP_TESTS_TITLE', 'CI Test Site');
+    volumes:
+      - .:/var/www/html:ro  # Read-only en CI
+
+  mysql:
+    environment:
+      - MYSQL_DATABASE=palafito_test
+    command: 
+      - --default-authentication-plugin=mysql_native_password
+      - --innodb-buffer-pool-size=128M
+      - --max-allowed-packet=64M
+      - --innodb-flush-log-at-trx-commit=2
+      - --innodb-flush-method=O_DIRECT
+
+  redis:
+    command: redis-server --maxmemory 64mb --maxmemory-policy allkeys-lru
+
+  # Servicios específicos para testing
+  wp-cli:
+    environment:
+      - WP_CLI_PACKAGES_DIR=/tmp/wp-cli-packages
+    volumes:
+      - .:/var/www/html:ro
+
+  testing:
+    environment:
+      - WORDPRESS_DB_NAME=palafito_test
+      - CI=true
+      - GITHUB_ACTIONS=true
+    volumes:
+      - .:/var/www/html:ro
+      - test_results:/var/www/html/tests/results
+
+volumes:
+  test_results:

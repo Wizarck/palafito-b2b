@@ -1,0 +1,74 @@
+# Docker Compose simplificado para testing rápido
+services:
+  # WordPress usando imagen estándar
+  wordpress:
+    image: wordpress:latest
+    container_name: palafito_wordpress_simple
+    restart: unless-stopped
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_NAME: palafito_dev
+      WORDPRESS_DB_USER: palafito_user
+      WORDPRESS_DB_PASSWORD: palafito_pass
+      WORDPRESS_DEBUG: 1
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - mysql
+    networks:
+      - palafito_network
+    ports:
+      - "8080:80"
+
+  # MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: palafito_mysql_simple
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: palafito_dev
+      MYSQL_USER: palafito_user
+      MYSQL_PASSWORD: palafito_pass
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - palafito_network
+    command: 
+      - --default-authentication-plugin=mysql_native_password
+
+  # MailHog
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: palafito_mailhog_simple
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - palafito_network
+
+  # phpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: palafito_phpmyadmin_simple
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: root_password
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql
+    networks:
+      - palafito_network
+
+volumes:
+  mysql_data:
+
+networks:
+  palafito_network:
+    driver: bridge

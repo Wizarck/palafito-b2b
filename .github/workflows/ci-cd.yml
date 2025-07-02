@@ -1,0 +1,386 @@
+name: CI/CD Pipeline - Palafito B2B
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master ]
+
+env:
+  PHP_VERSION: '8.2'
+  NODE_VERSION: '18'
+  WP_VERSION: 'latest'
+
+jobs:
+  # Job de análisis de código y linting
+  code-quality:
+    name: 🔍 Code Quality & Security
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: 🐘 Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ env.PHP_VERSION }}
+        extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, iconv, json, mbstring, pdo, mysql, redis
+        coverage: xdebug
+        tools: composer:v2
+
+    - name: 📦 Cache Composer dependencies
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: ${{ runner.os }}-composer-
+
+    - name: 🔧 Install Composer dependencies
+      run: composer install --prefer-dist --no-progress --no-interaction
+
+    - name: ✅ Validate composer.json
+      run: composer validate --strict
+
+    - name: 🔍 Run PHPCS (WordPress Coding Standards)
+      run: |
+        composer lint
+        echo "::notice::PHPCS analysis completed"
+
+    - name: 🔧 Check PHP syntax
+      run: |
+        find wp-content/plugins/palafito-wc-extensions -name "*.php" -exec php -l {} \;
+        echo "::notice::PHP syntax check completed"
+
+    - name: 🛡️ Security audit
+      run: |
+        composer audit --format=json --no-interaction || true
+        echo "::notice::Security audit completed"
+
+    - name: 📊 Generate code metrics
+      run: |
+        echo "::group::Code Metrics"
+        find wp-content/plugins/palafito-wc-extensions -name "*.php" | xargs wc -l
+        echo "::endgroup::"
+
+  # Job de testing con matriz de versiones
+  testing:
+    name: 🧪 Testing Suite
+    runs-on: ubuntu-latest
+    needs: code-quality
+    
+    strategy:
+      matrix:
+        php: ['8.1', '8.2', '8.3']
+        wordpress: ['6.3', '6.4', 'latest']
+        woocommerce: ['8.0', '8.5', 'latest']
+      fail-fast: false
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: palafito_test
+          MYSQL_USER: palafito_user
+          MYSQL_PASSWORD: palafito_pass
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+
+    - name: 🐘 Setup PHP ${{ matrix.php }}
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php }}
+        extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, json, mysqli, redis
+        coverage: xdebug
+        tools: composer:v2, wp-cli
+
+    - name: 📦 Install dependencies
+      run: composer install --prefer-dist --no-progress --no-interaction
+
+    - name: 🔧 Setup WordPress ${{ matrix.wordpress }}
+      run: |
+        wp core download --version=${{ matrix.wordpress }} --path=/tmp/wordpress --allow-root
+        wp config create --dbname=palafito_test --dbuser=palafito_user --dbpass=palafito_pass --dbhost=127.0.0.1 --path=/tmp/wordpress --allow-root
+        wp core install --url=http://localhost --title="Test Site" --admin_user=admin --admin_password=admin --admin_email=admin@test.com --path=/tmp/wordpress --allow-root
+
+    - name: 🛒 Install WooCommerce ${{ matrix.woocommerce }}
+      run: |
+        wp plugin install woocommerce --version=${{ matrix.woocommerce }} --path=/tmp/wordpress --allow-root
+        wp plugin activate woocommerce --path=/tmp/wordpress --allow-root
+
+    - name: 🔌 Setup Palafito Plugin
+      run: |
+        cp -r wp-content/plugins/palafito-wc-extensions /tmp/wordpress/wp-content/plugins/
+        wp plugin activate palafito-wc-extensions --path=/tmp/wordpress --allow-root
+
+    - name: 🧪 Run PHPUnit tests
+      run: |
+        cd /tmp/wordpress
+        phpunit --configuration /tmp/wordpress/wp-content/plugins/palafito-wc-extensions/phpunit.xml
+      env:
+        WP_TESTS_DB_HOST: 127.0.0.1
+        WP_TESTS_DB_NAME: palafito_test
+        WP_TESTS_DB_USER: palafito_user
+        WP_TESTS_DB_PASSWORD: palafito_pass
+
+    - name: 📊 Upload coverage reports
+      if: matrix.php == '8.2' && matrix.wordpress == 'latest'
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: palafito-b2b-coverage
+
+  # Job de testing funcional con Docker
+  functional-testing:
+    name: 🎭 Functional Testing
+    runs-on: ubuntu-latest
+    needs: code-quality
+
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+
+    - name: 🐳 Build Docker environment
+      run: |
+        docker-compose -f docker-compose.yml -f docker-compose.ci.yml build
+        docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d
+
+    - name: ⏳ Wait for services
+      run: |
+        sleep 30
+        docker-compose exec -T wordpress wp core is-installed --allow-root
+
+    - name: 🧪 Run functional tests
+      run: |
+        docker-compose exec -T testing run-tests
+        docker-compose exec -T wp-cli palafito-debug test-sync
+
+    - name: 📋 Collect logs
+      if: failure()
+      run: |
+        docker-compose logs > docker-logs.txt
+        docker-compose exec wordpress cat wp-content/debug.log > debug.log || true
+
+    - name: 📤 Upload logs
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-logs-${{ github.run_id }}
+        path: |
+          docker-logs.txt
+          debug.log
+
+    - name: 🧹 Cleanup
+      if: always()
+      run: docker-compose down -v
+
+  # Job de análisis de seguridad
+  security-scan:
+    name: 🛡️ Security Scan
+    runs-on: ubuntu-latest
+    needs: code-quality
+
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+
+    - name: 🔍 Run Semgrep security scan
+      uses: returntocorp/semgrep-action@v1
+      with:
+        config: >-
+          p/security-audit
+          p/secrets
+          p/owasp-top-ten
+        publishToken: ${{ secrets.SEMGREP_APP_TOKEN }}
+
+    - name: 🔐 WordPress security scan
+      run: |
+        # Instalar WPScan
+        docker run --rm -v $(pwd):/app wpscanteam/wpscan:latest --url http://localhost --no-update --random-user-agent || true
+
+  # Job de deployment a staging
+  deploy-staging:
+    name: 🚀 Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [testing, functional-testing, security-scan]
+    if: github.event_name == 'pull_request' && github.base_ref == 'master'
+    environment: staging
+
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+
+    - name: 🔧 Setup deployment tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y rsync
+
+    - name: 🚀 Deploy to staging
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.STAGING_HOST }}
+        username: ${{ secrets.STAGING_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.STAGING_PORT }}
+        script: |
+          cd ${{ secrets.STAGING_PATH }}
+          git fetch origin
+          git checkout ${{ github.head_ref }}
+          git pull origin ${{ github.head_ref }}
+          
+          # Backup actual
+          wp db export backups/pre-deploy-$(date +%Y%m%d-%H%M%S).sql --allow-root
+          
+          # Activar modo mantenimiento
+          wp maintenance-mode activate --allow-root
+          
+          # Instalar dependencias
+          composer install --no-dev --optimize-autoloader
+          
+          # Ejecutar migraciones si existen
+          wp db check --allow-root
+          
+          # Limpiar cache
+          wp cache flush --allow-root
+          
+          # Verificar que el sitio funciona
+          wp doctor check --allow-root
+          
+          # Desactivar modo mantenimiento
+          wp maintenance-mode deactivate --allow-root
+          
+          echo "✅ Deployment to staging completed"
+
+    - name: 🔍 Post-deployment health check
+      run: |
+        curl -f ${{ secrets.STAGING_URL }}/wp-json/wp/v2/ || exit 1
+        echo "✅ Staging health check passed"
+
+  # Job de deployment a producción
+  deploy-production:
+    name: 🌟 Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [testing, functional-testing, security-scan]
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    environment: production
+
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+
+    - name: 🛡️ Production deployment confirmation
+      uses: trstringer/manual-approval@v1
+      with:
+        secret: ${{ github.TOKEN }}
+        approvers: ${{ secrets.PRODUCTION_APPROVERS }}
+        minimum-approvals: 1
+        issue-title: "Production Deployment Approval - ${{ github.sha }}"
+
+    - name: 🚀 Deploy to production
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.PRODUCTION_HOST }}
+        username: ${{ secrets.PRODUCTION_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.PRODUCTION_PORT }}
+        script: |
+          cd ${{ secrets.PRODUCTION_PATH }}
+          
+          # Backup completo antes del deploy
+          wp db export backups/pre-deploy-$(date +%Y%m%d-%H%M%S).sql --allow-root
+          tar -czf backups/files-$(date +%Y%m%d-%H%M%S).tar.gz wp-content/uploads
+          
+          # Activar modo mantenimiento
+          wp maintenance-mode activate --allow-root
+          
+          # Deploy del código
+          git fetch origin
+          git checkout ${{ github.ref_name }}
+          git pull origin ${{ github.ref_name }}
+          
+          # Instalar dependencias de producción
+          composer install --no-dev --optimize-autoloader --no-interaction
+          
+          # Ejecutar migraciones y actualizaciones
+          wp core update-db --allow-root
+          wp plugin update --all --allow-root
+          
+          # Optimizar base de datos
+          wp db optimize --allow-root
+          
+          # Limpiar y regenerar cache
+          wp cache flush --allow-root
+          wp rewrite flush --allow-root
+          
+          # Verificaciones post-deploy
+          wp doctor check --all --allow-root
+          wp plugin status palafito-wc-extensions --allow-root
+          
+          # Desactivar modo mantenimiento
+          wp maintenance-mode deactivate --allow-root
+          
+          echo "✅ Production deployment completed successfully"
+
+    - name: 🔍 Production health check
+      run: |
+        sleep 10
+        curl -f ${{ secrets.PRODUCTION_URL }}/wp-json/wp/v2/ || exit 1
+        curl -f ${{ secrets.PRODUCTION_URL }}/wp-json/wc/v3/ || exit 1
+        echo "✅ Production health check passed"
+
+    - name: 📢 Deployment notification
+      if: success()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: success
+        channel: '#deployments'
+        text: '🚀 Palafito B2B deployed to production successfully!'
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: 🚨 Deployment failure notification
+      if: failure()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        channel: '#deployments'
+        text: '🚨 Palafito B2B production deployment failed!'
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  # Job de cleanup y reporting
+  cleanup:
+    name: 🧹 Cleanup & Reporting
+    runs-on: ubuntu-latest
+    needs: [deploy-staging, deploy-production]
+    if: always()
+
+    steps:
+    - name: 📊 Generate deployment report
+      run: |
+        echo "## Deployment Report" > deployment-report.md
+        echo "- Commit: ${{ github.sha }}" >> deployment-report.md
+        echo "- Branch: ${{ github.ref_name }}" >> deployment-report.md
+        echo "- Author: ${{ github.actor }}" >> deployment-report.md
+        echo "- Timestamp: $(date)" >> deployment-report.md
+
+    - name: 📤 Upload deployment report
+      uses: actions/upload-artifact@v3
+      with:
+        name: deployment-report-${{ github.run_id }}
+        path: deployment-report.md

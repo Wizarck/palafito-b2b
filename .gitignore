@@ -30,6 +30,35 @@ ehthumbs.db
 node_modules/
 vendor/
 
+# Archivos de desarrollo local
+wp-config-local.php
+.env.local
+wp-config-production.php.bak
+
+# Backups de desarrollo
+wp-content/backups/*.sql
+
+# Logs de desarrollo
+wp-content/debug.log
+php_error.log
+error_log
+
+# Archivos de editor (mantener configuración Docker)
+.vscode/settings.json.user
+.idea/
+*.sublime-*
+
+# Docker y desarrollo
+docker-compose.override.yml
+.env
+.env.production
+
+# Testing y coverage
+tests/coverage/
+tests/results/
+coverage.xml
+*.coverage
+
 # Evitar copiar una carpeta duplicada si apareció antes
 wp-content/wp-content/
 .DS_Store

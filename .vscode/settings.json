@@ -1,0 +1,58 @@
+{
+  "php.validate.executablePath": "/usr/local/bin/php",
+  "php.debug.executablePath": "/usr/local/bin/php",
+  "php.executablePath": "/usr/local/bin/php",
+  
+  "intelephense.files.maxSize": 5000000,
+  "intelephense.environment.includePaths": [
+    "wp-content/plugins/woocommerce",
+    "wp-content/plugins/palafito-wc-extensions"
+  ],
+  
+  "phpcs.enable": true,
+  "phpcs.standard": "WordPress",
+  "phpcs.executablePath": "./vendor/bin/phpcs",
+  
+  "files.associations": {
+    "*.php": "php"
+  },
+  
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/vendor": true,
+    "**/.git": true,
+    "**/wp-content/uploads": true,
+    "**/wp-content/cache": true,
+    "**/wp-content/backups": true
+  },
+  
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/vendor": true,
+    "**/wp-content/uploads": true,
+    "**/wp-content/cache": true,
+    "**/wp-content/backups": true,
+    "**/*.log": true
+  },
+  
+  "emmet.includeLanguages": {
+    "php": "html"
+  },
+  
+  "editor.tabSize": 4,
+  "editor.insertSpaces": false,
+  "editor.detectIndentation": true,
+  
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  
+  "docker.defaultRegistryPath": "",
+  
+  "terminal.integrated.defaultProfile.osx": "bash",
+  "terminal.integrated.profiles.osx": {
+    "bash": {
+      "path": "bash",
+      "args": ["-l"]
+    }
+  }
+}

@@ -85,6 +85,15 @@ class Assets {
 					'sticky_document_data_metabox' => apply_filters( 'wpo_wcpdf_sticky_document_data_metabox', true ),
 				)
 			);
+
+			// Script de debug para el metabox
+			wp_enqueue_script(
+				'wpo-wcpdf-debug-metabox',
+				WPO_WCPDF()->plugin_url() . '/assets/js/debug-metabox.js',
+				array( 'jquery', 'wpo-wcpdf' ),
+				WPO_WCPDF_VERSION,
+				true
+			);
 		}
 
 		// only load on our own settings page

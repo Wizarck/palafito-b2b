@@ -1,0 +1,125 @@
+services:
+  # WordPress + PHP-FPM
+  wordpress:
+    build:
+      context: .
+      dockerfile: docker/wordpress/Dockerfile
+    container_name: palafito_wordpress
+    restart: unless-stopped
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_NAME: palafito_dev
+      WORDPRESS_DB_USER: palafito_user
+      WORDPRESS_DB_PASSWORD: palafito_pass
+      WORDPRESS_DEBUG: 1
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_DEBUG', true);
+        define('WP_DEBUG_LOG', true);
+        define('WP_DEBUG_DISPLAY', false);
+        define('SCRIPT_DEBUG', true);
+        define('WP_ENVIRONMENT_TYPE', 'local');
+        define('WP_CACHE', false);
+        ini_set('log_errors', 1);
+        ini_set('error_log', '/var/www/html/wp-content/debug.log');
+    volumes:
+      - .:/var/www/html
+      - wordpress_uploads:/var/www/html/wp-content/uploads
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - palafito_network
+    ports:
+      - "8080:80"
+
+  # Base de datos MySQL 8.0
+  mysql:
+    image: mysql:8.0
+    container_name: palafito_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: palafito_dev
+      MYSQL_USER: palafito_user
+      MYSQL_PASSWORD: palafito_pass
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+      - ./docker/mysql/conf.d:/etc/mysql/conf.d
+    ports:
+      - "3306:3306"
+    networks:
+      - palafito_network
+    command: 
+      - --default-authentication-plugin=mysql_native_password
+      - --innodb-buffer-pool-size=256M
+      - --max-allowed-packet=64M
+
+  # Redis para cache
+  redis:
+    image: redis:7-alpine
+    container_name: palafito_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - palafito_network
+    command: redis-server --maxmemory 128mb --maxmemory-policy allkeys-lru
+
+  # MailHog para testing de emails
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: palafito_mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - palafito_network
+
+  # PhpMyAdmin para gestión de BD
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: palafito_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: root_password
+      PMA_ARBITRARY: 1
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql
+    networks:
+      - palafito_network
+
+  # WP-CLI container para comandos
+  wp-cli:
+    build:
+      context: .
+      dockerfile: docker/wp-cli/Dockerfile
+    container_name: palafito_wpcli
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - mysql
+      - wordpress
+    networks:
+      - palafito_network
+    working_dir: /var/www/html
+    command: tail -f /dev/null
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+  wordpress_uploads:
+    driver: local
+
+networks:
+  palafito_network:
+    driver: bridge

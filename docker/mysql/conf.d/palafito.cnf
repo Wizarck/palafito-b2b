@@ -1,0 +1,64 @@
+# Configuración MySQL optimizada para Palafito B2B
+
+[mysqld]
+# General settings
+default-storage-engine = InnoDB
+character-set-server = utf8mb4
+collation-server = utf8mb4_unicode_ci
+
+# Performance tuning
+innodb_buffer_pool_size = 512M
+innodb_log_file_size = 128M
+innodb_log_buffer_size = 16M
+innodb_flush_log_at_trx_commit = 2
+innodb_flush_method = O_DIRECT
+
+# Query cache (para desarrollo)
+query_cache_type = 1
+query_cache_size = 32M
+query_cache_limit = 2M
+
+# Connection settings
+max_connections = 200
+max_user_connections = 180
+max_connect_errors = 1000000
+
+# Timeout settings
+wait_timeout = 28800
+interactive_timeout = 28800
+net_read_timeout = 60
+net_write_timeout = 60
+
+# Buffer sizes
+key_buffer_size = 32M
+read_buffer_size = 2M
+read_rnd_buffer_size = 4M
+sort_buffer_size = 4M
+join_buffer_size = 4M
+tmp_table_size = 64M
+max_heap_table_size = 64M
+
+# MyISAM settings (para compatibilidad)
+myisam_sort_buffer_size = 64M
+
+# Logging (para desarrollo)
+general_log = 1
+general_log_file = /var/log/mysql/general.log
+slow_query_log = 1
+slow_query_log_file = /var/log/mysql/slow.log
+long_query_time = 2
+
+# Binary logging (para backup/replicación)
+log_bin = /var/log/mysql/mysql-bin.log
+expire_logs_days = 7
+max_binlog_size = 100M
+
+# Security
+bind-address = 0.0.0.0
+skip-name-resolve
+
+[mysql]
+default-character-set = utf8mb4
+
+[client]
+default-character-set = utf8mb4

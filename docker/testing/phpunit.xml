@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
+    bootstrap="tests/bootstrap.php"
+    colors="true"
+    verbose="true"
+    stopOnFailure="false"
+    processIsolation="false"
+    backupGlobals="false"
+    convertErrorsToExceptions="true"
+    convertNoticesToExceptions="true"
+    convertWarningsToExceptions="true">
+    
+    <testsuites>
+        <testsuite name="Palafito WC Extensions">
+            <directory>./tests/</directory>
+        </testsuite>
+    </testsuites>
+    
+    <php>
+        <const name="WP_TESTS_DOMAIN" value="localhost" />
+        <const name="WP_TESTS_EMAIL" value="admin@palafito.test" />
+        <const name="WP_TESTS_TITLE" value="Palafito B2B Tests" />
+        <const name="WP_PHP_BINARY" value="php" />
+        
+        <server name="SERVER_NAME" value="localhost" />
+        <server name="REQUEST_METHOD" value="GET" />
+        <server name="HTTP_HOST" value="localhost" />
+        
+        <!-- Database configuration -->
+        <env name="WP_TESTS_DB_NAME" value="palafito_test" />
+        <env name="WP_TESTS_DB_USER" value="palafito_user" />
+        <env name="WP_TESTS_DB_PASSWORD" value="palafito_pass" />
+        <env name="WP_TESTS_DB_HOST" value="mysql" />
+        
+        <!-- Plugin configuration -->
+        <env name="WP_TESTS_MULTISITE" value="0" />
+        <env name="WP_DEBUG" value="1" />
+        <env name="WP_DEBUG_LOG" value="1" />
+        <env name="WP_DEBUG_DISPLAY" value="0" />
+    </php>
+    
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./wp-content/plugins/palafito-wc-extensions</directory>
+            <exclude>
+                <directory>./wp-content/plugins/palafito-wc-extensions/vendor</directory>
+                <directory>./wp-content/plugins/palafito-wc-extensions/tests</directory>
+                <file>./wp-content/plugins/palafito-wc-extensions/palafito-wc-extensions.php</file>
+            </exclude>
+        </whitelist>
+    </filter>
+    
+    <logging>
+        <log type="coverage-html" target="./tests/coverage" />
+        <log type="coverage-xml" target="./tests/coverage/coverage.xml" />
+        <log type="junit" target="./tests/results/junit.xml" />
+    </logging>
+</phpunit>
