@@ -108,7 +108,9 @@ $has_orders = ! empty( $customer_orders );
 												printf( _x( '%s for %s item', 'Order total on My Account page', 'woocommerce' ), $order->get_formatted_order_total(), $order->get_item_count() );
 												break;
 											case 'order-actions':
-												foreach ( wc_get_account_orders_actions( $order ) as $key => $action ) {
+												$actions = wc_get_account_orders_actions( $order );
+												unset($actions['view']); // Eliminar el botón 'Ver'
+												foreach ( $actions as $key => $action ) {
 													?>
 													<a href="<?php echo esc_url( $action['url'] ); ?>" class="woocommerce-button button <?php echo esc_attr( $key ); ?>"><?php echo esc_html( $action['name'] ); ?></a>
 													<?php
