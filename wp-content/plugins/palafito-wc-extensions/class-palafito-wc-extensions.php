@@ -334,7 +334,7 @@ final class Palafito_WC_Extensions {
 
 		// Guardar fecha de entrega cuando el pedido se marca como "entregado".
 		if ( 'entregado' === $new_status ) {
-			if (!$order->get_meta('_entregado_date')) {
+			if ( ! $order->get_meta( '_entregado_date' ) ) {
 				$order->update_meta_data( '_entregado_date', time() );
 				$order->save_meta_data();
 			}
