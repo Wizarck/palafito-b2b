@@ -33,8 +33,26 @@
   text-decoration: none;
 }
 
-/* Aumentar ancho de columna de acciones para que los botones quepan en una sola línea */
-.woocommerce-orders-table .woocommerce-orders-table__cell-order-actions {
-  min-width: 210px; /* Suficiente para 2-3 botones compactos */
+/* Forzar ancho de columna de acciones y tabla para que los botones quepan siempre en una línea */
+.woocommerce-orders-table .woocommerce-orders-table__cell-order-actions,
+.woocommerce-orders-table td.woocommerce-orders-table__cell-order-actions {
+  min-width: 260px !important;
+  max-width: 320px;
   white-space: nowrap;
+}
+
+.woocommerce-orders-table {
+  min-width: 900px !important;
+  width: 100%;
+  table-layout: auto;
+}
+
+@media (max-width: 1024px) {
+  .woocommerce-orders-table {
+    min-width: 100% !important;
+  }
+  .woocommerce-orders-table .woocommerce-orders-table__cell-order-actions {
+    min-width: 180px !important;
+    max-width: 100%;
+  }
 }
