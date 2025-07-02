@@ -29,3 +29,16 @@ class Palafito_Child_Theme {
 }
 
 new Palafito_Child_Theme();
+
+// Prevent direct access.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Remove cross-sell products from cart page.
+ */
+function palafito_remove_cross_sell_from_cart() {
+	remove_action( 'woocommerce_cart_collaterals', 'woocommerce_cross_sell_display' );
+}
+add_action( 'init', 'palafito_remove_cross_sell_from_cart' );
