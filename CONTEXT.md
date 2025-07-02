@@ -561,3 +561,24 @@ git add . && git commit -m "descripción" && git push
 | #1234  | ... | [Factura] [Albarán]     |
 
 - Cambio documentado y pusheado el 11/07/2025.
+
+## 🆕 11 de Julio, 2025 - Lógica de nota de cliente tras merge de pedidos
+
+- Al hacer merge de pedidos, la nota de cliente (`customer_note`) del pedido resultante se reemplaza por la nota final generada (la misma que la nota de factura).
+- Si el pedido resultante tenía una nota de cliente previa, se añade como postfijo, precedida por una línea en blanco y el texto:
+  
+  Nota original: [NOTA VIEJA]
+- Si no había nota previa, solo se muestra la nota final generada.
+- Las notas de cliente de los pedidos originales NO se modifican.
+
+**Ejemplo visual:**
+
+```
+Feria: C00262 - Feria X
+Obrador: C00264
+C00270
+
+Nota original: Por favor entregar antes de las 12h.
+```
+
+- Lógica implementada y documentada el 11/07/2025.

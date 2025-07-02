@@ -191,6 +191,24 @@ woocommerce_after_shop_loop_item_title
 - Hover sobre la nota muestra el texto completo.
 - Lógica y decisión documentadas en CONTEXT.md y TODO.md.
 
+### Nota de cliente tras merge de pedidos
+
+- **Nota de cliente tras merge de pedidos**: Cuando se realiza un merge, la nota de cliente del pedido resultante se reemplaza por la nota final generada (la misma que la nota de factura). Si existía una nota de cliente previa, se añade como postfijo, precedida por una línea en blanco y el texto:
+  
+  Nota original: [NOTA VIEJA]
+  
+  Si no había nota previa, solo se muestra la nota final generada. Las notas de cliente de los pedidos originales no se modifican.
+
+**Ejemplo visual:**
+
+```
+Feria: C00262 - Feria X
+Obrador: C00264
+C00270
+
+Nota original: Por favor entregar antes de las 12h.
+```
+
 ## 🔧 Configuración de producción
 
 ### Variables de entorno
