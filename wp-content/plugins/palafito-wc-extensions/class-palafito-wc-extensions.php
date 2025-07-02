@@ -493,18 +493,27 @@ final class Palafito_WC_Extensions {
 	 * @return array
 	 */
 	public static function add_custom_order_columns( $columns ) {
-		// Insertar después de la columna de fecha.
-		$new_columns = array();
+		// Definir el orden deseado de las columnas.
+		$desired_order = array(
+			'cb'             => $columns['cb'], // Checkbox.
+			'order_number'   => $columns['order_number'], // Pedido.
+			'order_total'    => $columns['order_total'], // Total.
+			'notes'          => __( 'Notas', 'palafito-wc-extensions' ), // Notas.
+			'order_status'   => $columns['order_status'], // Estado.
+			'wc_actions'     => $columns['wc_actions'], // Acciones.
+			'entregado_date' => __( 'Fecha de entrega', 'palafito-wc-extensions' ), // Fecha de entrega.
+			'invoice_number' => __( 'Número de factura', 'palafito-wc-extensions' ), // Número de factura.
+			'invoice_date'   => __( 'Fecha de factura', 'palafito-wc-extensions' ), // Fecha de factura.
+		);
+
+		// Añadir cualquier columna que no esté en el orden deseado al final.
 		foreach ( $columns as $key => $column ) {
-			$new_columns[ $key ] = $column;
-			if ( 'order_date' === $key ) {
-				$new_columns['entregado_date'] = __( 'Fecha de entrega', 'palafito-wc-extensions' );
+			if ( ! isset( $desired_order[ $key ] ) ) {
+				$desired_order[ $key ] = $column;
 			}
 		}
-		// Añadir columna de notas al final.
-		$new_columns['notes'] = __( 'Notas', 'palafito-wc-extensions' );
 
-		return $new_columns;
+		return $desired_order;
 	}
 
 	/**
@@ -541,6 +550,27 @@ final class Palafito_WC_Extensions {
 					echo '&mdash;';
 				}
 				break;
+
+			case 'invoice_number':
+				// Mostrar número de factura del plugin PDF.
+				$invoice_number = $order->get_meta( '_wcpdf_invoice_number' );
+				if ( $invoice_number ) {
+					echo esc_html( $invoice_number );
+				} else {
+					echo '&mdash;';
+				}
+				break;
+
+			case 'invoice_date':
+				// Mostrar fecha de factura del plugin PDF.
+				$invoice_date = $order->get_meta( '_wcpdf_invoice_date' );
+				if ( $invoice_date ) {
+					$date = is_numeric( $invoice_date ) ? $invoice_date : strtotime( $invoice_date );
+					echo esc_html( date_i18n( 'd/m/Y', $date ) );
+				} else {
+					echo '&mdash;';
+				}
+				break;
 		}
 	}
 
@@ -553,6 +583,8 @@ final class Palafito_WC_Extensions {
 	public static function add_custom_order_sortable_columns( $columns ) {
 		$columns['entregado_date'] = 'entregado_date';
 		$columns['notes']          = 'notes';
+		$columns['invoice_number'] = 'invoice_number';
+		$columns['invoice_date']   = 'invoice_date';
 		return $columns;
 	}
 
@@ -573,6 +605,12 @@ final class Palafito_WC_Extensions {
 		} elseif ( 'notes' === $orderby ) {
 			$query->set( 'meta_key', '_wcpdf_invoice_notes' );
 			$query->set( 'orderby', 'meta_value' );
+		} elseif ( 'invoice_number' === $orderby ) {
+			$query->set( 'meta_key', '_wcpdf_invoice_number' );
+			$query->set( 'orderby', 'meta_value' );
+		} elseif ( 'invoice_date' === $orderby ) {
+			$query->set( 'meta_key', '_wcpdf_invoice_date' );
+			$query->set( 'orderby', 'meta_value_num' );
 		}
 	}
 
@@ -599,6 +637,22 @@ final class Palafito_WC_Extensions {
 				),
 			);
 			$args['orderby']    = 'meta_value';
+		} elseif ( 'invoice_number' === $args['orderby'] ) {
+			$args['meta_query'] = array(
+				'invoice_number' => array(
+					'key'     => '_wcpdf_invoice_number',
+					'compare' => 'EXISTS',
+				),
+			);
+			$args['orderby']    = 'meta_value';
+		} elseif ( 'invoice_date' === $args['orderby'] ) {
+			$args['meta_query'] = array(
+				'invoice_date' => array(
+					'key'     => '_wcpdf_invoice_date',
+					'compare' => 'EXISTS',
+				),
+			);
+			$args['orderby']    = 'meta_value_num';
 		}
 		return $args;
 	}
