@@ -36,7 +36,7 @@ if ( ! class_exists( 'WC_Email_Customer_Entregado' ) ) :
 
 			$this->template_html  = 'emails/customer-entregado.php';
 			$this->template_plain = 'emails/plain/customer-entregado.php';
-			$this->template_base  = plugin_dir_path( dirname( dirname( __FILE__ ) ) ) . 'templates/';
+			$this->template_base  = plugin_dir_path( dirname( __DIR__ ) ) . 'templates/';
 
 			$this->subject = __( 'Tu pedido #{order_number} ha sido entregado', 'palafito-wc-extensions' );
 			$this->heading = __( '¡Tu pedido ha sido entregado!', 'palafito-wc-extensions' );

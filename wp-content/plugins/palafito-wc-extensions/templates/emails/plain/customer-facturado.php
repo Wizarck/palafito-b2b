@@ -23,4 +23,5 @@ do_action( 'woocommerce_email_order_meta', $order, $sent_to_admin, $plain_text, 
 do_action( 'woocommerce_email_customer_details', $order, $sent_to_admin, $plain_text, $email );
 ?>
 
-<?php esc_html_e( '¡Gracias por tu compra!', 'palafito-wc-extensions' ); ?>
+<?php
+esc_html_e( '¡Gracias por tu compra!', 'palafito-wc-extensions' );

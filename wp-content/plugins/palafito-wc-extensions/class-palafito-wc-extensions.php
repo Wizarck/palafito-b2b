@@ -290,6 +290,12 @@ final class Palafito_WC_Extensions {
 			error_log( "Palafito WC Extensions: Order {$order_id} status changed from {$old_status} to {$new_status}" );
 		}
 
+		// Guardar fecha de entrega cuando el pedido se marca como "entregado".
+		if ( 'entregado' === $new_status ) {
+			$order->update_meta_data( '_entregado_date', time() );
+			$order->save_meta_data();
+		}
+
 		// Los emails se envían automáticamente por los hooks de WooCommerce.
 		// No necesitamos disparar manualmente las acciones aquí.
 	}

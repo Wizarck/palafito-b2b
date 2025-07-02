@@ -697,21 +697,31 @@ class Functions {
 				$number = $packing_slip->get_number( $packing_slip->get_type() );
 				$date   = $packing_slip->get_date();
 
-				// Packing Slip Number
+				// Packing Slip Number - only if not already displayed in template
 				if ( ! empty( $packing_slip_settings['display_number'] ) && $number ) {
 					?>
 					<tr class="packing-slip-number">
-						<th><?php echo $packing_slip->get_number_title(); ?></th>
+						<th><?php esc_html_e( 'Número del albarán:', 'palafito-wc-extensions' ); ?></th>
 						<td><?php echo $number; ?></td>
 					</tr>
 					<?php
 				}
-				// Packing Slip Date
+				// Packing Slip Date - only if not already displayed in template
 				if ( isset( $packing_slip_settings['display_date'] ) && $date ) {
+					// Apply logic for delivery date: if order is delivered, show delivery date, otherwise show current date
+					$delivery_date = $date;
+					if ( $order->get_status() === 'entregado' ) {
+						// If order is delivered, use the date when it was marked as delivered
+						$delivery_timestamp = $order->get_meta( '_entregado_date', true );
+						if ( $delivery_timestamp ) {
+							$delivery_date = new \DateTime();
+							$delivery_date->setTimestamp( $delivery_timestamp );
+						}
+					}
 					?>
-					<tr class="packing-slip-date">
-						<th><?php echo $packing_slip->get_date_title(); ?></th>
-						<td><?php echo $date->date_i18n( apply_filters( 'wpo_wcpdf_date_format', wc_date_format(), $packing_slip ) ); ?></td>
+					<tr class="delivery-date">
+						<th><?php esc_html_e( 'Fecha de entrega:', 'palafito-wc-extensions' ); ?></th>
+						<td><?php echo $delivery_date->date_i18n( apply_filters( 'wpo_wcpdf_date_format', wc_date_format(), $packing_slip ) ); ?></td>
 					</tr>
 					<?php
 				}

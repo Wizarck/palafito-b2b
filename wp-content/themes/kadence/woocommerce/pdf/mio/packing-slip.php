@@ -126,18 +126,6 @@
 		<td class="order-data">
 			<table>
 				<?php do_action( 'wpo_wcpdf_before_order_data', $this->get_type(), $this->order ); ?>
-				<?php if ( method_exists( $this, 'get_number' ) && $this->get_number() ) : ?>
-					<tr class="packing-slip-number">
-						<th><?php esc_html_e( 'Número de albarán:', 'palafito-wc-extensions' ); ?></th>
-						<td><?php $this->number( 'packing-slip' ); ?></td>
-					</tr>
-				<?php endif; ?>
-				<?php if ( method_exists( $this, 'get_date' ) && $this->get_date() ) : ?>
-					<tr class="delivery-date">
-						<th><?php esc_html_e( 'Fecha de entrega:', 'palafito-wc-extensions' ); ?></th>
-						<td><?php $this->date( 'packing-slip' ); ?></td>
-					</tr>
-				<?php endif; ?>
 				<?php if ( $this->get_shipping_method() ) : ?>
 					<tr class="shipping-method">
 						<th><?php $this->shipping_method_title(); ?></th>
