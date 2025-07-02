@@ -83,33 +83,65 @@ add_action( 'wpo_wcpdf_on_save_invoice_order_data', 'palafito_save_packing_slip_
  * @param object $admin_instance PDF plugin admin instance.
  */
 function palafito_save_packing_slip_data_on_order_save( $form_data, $order, $admin_instance ) {
+	// ALWAYS log for debugging - we need to see what's happening.
+	error_log( '=== PALAFITO DEBUG: Hook fired ===' );
+	error_log( 'Order ID: ' . ( $order ? $order->get_id() : 'NULL' ) );
+	error_log( 'Admin Instance: ' . ( $admin_instance ? 'EXISTS' : 'NULL' ) );
+	error_log( 'Form Data Keys: ' . ( is_array( $form_data ) ? implode( ', ', array_keys( $form_data ) ) : 'NOT ARRAY' ) );
+
 	// Validate inputs.
 	if ( ! $admin_instance || ! $order || ! is_array( $form_data ) ) {
+		error_log( 'PALAFITO DEBUG: Validation failed - exiting early' );
 		return;
-	}
-
-	// Log the hook execution for debugging.
-	if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-		error_log( 'Palafito WC Extensions: Saving packing slip data for order ' . $order->get_id() );
 	}
 
 	// Get packing slip document.
 	$packing_slip = wcpdf_get_document( 'packing-slip', $order );
 	if ( empty( $packing_slip ) ) {
+		error_log( 'PALAFITO DEBUG: No packing slip document found' );
 		return;
 	}
+
+	error_log( 'PALAFITO DEBUG: Packing slip document exists, slug: ' . $packing_slip->slug );
+
+	// Look for packing slip fields in form data.
+	$packing_slip_fields = array();
+	foreach ( $form_data as $key => $value ) {
+		if ( strpos( $key, 'packing-slip' ) !== false || strpos( $key, 'packing_slip' ) !== false ) {
+			$packing_slip_fields[ $key ] = $value;
+		}
+	}
+
+	error_log( 'PALAFITO DEBUG: Packing slip fields found: ' . print_r( $packing_slip_fields, true ) );
 
 	// Process packing slip form data.
 	$document_data = $admin_instance->process_order_document_form_data( $form_data, $packing_slip->slug );
 
+	error_log( 'PALAFITO DEBUG: Processed document data: ' . print_r( $document_data, true ) );
+
 	// Only save if we have data to save.
 	if ( ! empty( $document_data ) ) {
+		error_log( 'PALAFITO DEBUG: Attempting to save packing slip data...' );
 		$packing_slip->set_data( $document_data, $order );
 		$packing_slip->save();
+		error_log( 'PALAFITO DEBUG: Packing slip data saved successfully!' );
 
-		// Log successful save for debugging.
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			error_log( 'Palafito WC Extensions: Packing slip data saved for order ' . $order->get_id() );
-		}
+		// Verify the meta was actually saved.
+		$saved_date = $order->get_meta( '_wcpdf_packing-slip_date', true );
+		error_log( 'PALAFITO DEBUG: Saved meta _wcpdf_packing-slip_date: ' . $saved_date );
+	} else {
+		error_log( 'PALAFITO DEBUG: No document data to save - form data may not contain packing slip fields' );
 	}
+
+	// EMERGENCY TEST: Force set the meta field directly to see if that works.
+	$test_timestamp = time();
+	$order->update_meta_data( '_wcpdf_packing-slip_date', $test_timestamp );
+	$order->save_meta_data();
+	error_log( 'PALAFITO DEBUG: EMERGENCY TEST - Force set _wcpdf_packing-slip_date to: ' . $test_timestamp );
+
+	// Verify it was saved.
+	$verification = $order->get_meta( '_wcpdf_packing-slip_date', true );
+	error_log( 'PALAFITO DEBUG: EMERGENCY TEST - Verification read: ' . $verification );
+
+	error_log( '=== PALAFITO DEBUG: Hook completed ===' );
 }
