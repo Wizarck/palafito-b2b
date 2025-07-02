@@ -32,3 +32,23 @@ add_filter('wpo_wcpdf_filename', function($filename, $document_type, $order_ids,
     }
     return $filename;
 }, 20, 5);
+
+// Forzar que la fecha del albarán (packing slip) sea siempre la del metabox personalizado
+add_filter('wpo_wcpdf_packing-slip_date', function($date, $document_type, $order, $context, $formatted, $document) {
+    if ($order && is_object($order)) {
+        $order_id = is_callable([$order, 'get_id']) ? $order->get_id() : $order->ID;
+        $meta_date = get_post_meta($order_id, '_wcpdf_packing_slip_date', true);
+        if ($meta_date) {
+            if (class_exists('WC_DateTime')) {
+                try {
+                    $date_obj = new WC_DateTime($meta_date);
+                    return $formatted ? $date_obj->date_i18n(wc_date_format()) : $date_obj;
+                } catch (Exception $e) {
+                    return $meta_date;
+                }
+            }
+            return $meta_date;
+        }
+    }
+    return $date;
+}, 10, 6);
