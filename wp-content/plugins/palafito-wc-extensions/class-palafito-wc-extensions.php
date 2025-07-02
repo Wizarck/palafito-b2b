@@ -334,8 +334,10 @@ final class Palafito_WC_Extensions {
 
 		// Guardar fecha de entrega cuando el pedido se marca como "entregado".
 		if ( 'entregado' === $new_status ) {
-			$order->update_meta_data( '_entregado_date', time() );
-			$order->save_meta_data();
+			if (!$order->get_meta('_entregado_date')) {
+				$order->update_meta_data( '_entregado_date', time() );
+				$order->save_meta_data();
+			}
 		}
 
 		// Limpiar fecha de entrega si el estado cambia de "entregado" a otro estado.
@@ -343,9 +345,6 @@ final class Palafito_WC_Extensions {
 			$order->delete_meta_data( '_entregado_date' );
 			$order->save_meta_data();
 		}
-
-		// Los emails se envían automáticamente por los hooks de WooCommerce.
-		// No necesitamos disparar manualmente las acciones aquí.
 	}
 
 	/**
