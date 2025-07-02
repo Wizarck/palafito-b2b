@@ -137,35 +137,6 @@
 					<th><?php $this->order_number_title(); ?></th>
 					<td><?php $this->order_number(); ?></td>
 				</tr>
-				<tr class="order-date">
-					<th>Fecha de entrega:</th>
-					<td>
-						<?php
-						$order_id = $this->order->get_id();
-						$meta_key = '_wcpdf_packing_slip_date';
-						$fecha_albaran = get_post_meta($order_id, $meta_key, true);
-						if (!$fecha_albaran || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha_albaran)) {
-							$fecha_albaran = date('Y-m-d');
-							update_post_meta($order_id, $meta_key, $fecha_albaran);
-						}
-						// Convertir a WC_DateTime para compatibilidad y formateo
-						if (class_exists('WC_DateTime')) {
-							try {
-								$fecha_obj = new WC_DateTime($fecha_albaran);
-								if ($fecha_obj instanceof WC_DateTime) {
-									echo esc_html($fecha_obj->date_i18n('d/m/Y'));
-								} else {
-									echo esc_html($fecha_obj->format('d/m/Y'));
-								}
-							} catch (Exception $e) {
-								echo esc_html($fecha_albaran);
-							}
-						} else {
-							echo esc_html(date('d/m/Y', strtotime($fecha_albaran)));
-						}
-						?>
-					</td>
-				</tr>
 				<?php do_action( 'wpo_wcpdf_after_order_data', $this->get_type(), $this->order ); ?>
 			</table>
 		</td>
