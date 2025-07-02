@@ -78,9 +78,6 @@ final class Palafito_WC_Extensions {
 		// Cargar estilos personalizados para colores de estados.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
 
-		// Cargar scripts para mejorar funcionalidad del admin.
-		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_admin_scripts' ) );
-
 		// Hook para Kadence WooCommerce Email Designer.
 		add_action( 'kadence_woomail_designer_email_details', array( $this, 'kadence_email_main_content' ), 10, 4 );
 
@@ -720,44 +717,5 @@ final class Palafito_WC_Extensions {
 			$fields['order']['order_comments']['placeholder'] = __( 'Notas sobre tu pedido, por ejemplo, notas especiales para la entrega.', 'palafito-wc-extensions' );
 		}
 		return $fields;
-	}
-
-	/**
-	 * Enqueue admin scripts para mejorar funcionalidad.
-	 *
-	 * @param string $hook Página actual del admin.
-	 */
-	public static function enqueue_admin_scripts( $hook ) {
-		// Solo cargar en páginas de pedidos WooCommerce.
-		if ( ! in_array( $hook, array( 'post.php', 'edit.php', 'woocommerce_page_wc-orders' ), true ) ) {
-			return;
-		}
-
-		$screen = get_current_screen();
-		if ( ! $screen || ( 'shop_order' !== $screen->post_type && 'woocommerce_page_wc-orders' !== $screen->id ) ) {
-			return;
-		}
-
-		// Script inline para mejorar la actualización de fecha de entrega.
-		wp_add_inline_script(
-			'jquery',
-			"
-			jQuery(document).ready(function($) {
-				// Interceptar el evento AJAX de guardado del documento PDF
-				$(document).ajaxSuccess(function(event, xhr, settings) {
-					// Verificar si es una petición de guardado de documento
-					if (settings.data && settings.data.indexOf('action=wpo_wcpdf_save_document') !== -1 && settings.data.indexOf('document_type=packing-slip') !== -1) {
-						// Esperar un momento para que se complete el guardado
-						setTimeout(function() {
-							// Forzar recarga de la página solo si estamos en la página de edición de pedido
-							if ($('#wpo_wcpdf-data-input-box').length > 0) {
-								location.reload();
-							}
-						}, 1000);
-					}
-				});
-			});
-		"
-		);
 	}
 }

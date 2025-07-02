@@ -62,3 +62,54 @@ function palafito_wc_extensions_handle_order_status_change( $order_id, $old_stat
 // Eliminado: Registro de emails personalizados - funcionalidad manejada por el plugin PRO.
 // Eliminado: Forzar generación de albarán - funcionalidad manejada por el plugin PRO.
 // Eliminado: Adjuntos de email - funcionalidad manejada por el plugin PRO.
+
+/**
+ * Save packing slip data when order is saved.
+ *
+ * The base PDF plugin only saves invoice data during regular order saves.
+ * This hook ensures packing slip data is also saved during order save operations.
+ *
+ * @param array  $form_data     Form data from the order save.
+ * @param object $order         WooCommerce order object.
+ * @param object $admin_instance PDF plugin admin instance.
+ */
+add_action( 'wpo_wcpdf_on_save_invoice_order_data', 'palafito_save_packing_slip_data_on_order_save', 10, 3 );
+
+/**
+ * Save packing slip data during order save operations.
+ *
+ * @param array  $form_data     Form data.
+ * @param object $order         WooCommerce order object.
+ * @param object $admin_instance PDF plugin admin instance.
+ */
+function palafito_save_packing_slip_data_on_order_save( $form_data, $order, $admin_instance ) {
+	// Validate inputs.
+	if ( ! $admin_instance || ! $order || ! is_array( $form_data ) ) {
+		return;
+	}
+
+	// Log the hook execution for debugging.
+	if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+		error_log( 'Palafito WC Extensions: Saving packing slip data for order ' . $order->get_id() );
+	}
+
+	// Get packing slip document.
+	$packing_slip = wcpdf_get_document( 'packing-slip', $order );
+	if ( empty( $packing_slip ) ) {
+		return;
+	}
+
+	// Process packing slip form data.
+	$document_data = $admin_instance->process_order_document_form_data( $form_data, $packing_slip->slug );
+
+	// Only save if we have data to save.
+	if ( ! empty( $document_data ) ) {
+		$packing_slip->set_data( $document_data, $order );
+		$packing_slip->save();
+
+		// Log successful save for debugging.
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			error_log( 'Palafito WC Extensions: Packing slip data saved for order ' . $order->get_id() );
+		}
+	}
+}
