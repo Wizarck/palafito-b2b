@@ -66,12 +66,24 @@ add_filter('wpo_wcpdf_packing-slip_date', function($date, $document_type, $order
 }, 10, 6);
 
 // Sincronizar la fecha del albarán del metabox/AJAX con _wcpdf_packing-slip_date
+// SOLO cuando el pedido esté en estado "entregado"
 add_action('wpo_wcpdf_save_document', function($document, $order) {
     if ($document->get_type() === 'packing-slip') {
-        $date_obj = $document->get_date();
-        if ($date_obj instanceof WC_DateTime) {
-            $timestamp = $date_obj->getTimestamp();
-            update_post_meta($order->get_id(), '_wcpdf_packing-slip_date', $timestamp);
+        // SOLO sincronizar si el pedido está en estado "entregado"
+        if ($order->get_status() === 'entregado') {
+            $date_obj = $document->get_date();
+            if ($date_obj instanceof WC_DateTime) {
+                $timestamp = $date_obj->getTimestamp();
+                update_post_meta($order->get_id(), '_wcpdf_packing-slip_date', $timestamp);
+                
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    error_log('[PALAFITO][template-functions] Syncing date for entregado order: ' . $order->get_id() . ' timestamp: ' . $timestamp);
+                }
+            }
+        } else {
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('[PALAFITO][template-functions] Skipping sync for order ' . $order->get_id() . ' in status: ' . $order->get_status());
+            }
         }
     }
 }, 10, 2);
