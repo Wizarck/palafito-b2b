@@ -553,7 +553,12 @@ final class Palafito_WC_Extensions {
 
 		switch ( $column ) {
 			case 'entregado_date':
-				$entregado_date = $order->get_meta( '_wcpdf_packing-slip_date' );
+				// Primero intentar obtener _entregado_date, luego fallback a _wcpdf_packing-slip_date
+				$entregado_date = $order->get_meta( '_entregado_date' );
+				if ( empty( $entregado_date ) ) {
+					$entregado_date = $order->get_meta( '_wcpdf_packing-slip_date' );
+				}
+				
 				if ( $entregado_date ) {
 					$date = is_numeric( $entregado_date ) ? $entregado_date : strtotime( $entregado_date );
 					echo esc_html( date_i18n( 'd/m/Y', $date ) );
@@ -635,8 +640,22 @@ final class Palafito_WC_Extensions {
 
 		$orderby = $query->get( 'orderby' );
 		if ( 'entregado_date' === $orderby ) {
-			$query->set( 'meta_key', '_wcpdf_packing-slip_date' );
-			$query->set( 'orderby', 'meta_value_num' );
+			// Ordenar por _entregado_date primero, luego por _wcpdf_packing-slip_date como fallback
+			$query->set( 'meta_query', array(
+				'relation' => 'OR',
+				'entregado_clause' => array(
+					'key'     => '_entregado_date',
+					'compare' => 'EXISTS',
+				),
+				'packing_slip_clause' => array(
+					'key'     => '_wcpdf_packing-slip_date',
+					'compare' => 'EXISTS',
+				),
+			) );
+			$query->set( 'orderby', array(
+				'entregado_clause'     => 'DESC',
+				'packing_slip_clause'  => 'DESC',
+			) );
 		} elseif ( 'notes' === $orderby ) {
 			$query->set( 'meta_key', '_wcpdf_invoice_notes' );
 			$query->set( 'orderby', 'meta_value' );
@@ -658,12 +677,20 @@ final class Palafito_WC_Extensions {
 	public static function adjust_order_list_query_args( $args ) {
 		if ( 'entregado_date' === $args['orderby'] ) {
 			$args['meta_query'] = array(
-				'entregado_date' => array(
+				'relation' => 'OR',
+				'entregado_clause' => array(
+					'key'     => '_entregado_date',
+					'compare' => 'EXISTS',
+				),
+				'packing_slip_clause' => array(
 					'key'     => '_wcpdf_packing-slip_date',
 					'compare' => 'EXISTS',
 				),
 			);
-			$args['orderby']    = 'meta_value_num';
+			$args['orderby'] = array(
+				'entregado_clause'     => 'DESC',
+				'packing_slip_clause'  => 'DESC',
+			);
 		} elseif ( 'notes' === $args['orderby'] ) {
 			$args['meta_query'] = array(
 				'notes' => array(
