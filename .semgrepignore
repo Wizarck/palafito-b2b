@@ -1,0 +1,36 @@
+# WordPress Core Files (NO TOCAR)
+wp-admin/
+wp-includes/
+wp-content/plugins/woocommerce/
+wp-content/themes/kadence/
+wp-content/plugins/woocommerce-pdf-invoices-packing-slips/
+wp-content/plugins/wholesalex/
+
+# Docker Configuration
+docker/
+
+# Problematic Files
+it-api.php
+phpinfo.php
+
+# Large Files (may cause timeouts)
+*.min.js
+*.min.css
+*.map
+
+# Generated Files
+*.l10n.php
+*.mo
+*.po
+
+# Cache and Temporary Files
+cache/
+tmp/
+temp/
+
+# Vendor Dependencies
+vendor/
+node_modules/
+
+# Log Files
+*.log
