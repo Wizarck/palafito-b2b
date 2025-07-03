@@ -332,17 +332,10 @@ final class Palafito_WC_Extensions {
 			error_log( "Palafito WC Extensions: Order {$order_id} status changed from {$old_status} to {$new_status}" );
 		}
 
-		// Guardar fecha de entrega cuando el pedido se marca como "entregado".
+		// Update delivery date when order status changes to "entregado".
+		// This overwrites any previous value as per requirements.
 		if ( 'entregado' === $new_status ) {
-			if ( ! $order->get_meta( '_wcpdf_packing-slip_date' ) ) {
-				$order->update_meta_data( '_wcpdf_packing-slip_date', time() );
-				$order->save_meta_data();
-			}
-		}
-
-		// Limpiar fecha de entrega si el estado cambia de "entregado" a otro estado.
-		if ( 'entregado' === $old_status && 'entregado' !== $new_status ) {
-			$order->delete_meta_data( '_wcpdf_packing-slip_date' );
+			$order->update_meta_data( '_wcpdf_packing-slip_date', current_time( 'mysql' ) );
 			$order->save_meta_data();
 		}
 	}
@@ -553,15 +546,13 @@ final class Palafito_WC_Extensions {
 
 		switch ( $column ) {
 			case 'entregado_date':
-				// Primero intentar obtener _entregado_date, luego fallback a _wcpdf_packing-slip_date.
-				$entregado_date = $order->get_meta( '_entregado_date' );
-				if ( empty( $entregado_date ) ) {
-					$entregado_date = $order->get_meta( '_wcpdf_packing-slip_date' );
-				}
+				// Use only _wcpdf_packing-slip_date as single source of truth.
+				$entregado_date = $order->get_meta( '_wcpdf_packing-slip_date' );
 
 				if ( $entregado_date ) {
 					$date = is_numeric( $entregado_date ) ? $entregado_date : strtotime( $entregado_date );
-					echo esc_html( date_i18n( 'd/m/Y', $date ) );
+					// Format as d-m-Y as specified in requirements.
+					echo esc_html( date_i18n( 'd-m-Y', $date ) );
 				} else {
 					echo '&mdash;';
 				}
@@ -640,28 +631,9 @@ final class Palafito_WC_Extensions {
 
 		$orderby = $query->get( 'orderby' );
 		if ( 'entregado_date' === $orderby ) {
-			// Ordenar por _entregado_date primero, luego por _wcpdf_packing-slip_date como fallback.
-			$query->set(
-				'meta_query',
-				array(
-					'relation'            => 'OR',
-					'entregado_clause'    => array(
-						'key'     => '_entregado_date',
-						'compare' => 'EXISTS',
-					),
-					'packing_slip_clause' => array(
-						'key'     => '_wcpdf_packing-slip_date',
-						'compare' => 'EXISTS',
-					),
-				)
-			);
-			$query->set(
-				'orderby',
-				array(
-					'entregado_clause'    => 'DESC',
-					'packing_slip_clause' => 'DESC',
-				)
-			);
+			// Order by _wcpdf_packing-slip_date as single source of truth.
+			$query->set( 'meta_key', '_wcpdf_packing-slip_date' );
+			$query->set( 'orderby', 'meta_value' );
 		} elseif ( 'notes' === $orderby ) {
 			$query->set( 'meta_key', '_wcpdf_invoice_notes' );
 			$query->set( 'orderby', 'meta_value' );
