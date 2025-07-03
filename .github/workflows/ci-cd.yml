@@ -299,40 +299,22 @@ jobs:
         curl -f https://staging.palafito.com/wp-admin/admin-ajax.php?action=heartbeat || exit 1
         echo "✅ Staging site is responding"
 
-  # Job de deployment a producción
-  deploy-production:
-    name: 🌟 Deploy to Production
+  # Job de preparación para producción (NO auto-deploy)
+  prepare-production:
+    name: 📦 Prepare Production Package
     runs-on: ubuntu-latest
-    needs: [testing, functional-testing, security-scan, deploy-staging]
+    needs: [testing, functional-testing, security-scan]
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-    environment: production
 
     steps:
     - name: 📥 Checkout code
       uses: actions/checkout@v4
 
-    - name: 🔧 Setup deployment tools
+    - name: ✅ Validate code quality
       run: |
-        sudo apt-get update
-        sudo apt-get install -y rsync openssh-client
-        mkdir -p ~/.ssh
-        echo "${{ secrets.PRODUCTION_SSH_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ secrets.PRODUCTION_HOST }} >> ~/.ssh/known_hosts
-
-    - name: 🚨 Create production backup
-      run: |
-        ssh ${{ secrets.PRODUCTION_USER }}@${{ secrets.PRODUCTION_HOST }} << 'EOF'
-          cd /var/www/palafito.com
-          
-          # Backup database
-          wp db export backups/pre-deploy-$(date +%Y%m%d-%H%M%S).sql --allow-root
-          
-          # Backup plugin files
-          tar -czf backups/palafito-plugin-$(date +%Y%m%d-%H%M%S).tar.gz wp-content/plugins/palafito-wc-extensions/
-          
-          echo "✅ Production backup completed"
-        EOF
+        echo "✅ All tests passed - Code is ready for production"
+        echo "🔍 Security scans completed successfully"
+        echo "🧪 Functional tests validated"
 
     - name: 📦 Prepare production package
       run: |
@@ -347,178 +329,47 @@ jobs:
           --exclude='composer.lock' \
           wp-content/plugins/palafito-wc-extensions/
 
-    - name: 🌟 Deploy to production server
+    - name: 📋 Generate deployment instructions
       run: |
-        scp palafito-production.tar.gz ${{ secrets.PRODUCTION_USER }}@${{ secrets.PRODUCTION_HOST }}:/tmp/
-        ssh ${{ secrets.PRODUCTION_USER }}@${{ secrets.PRODUCTION_HOST }} << 'EOF'
-          cd /var/www/palafito.com
-          
-          # Activar modo mantenimiento
-          wp maintenance-mode activate --allow-root
-          
-          # Backup actual plugin antes de reemplazar
-          cp -r wp-content/plugins/palafito-wc-extensions wp-content/plugins/palafito-wc-extensions.backup.$(date +%Y%m%d-%H%M%S)
-          
-          # Extract new version
-          tar -xzf /tmp/palafito-production.tar.gz -C .
-          
-          # Set correct permissions
-          chown -R www-data:www-data wp-content/plugins/palafito-wc-extensions
-          chmod -R 755 wp-content/plugins/palafito-wc-extensions
-          
-          # Verificar integridad del plugin
-          wp plugin status palafito-wc-extensions --allow-root
-          
-          # Clear all caches
-          wp cache flush --allow-root
-          wp rewrite flush --allow-root
-          
-          # Reactivar plugin para asegurar que los hooks se cargan
-          wp plugin deactivate palafito-wc-extensions --allow-root
-          wp plugin activate palafito-wc-extensions --allow-root
-          
-          # Verificar que no hay errores críticos
-          wp doctor check --allow-root || echo "Warning: Doctor check found issues"
-          
-          # Desactivar modo mantenimiento
-          wp maintenance-mode deactivate --allow-root
-          
-          echo "✅ Production deployment completed"
-        EOF
+        echo "## 🚀 READY FOR PRODUCTION DEPLOYMENT" > DEPLOYMENT_INSTRUCTIONS.md
+        echo "" >> DEPLOYMENT_INSTRUCTIONS.md
+        echo "### Package created: palafito-production.tar.gz" >> DEPLOYMENT_INSTRUCTIONS.md
+        echo "### Commit: ${{ github.sha }}" >> DEPLOYMENT_INSTRUCTIONS.md
+        echo "### Branch: ${{ github.ref_name }}" >> DEPLOYMENT_INSTRUCTIONS.md
+        echo "" >> DEPLOYMENT_INSTRUCTIONS.md
+        echo "### Manual deployment steps:" >> DEPLOYMENT_INSTRUCTIONS.md
+        echo "1. Download the production package from artifacts" >> DEPLOYMENT_INSTRUCTIONS.md
+        echo "2. Backup current plugin: \`cp -r wp-content/plugins/palafito-wc-extensions wp-content/plugins/palafito-wc-extensions.backup.\$(date +%Y%m%d)\`" >> DEPLOYMENT_INSTRUCTIONS.md
+        echo "3. Extract: \`tar -xzf palafito-production.tar.gz -C /path/to/wordpress/\`" >> DEPLOYMENT_INSTRUCTIONS.md
+        echo "4. Set permissions: \`chown -R www-data:www-data wp-content/plugins/palafito-wc-extensions\`" >> DEPLOYMENT_INSTRUCTIONS.md
+        echo "5. Clear cache: \`wp cache flush\`" >> DEPLOYMENT_INSTRUCTIONS.md
+        echo "6. Test sync functionality in admin panel" >> DEPLOYMENT_INSTRUCTIONS.md
+        echo "" >> DEPLOYMENT_INSTRUCTIONS.md
+        echo "### ✅ Quality Gates Passed:" >> DEPLOYMENT_INSTRUCTIONS.md
+        echo "- Security scan: PASSED" >> DEPLOYMENT_INSTRUCTIONS.md
+        echo "- Unit tests: PASSED" >> DEPLOYMENT_INSTRUCTIONS.md
+        echo "- Functional tests: PASSED" >> DEPLOYMENT_INSTRUCTIONS.md
+        echo "- Sync functionality: VALIDATED" >> DEPLOYMENT_INSTRUCTIONS.md
+        
+        cat DEPLOYMENT_INSTRUCTIONS.md
 
-    - name: 🔍 Production health checks
-      run: |
-        sleep 15
-        
-        # Verificar que el sitio principal responde
-        curl -f https://palafito.com/wp-admin/admin-ajax.php?action=heartbeat || exit 1
-        
-        # Verificar API de WooCommerce
-        curl -f https://palafito.com/wp-json/wc/v3/ || exit 1
-        
-        # Verificar que no hay errores en el log
-        ssh ${{ secrets.PRODUCTION_USER }}@${{ secrets.PRODUCTION_HOST }} "tail -10 /var/www/palafito.com/wp-content/debug.log | grep -i 'fatal\|error' && exit 1 || echo 'No critical errors found'"
-        
-        echo "✅ Production health checks passed"
-
-    - name: 📊 Post-deployment monitoring
-      run: |
-        # Enviar notificación a Slack/Teams (opcional)
-        curl -X POST -H 'Content-type: application/json' \
-          --data '{"text":"🌟 Palafito B2B Plugin deployed to production successfully! Version: '${{ github.sha }}'"}' \
-          ${{ secrets.SLACK_WEBHOOK_URL }} || echo "Notification failed"
+    - name: 📤 Upload production package
+      uses: actions/upload-artifact@v3
+      with:
+        name: palafito-production-${{ github.sha }}
+        path: |
+          palafito-production.tar.gz
+          DEPLOYMENT_INSTRUCTIONS.md
+        retention-days: 30
 
     - name: 🏷️ Create release tag
       if: success()
       run: |
-        git tag -a "v$(date +%Y.%m.%d-%H%M)" -m "Production deployment $(date +%Y-%m-%d\ %H:%M:%S)"
+        git tag -a "v$(date +%Y.%m.%d-%H%M)" -m "Production ready - $(date +%Y-%m-%d\ %H:%M:%S)"
         git push origin --tags
-    needs: [testing, functional-testing, security-scan]
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-    environment: production
 
-    steps:
-    - name: 📥 Checkout code
-      uses: actions/checkout@v4
-
-    - name: 🛡️ Production deployment confirmation
-      uses: trstringer/manual-approval@v1
-      with:
-        secret: ${{ github.TOKEN }}
-        approvers: ${{ secrets.PRODUCTION_APPROVERS }}
-        minimum-approvals: 1
-        issue-title: "Production Deployment Approval - ${{ github.sha }}"
-
-    - name: 🚀 Deploy to production
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.PRODUCTION_HOST }}
-        username: ${{ secrets.PRODUCTION_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: ${{ secrets.PRODUCTION_PORT }}
-        script: |
-          cd ${{ secrets.PRODUCTION_PATH }}
-          
-          # Backup completo antes del deploy
-          wp db export backups/pre-deploy-$(date +%Y%m%d-%H%M%S).sql --allow-root
-          tar -czf backups/files-$(date +%Y%m%d-%H%M%S).tar.gz wp-content/uploads
-          
-          # Activar modo mantenimiento
-          wp maintenance-mode activate --allow-root
-          
-          # Deploy del código
-          git fetch origin
-          git checkout ${{ github.ref_name }}
-          git pull origin ${{ github.ref_name }}
-          
-          # Instalar dependencias de producción
-          composer install --no-dev --optimize-autoloader --no-interaction
-          
-          # Ejecutar migraciones y actualizaciones
-          wp core update-db --allow-root
-          wp plugin update --all --allow-root
-          
-          # Optimizar base de datos
-          wp db optimize --allow-root
-          
-          # Limpiar y regenerar cache
-          wp cache flush --allow-root
-          wp rewrite flush --allow-root
-          
-          # Verificaciones post-deploy
-          wp doctor check --all --allow-root
-          wp plugin status palafito-wc-extensions --allow-root
-          
-          # Desactivar modo mantenimiento
-          wp maintenance-mode deactivate --allow-root
-          
-          echo "✅ Production deployment completed successfully"
-
-    - name: 🔍 Production health check
+    - name: 💬 Summary
       run: |
-        sleep 10
-        curl -f ${{ secrets.PRODUCTION_URL }}/wp-json/wp/v2/ || exit 1
-        curl -f ${{ secrets.PRODUCTION_URL }}/wp-json/wc/v3/ || exit 1
-        echo "✅ Production health check passed"
-
-    - name: 📢 Deployment notification
-      if: success()
-      uses: 8398a7/action-slack@v3
-      with:
-        status: success
-        channel: '#deployments'
-        text: '🚀 Palafito B2B deployed to production successfully!'
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-    - name: 🚨 Deployment failure notification
-      if: failure()
-      uses: 8398a7/action-slack@v3
-      with:
-        status: failure
-        channel: '#deployments'
-        text: '🚨 Palafito B2B production deployment failed!'
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-  # Job de cleanup y reporting
-  cleanup:
-    name: 🧹 Cleanup & Reporting
-    runs-on: ubuntu-latest
-    needs: [deploy-staging, deploy-production]
-    if: always()
-
-    steps:
-    - name: 📊 Generate deployment report
-      run: |
-        echo "## Deployment Report" > deployment-report.md
-        echo "- Commit: ${{ github.sha }}" >> deployment-report.md
-        echo "- Branch: ${{ github.ref_name }}" >> deployment-report.md
-        echo "- Author: ${{ github.actor }}" >> deployment-report.md
-        echo "- Timestamp: $(date)" >> deployment-report.md
-
-    - name: 📤 Upload deployment report
-      uses: actions/upload-artifact@v3
-      with:
-        name: deployment-report-${{ github.run_id }}
-        path: deployment-report.md
+        echo "🎉 Production package ready!"
+        echo "📦 Download from GitHub Actions artifacts"
+        echo "🔗 Manual deployment required to Palafito production environment"
