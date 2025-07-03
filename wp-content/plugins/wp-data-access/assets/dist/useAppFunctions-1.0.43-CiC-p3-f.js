@@ -1,0 +1,1 @@
+import{a as s}from"./hooks-1.0.43-Bzf6s8gj.js";import{u as n}from"./useMetadata-1.0.43-5v27HTeK.js";import"./lib-1.0.43-GM4CAPbj.js";const b=t=>(s(),n(t),{app:{getUsername:()=>{},userHasRole:e=>{},setGlobalSearch:e=>{},setColumnFilters:e=>{},setInsert:e=>{},setUpdate:e=>{},setDelete:e=>{},setInlineEditing:e=>{},setBulkActions:e=>{}}});export{b as u};

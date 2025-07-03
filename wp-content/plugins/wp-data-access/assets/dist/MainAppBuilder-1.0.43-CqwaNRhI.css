@@ -1,0 +1,1 @@
+:root{--addAppIconVisibility: visible;--addRenameDatabaseVisibility: visible}#wpda-dashboard-toolbar .wpda-dashboard-item.wpda-create-new-app{visibility:var(--addAppIconVisibility)}#wpda-dashboard-toolbar .wpda-dashboard-item.wpda-rename-database{visibility:var(--addRenameDatabaseVisibility)}
