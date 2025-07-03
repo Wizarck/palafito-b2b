@@ -66,7 +66,8 @@ final class Palafito_WC_Extensions {
 		add_filter( 'woocommerce_order_statuses', array( __CLASS__, 'add_custom_statuses_to_order_statuses' ) );
 
 		// Permitir transiciones de estado personalizadas.
-		add_filter( 'woocommerce_order_status_changed', array( __CLASS__, 'handle_custom_order_status_change' ), 10, 4 );
+		// Priority 20 to ensure it runs AFTER other plugins and forces the update.
+		add_filter( 'woocommerce_order_status_changed', array( __CLASS__, 'handle_custom_order_status_change' ), 20, 4 );
 
 		// Disparar emails personalizados cuando cambien los estados.
 		add_action( 'woocommerce_order_status_entregado', array( __CLASS__, 'trigger_entregado_email' ), 10, 2 );
@@ -333,16 +334,37 @@ final class Palafito_WC_Extensions {
 		}
 
 		// Update delivery date when order status changes to "entregado".
-		// This overwrites any previous value as per requirements.
+		// This ALWAYS overwrites any previous value, regardless of existing data.
 		if ( 'entregado' === $new_status ) {
-			// Force update with current timestamp to ensure overwrite.
+			$previous_value = $order->get_meta( '_wcpdf_packing-slip_date' );
+
+			// Force update with current timestamp to ensure COMPLETE overwrite.
 			$current_timestamp = current_time( 'timestamp' );
+
+			// Multiple approaches to ensure the update sticks:
+			// 1. Delete existing meta first to force clean write.
+			$order->delete_meta_data( '_wcpdf_packing-slip_date' );
+			$order->save_meta_data();
+
+			// 2. Add fresh meta data
 			$order->update_meta_data( '_wcpdf_packing-slip_date', $current_timestamp );
 			$order->save_meta_data();
 
-			// Log the update for debugging.
+			// 3. Direct database update as fallback
+			update_post_meta( $order_id, '_wcpdf_packing-slip_date', $current_timestamp );
+
+			// Verify the update was successful.
+			$verified_value = $order->get_meta( '_wcpdf_packing-slip_date' );
+
+			// Enhanced logging for debugging.
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				error_log( "Palafito WC Extensions: Forced update of delivery date for order {$order_id} to timestamp {$current_timestamp}" );
+				error_log( '=== PALAFITO DELIVERY DATE FORCE UPDATE ===' );
+				error_log( "Order {$order_id}: {$old_status} → {$new_status}" );
+				error_log( 'Previous value: ' . ( $previous_value ? $previous_value : 'EMPTY' ) );
+				error_log( "New timestamp: {$current_timestamp}" );
+				error_log( 'Verified value: ' . ( $verified_value ? $verified_value : 'FAILED' ) );
+				error_log( 'Update successful: ' . ( $verified_value == $current_timestamp ? 'YES' : 'NO' ) );
+				error_log( '=============================================' );
 			}
 		}
 	}
