@@ -92,7 +92,7 @@ function palafito_save_packing_slip_data_on_order_save( $order_id, $order_post =
 		return;
 	}
 
-	// Debug logging.
+	// Debug logging..
 	error_log( '=== PALAFITO DEBUG: Order save hook fired ===' );
 	error_log( 'Order ID: ' . $order_id );
 
@@ -209,49 +209,49 @@ function palafito_save_packing_slip_data_on_order_save( $order_id, $order_post =
 
 /**
  * Sincronización bidireccional entre _wcpdf_packing-slip_date y _entregado_date
- * 
+ *
  * Asegura que ambos campos estén siempre sincronizados cuando uno de ellos cambia.
  */
 
-// Hook para sincronizar cuando se actualiza _wcpdf_packing-slip_date
+// Hook para sincronizar cuando se actualiza _wcpdf_packing-slip_date.
 add_action( 'updated_post_meta', 'palafito_sync_packing_slip_to_entregado', 10, 4 );
 add_action( 'added_post_meta', 'palafito_sync_packing_slip_to_entregado', 10, 4 );
 
 /**
  * Sincronizar fecha de albarán a fecha de entrega
  *
- * @param int    $meta_id    Meta ID
- * @param int    $post_id    Post ID
- * @param string $meta_key   Meta key
- * @param mixed  $meta_value Meta value
+ * @param int    $meta_id    Meta ID.
+ * @param int    $post_id    Post ID.
+ * @param string $meta_key   Meta key.
+ * @param mixed  $meta_value Meta value.
  */
 function palafito_sync_packing_slip_to_entregado( $meta_id, $post_id, $meta_key, $meta_value ) {
-	// Solo procesar si es la fecha del albarán
+	// Solo procesar si es la fecha del albarán.
 	if ( '_wcpdf_packing-slip_date' !== $meta_key ) {
 		return;
 	}
 
-	// Verificar que es un pedido de WooCommerce
+	// Verificar que es un pedido de WooCommerce.
 	$order = wc_get_order( $post_id );
 	if ( ! $order ) {
 		return;
 	}
 
-	// Evitar bucle infinito con flag temporal
+	// Evitar bucle infinito con flag temporal.
 	if ( get_transient( "palafito_syncing_{$post_id}" ) ) {
 		return;
 	}
 
-	// Debug logging
+	// Debug logging.
 	if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 		error_log( "PALAFITO SYNC: Updating _entregado_date for order {$post_id} with value: {$meta_value}" );
 	}
 
-	// Establecer flag temporal para evitar bucle
+	// Establecer flag temporal para evitar bucle.
 	set_transient( "palafito_syncing_{$post_id}", true, 30 );
 
 	try {
-		// Actualizar _entregado_date con el mismo valor
+		// Actualizar _entregado_date con el mismo valor.
 		$order->update_meta_data( '_entregado_date', $meta_value );
 		$order->save_meta_data();
 
@@ -263,67 +263,67 @@ function palafito_sync_packing_slip_to_entregado( $meta_id, $post_id, $meta_key,
 			error_log( "PALAFITO SYNC ERROR: Failed to sync order {$post_id}: " . $e->getMessage() );
 		}
 	} finally {
-		// Limpiar flag temporal
+		// Limpiar flag temporal.
 		delete_transient( "palafito_syncing_{$post_id}" );
 	}
 }
 
-// Hook para sincronizar cuando se actualiza _entregado_date
+// Hook para sincronizar cuando se actualiza _entregado_date.
 add_action( 'updated_post_meta', 'palafito_sync_entregado_to_packing_slip', 10, 4 );
 add_action( 'added_post_meta', 'palafito_sync_entregado_to_packing_slip', 10, 4 );
 
 /**
  * Sincronizar fecha de entrega a fecha de albarán
  *
- * @param int    $meta_id    Meta ID
- * @param int    $post_id    Post ID
- * @param string $meta_key   Meta key
- * @param mixed  $meta_value Meta value
+ * @param int    $meta_id    Meta ID.
+ * @param int    $post_id    Post ID.
+ * @param string $meta_key   Meta key.
+ * @param mixed  $meta_value Meta value.
  */
 function palafito_sync_entregado_to_packing_slip( $meta_id, $post_id, $meta_key, $meta_value ) {
-	// Solo procesar si es la fecha de entrega
+	// Solo procesar si es la fecha de entrega.
 	if ( '_entregado_date' !== $meta_key ) {
 		return;
 	}
 
-	// Verificar que es un pedido de WooCommerce
+	// Verificar que es un pedido de WooCommerce.
 	$order = wc_get_order( $post_id );
 	if ( ! $order ) {
 		return;
 	}
 
-	// Evitar bucle infinito con flag temporal
+	// Evitar bucle infinito con flag temporal.
 	if ( get_transient( "palafito_syncing_{$post_id}" ) ) {
 		return;
 	}
 
-	// Debug logging
+	// Debug logging.
 	if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 		error_log( "PALAFITO SYNC: Updating _wcpdf_packing-slip_date for order {$post_id} with value: {$meta_value}" );
 	}
 
-	// Establecer flag temporal para evitar bucle
+	// Establecer flag temporal para evitar bucle.
 	set_transient( "palafito_syncing_{$post_id}", true, 30 );
 
 	try {
-		// Verificar si el plugin PDF está disponible y obtener el documento
+		// Verificar si el plugin PDF está disponible y obtener el documento.
 		if ( function_exists( 'wcpdf_get_document' ) ) {
 			$packing_slip = wcpdf_get_document( 'packing-slip', $order );
-			
+
 			if ( $packing_slip ) {
-				// Usar la API del plugin PDF para actualizar la fecha
+				// Usar la API del plugin PDF para actualizar la fecha.
 				$date_data = array(
-					'date' => $meta_value
+					'date' => $meta_value,
 				);
 				$packing_slip->set_data( $date_data, $order );
 				$packing_slip->save();
 			} else {
-				// Fallback: actualizar directamente el meta
+				// Fallback: actualizar directamente el meta..
 				$order->update_meta_data( '_wcpdf_packing-slip_date', $meta_value );
 				$order->save_meta_data();
 			}
 		} else {
-			// Fallback: actualizar directamente el meta
+			// Fallback: actualizar directamente el meta.
 			$order->update_meta_data( '_wcpdf_packing-slip_date', $meta_value );
 			$order->save_meta_data();
 		}
@@ -336,7 +336,7 @@ function palafito_sync_entregado_to_packing_slip( $meta_id, $post_id, $meta_key,
 			error_log( "PALAFITO SYNC ERROR: Failed to sync order {$post_id}: " . $e->getMessage() );
 		}
 	} finally {
-		// Limpiar flag temporal
+		// Limpiar flag temporal.
 		delete_transient( "palafito_syncing_{$post_id}" );
 	}
 }
