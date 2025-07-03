@@ -335,8 +335,15 @@ final class Palafito_WC_Extensions {
 		// Update delivery date when order status changes to "entregado".
 		// This overwrites any previous value as per requirements.
 		if ( 'entregado' === $new_status ) {
-			$order->update_meta_data( '_wcpdf_packing-slip_date', current_time( 'mysql' ) );
+			// Force update with current timestamp to ensure overwrite.
+			$current_timestamp = current_time( 'timestamp' );
+			$order->update_meta_data( '_wcpdf_packing-slip_date', $current_timestamp );
 			$order->save_meta_data();
+
+			// Log the update for debugging.
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( "Palafito WC Extensions: Forced update of delivery date for order {$order_id} to timestamp {$current_timestamp}" );
+			}
 		}
 	}
 
