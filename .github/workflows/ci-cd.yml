@@ -48,6 +48,32 @@ jobs:
     - name: ✅ Validate composer.json
       run: composer validate --strict
 
+    - name: 🛡️ Verify Production Configuration
+      run: |
+        echo "🔍 Verificando configuración de producción..."
+        
+        # Verificar que wp-config.php no contenga configuración local
+        if [ -f "wp-config.php" ]; then
+          if grep -q "localhost:8080" wp-config.php || grep -q "palafito_dev" wp-config.php; then
+            echo "❌ BLOQUEO: Configuración LOCAL detectada en wp-config.php"
+            echo "🚨 Esto rompería el entorno de PRODUCCIÓN"
+            echo "🔧 Solución: Ejecutar './dev-local.sh prod' antes del push"
+            exit 1
+          fi
+          
+          # Verificar que es configuración de PROD
+          if grep -q "db5016482050.hosting-data.io" wp-config.php; then
+            echo "✅ Configuración de PROD verificada correctamente"
+          else
+            echo "⚠️ Advertencia: No se pudo verificar configuración PROD"
+            echo "🔍 Contenido de wp-config.php:"
+            head -40 wp-config.php | grep -E "(DB_HOST|DB_NAME|DB_USER)" || echo "No se encontraron credenciales de BD"
+            exit 1
+          fi
+        else
+          echo "ℹ️ wp-config.php no encontrado (esperado si está en .gitignore)"
+        fi
+
     - name: 🔍 Run PHPCS (WordPress Coding Standards)
       run: |
         composer lint
@@ -180,7 +206,18 @@ jobs:
         username: a1559522
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd /clickandbuilds/Palafito
+          echo "🔍 Verificando directorio de trabajo..."
+          pwd
+          ls -la
+          echo "📁 Cambiando a directorio del proyecto..."
+          cd ~/clickandbuilds/Palafito || cd clickandbuilds/Palafito || {
+            echo "❌ Error: No se pudo encontrar el directorio del proyecto"
+            echo "🔍 Listando directorios disponibles:"
+            find ~ -maxdepth 3 -type d -name "*Palafito*" 2>/dev/null || echo "No se encontró directorio Palafito"
+            exit 1
+          }
+          echo "✅ Directorio encontrado: $(pwd)"
+          echo "🚀 Ejecutando script de actualización..."
           ./web_update_from_repo.sh
 
     - name: 🏷️ Create release tag
