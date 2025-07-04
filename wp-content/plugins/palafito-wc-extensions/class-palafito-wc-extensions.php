@@ -69,6 +69,9 @@ final class Palafito_WC_Extensions {
 		// Priority 20 to ensure it runs AFTER other plugins and forces the update.
 		add_filter( 'woocommerce_order_status_changed', array( __CLASS__, 'handle_custom_order_status_change' ), 20, 4 );
 
+		// Active prevention: Block any attempts to set delivery date in non-entregado states.
+		add_action( 'wpo_wcpdf_save_document', array( __CLASS__, 'prevent_premature_date_setting' ), 5, 2 );
+
 		// Disparar emails personalizados cuando cambien los estados.
 		add_action( 'woocommerce_order_status_entregado', array( __CLASS__, 'trigger_entregado_email' ), 10, 2 );
 		add_action( 'woocommerce_order_status_facturado', array( __CLASS__, 'trigger_facturado_email' ), 10, 2 );
@@ -365,6 +368,40 @@ final class Palafito_WC_Extensions {
 				error_log( 'Verified value: ' . ( $verified_value ? $verified_value : 'FAILED' ) );
 				error_log( 'Update successful: ' . ( $verified_value == $current_timestamp ? 'YES' : 'NO' ) );
 				error_log( '=============================================' );
+			}
+		}
+	}
+
+	/**
+	 * Prevent any attempts to set delivery date in non-entregado states.
+	 *
+	 * This function actively blocks the PDF plugin from setting packing slip dates
+	 * when orders are in states other than 'entregado'.
+	 *
+	 * @param object $document The PDF document object.
+	 * @param object $order The WooCommerce order object.
+	 */
+	public static function prevent_premature_date_setting( $document, $order ) {
+		// Only act on packing slip documents.
+		if ( $document && $document->get_type() === 'packing-slip' ) {
+			$order_status = $order->get_status();
+
+			// If order is NOT in 'entregado' state, prevent date setting.
+			if ( 'entregado' !== $order_status ) {
+				// Clear any date that might have been set.
+				if ( method_exists( $document, 'set_date' ) ) {
+					$document->set_date( null );
+				}
+
+				// Also ensure meta field stays empty.
+				$order->delete_meta_data( '_wcpdf_packing-slip_date' );
+				$order->save_meta_data();
+				delete_post_meta( $order->get_id(), '_wcpdf_packing-slip_date' );
+
+				// Log the prevention for debugging.
+				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					error_log( "[PALAFITO] BLOCKED: Prevented date setting for order {$order->get_id()} in status '{$order_status}' (only 'entregado' allowed)" );
+				}
 			}
 		}
 	}

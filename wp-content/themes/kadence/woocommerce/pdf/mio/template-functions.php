@@ -65,8 +65,21 @@ add_filter('wpo_wcpdf_packing-slip_date', function($date, $document_type, $order
     return $date;
 }, 10, 6);
 
-// Sincronizar la fecha del albarán del metabox/AJAX con _wcpdf_packing-slip_date
-// SOLO cuando el pedido esté en estado "entregado"
+// DISABLED: Sincronización automática de fecha del albarán
+// Esta funcionalidad ha sido COMPLETAMENTE DESACTIVADA para evitar conflictos.
+// La fecha de entrega se gestiona ÚNICAMENTE desde el hook de cambio de estado
+// en el plugin palafito-wc-extensions cuando el pedido pasa a estado "entregado".
+//
+// Razón: El hook wpo_wcpdf_save_document se ejecutaba en otros estados (como 'processing')
+// causando que la fecha se estableciera prematuramente.
+//
+// La lógica de fechas ahora está centralizada en:
+// wp-content/plugins/palafito-wc-extensions/class-palafito-wc-extensions.php
+// Método: handle_custom_order_status_change()
+
+/*
+CÓDIGO DESACTIVADO - NO ELIMINAR (para referencia futura)
+
 add_action('wpo_wcpdf_save_document', function($document, $order) {
     if ($document->get_type() === 'packing-slip') {
         // SOLO sincronizar si el pedido está en estado "entregado"
@@ -87,3 +100,5 @@ add_action('wpo_wcpdf_save_document', function($document, $order) {
         }
     }
 }, 10, 2);
+
+FIN CÓDIGO DESACTIVADO */
