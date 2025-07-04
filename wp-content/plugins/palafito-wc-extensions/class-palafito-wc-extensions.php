@@ -612,14 +612,25 @@ final class Palafito_WC_Extensions {
 
 		switch ( $column ) {
 			case 'entregado_date':
-				// Use only _wcpdf_packing-slip_date as single source of truth.
-				$entregado_date = $order->get_meta( '_wcpdf_packing-slip_date' );
+				// Only show delivery date if order is in 'entregado' status or later.
+				$order_status = $order->get_status();
 
-				if ( $entregado_date ) {
-					$date = is_numeric( $entregado_date ) ? $entregado_date : strtotime( $entregado_date );
-					// Format as d-m-Y as specified in requirements.
-					echo esc_html( date_i18n( 'd-m-Y', $date ) );
+				// Define valid statuses that should show delivery date.
+				$valid_statuses = array( 'entregado', 'facturado', 'completed' );
+
+				if ( in_array( $order_status, $valid_statuses, true ) ) {
+					// Use only _wcpdf_packing-slip_date as single source of truth.
+					$entregado_date = $order->get_meta( '_wcpdf_packing-slip_date' );
+
+					if ( $entregado_date ) {
+						$date = is_numeric( $entregado_date ) ? $entregado_date : strtotime( $entregado_date );
+						// Format as d-m-Y as specified in requirements.
+						echo esc_html( date_i18n( 'd-m-Y', $date ) );
+					} else {
+						echo '&mdash;';
+					}
 				} else {
+					// Order is not in valid status, don't show any date.
 					echo '&mdash;';
 				}
 				break;
