@@ -81,8 +81,9 @@ class WPO_WCPDF {
 		add_action( 'admin_notices', array( $this, 'yearly_reset_action_missing_notice' ) );
 		add_action( 'admin_notices', array( $this, 'legacy_addon_notices' ) );
 		add_action( 'admin_notices', array( $this, 'unstable_option_announcement_notice' ) );
-		add_action( 'admin_notices', array( $this, 'new_unstable_version_available_notice' ) );
-		add_action( 'wpo_wcpdf_new_github_prerelease_available', array( $this, 'set_new_unstable_version_available_option' ), 10, 3 );
+		// DISABLED: Unstable version notices removed for security
+		// add_action( 'admin_notices', array( $this, 'new_unstable_version_available_notice' ) );
+		// add_action( 'wpo_wcpdf_new_github_prerelease_available', array( $this, 'set_new_unstable_version_available_option' ), 10, 3 );
 		add_action( 'init', array( '\\WPO\\IPS\\Semaphore', 'init_cleanup' ), 999 ); // wait AS to initialize
 
 		// deactivate legacy extensions if activated
@@ -280,20 +281,11 @@ class WPO_WCPDF {
 
 	/**
 	 * Show plugin changes. Code adapted from W3 Total Cache.
+	 * DISABLED: Remote integrity check removed for security.
 	 */
 	public function in_plugin_update_message( $args ) {
-		$transient_name = 'wpo_wcpdf_upgrade_notice_' . $args['Version'];
-
-		if ( false === ( $upgrade_notice = get_transient( $transient_name ) ) ) {
-			$response = wp_safe_remote_get( 'https://plugins.svn.wordpress.org/woocommerce-pdf-invoices-packing-slips/trunk/readme.txt' );
-
-			if ( ! is_wp_error( $response ) && ! empty( $response['body'] ) ) {
-				$upgrade_notice = self::parse_update_notice( $response['body'], $args['new_version'] );
-				set_transient( $transient_name, $upgrade_notice, DAY_IN_SECONDS );
-			}
-		}
-
-		echo wp_kses_post( $upgrade_notice );
+		// Remote check disabled - return empty notice
+		return;
 	}
 
 	/**
@@ -741,25 +733,8 @@ class WPO_WCPDF {
 	 * @return void
 	 */
 	public function set_new_unstable_version_available_option( array $unstable, string $owner, string $repo ): void {
-		$debug_settings = $this->settings->debug_settings;
-		$enabled        = isset( $debug_settings['check_unstable_versions'] );
-		$new_tag        = sanitize_text_field( $unstable['tag'] );
-
-		if (
-			$enabled &&
-			! empty( $new_tag ) &&
-			'wpovernight' === $owner &&
-			'woocommerce-pdf-invoices-packing-slips' === $repo
-		) {
-			$current = get_option( 'wpo_wcpdf_unstable_version_state', array() );
-
-			if ( ! isset( $current['tag'] ) || $current['tag'] !== $new_tag ) {
-				update_option( 'wpo_wcpdf_unstable_version_state', array(
-					'tag'       => $new_tag,
-					'dismissed' => false,
-				) );
-			}
-		}
+		// DISABLED: Unstable version tracking removed for security
+		return;
 	}
 
 	/**

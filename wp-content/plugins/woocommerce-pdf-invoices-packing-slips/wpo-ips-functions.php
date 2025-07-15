@@ -1310,8 +1310,12 @@ function wpo_wcpdf_sanitize_identifier( string $identifier ): string {
  * }
  */
 function wpo_wcpdf_get_latest_releases_from_github( string $owner = 'wpovernight', string $repo = 'woocommerce-pdf-invoices-packing-slips', int $cache_duration = 1800 ): array {
-	$option_key   = 'wpo_latest_releases_' . md5( $owner . '/' . $repo );
+	// DISABLED: GitHub API check removed for security
 	$empty_result = array( 'stable' => array(), 'unstable' => array() );
+	return $empty_result;
+	
+	/* ORIGINAL CODE DISABLED
+	$option_key   = 'wpo_latest_releases_' . md5( $owner . '/' . $repo );
 	$cached       = get_option( $option_key );
 
 	if ( $cached && isset( $cached['timestamp'], $cached['data'] ) ) {
@@ -1321,6 +1325,8 @@ function wpo_wcpdf_get_latest_releases_from_github( string $owner = 'wpovernight
 	}
 
 	$url     = "https://api.github.com/repos/{$owner}/{$repo}/releases";
+	*/
+	/* DISABLED CODE:
 	$options = array(
 		'http' => array(
 			'header' => "User-Agent: " . get_bloginfo( 'name' ) . " (" . home_url() . ")\r\n"
@@ -1382,13 +1388,6 @@ function wpo_wcpdf_get_latest_releases_from_github( string $owner = 'wpovernight
 	if ( ! empty( $unstable['tag'] ) && $unstable['tag'] !== $last_seen_tag ) {
 		update_option( $last_seen_option_key, $unstable['tag'], false );
 
-		/**
-		 * Fires when a new GitHub prerelease becomes available.
-		 *
-		 * @param array  $unstable The new prerelease data.
-		 * @param string $owner    GitHub repo owner.
-		 * @param string $repo     GitHub repo name.
-		 */
 		do_action( 'wpo_wcpdf_new_github_prerelease_available', $unstable, $owner, $repo );
 	}
 
@@ -1398,6 +1397,7 @@ function wpo_wcpdf_get_latest_releases_from_github( string $owner = 'wpovernight
 	), false );
 
 	return $data;
+	*/ // End of disabled code
 }
 
 /**

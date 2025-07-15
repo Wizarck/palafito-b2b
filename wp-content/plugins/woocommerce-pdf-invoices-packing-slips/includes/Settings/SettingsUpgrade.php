@@ -24,7 +24,8 @@ class SettingsUpgrade {
 
 		add_action( 'wpo_wcpdf_before_settings_page', array( $this, 'extensions_license_cache_notice' ), 10, 2 );
 		add_action( 'wpo_wcpdf_after_settings_page', array( $this, 'extension_overview' ), 10, 2 );
-		add_action( 'wpo_wcpdf_schedule_extensions_license_cache_clearing', array( $this, 'clear_extensions_license_cache' ) );
+		// DISABLED: License cache clearing removed for security
+		// add_action( 'wpo_wcpdf_schedule_extensions_license_cache_clearing', array( $this, 'clear_extensions_license_cache' ) );
 	}
 
 	public function extensions_license_cache_notice( $tab, $active_section ) {
@@ -209,17 +210,14 @@ class SettingsUpgrade {
 
 	/**
 	 * Get PDF extensions license info
+	 * DISABLED: License verification removed for security.
 	 *
 	 * @param  bool  $ignore_cache
 	 * @return array
 	 */
 	public function get_extension_license_infos( $ignore_cache = false ) {
-		$extensions   = $this->extensions;
-		$license_info = ! $ignore_cache ? $this->get_extensions_license_data( 'cached' ) : array();
-
-		if ( ! empty( $license_info ) ) {
-			return $license_info;
-		}
+		// License verification disabled - return empty array
+		return array();
 
 		foreach ( $extensions as $extension ) {
 			$license_info[ $extension ] = array();
