@@ -63,6 +63,7 @@
   - [x] Permitir descarga del albarán solo en "Procesando" (solo admin).
   - [x] Al pasar a "Entregado", enviar el albarán al cliente por email y permitir su descarga en el portal.
   - [x] Guardar la fecha de entrega del albarán al cambiar a "Entregado".
+  - [x] **CENTRALIZACIÓN DE FECHAS DE ENTREGA**: Lógica centralizada en plugins PDF usando `_wcpdf_packing-slip_date` como única fuente de verdad, formato d-m-Y estandarizado, eliminadas duplicaciones.
 - [x] **5.5. Facturación**
   - [x] Al pasar a "Facturado", generar la factura.
   - [x] Permitir descarga de la factura tanto al admin como al cliente.
@@ -124,5 +125,13 @@
 - [x] Validar que el metabox, tabla y PDF usan solo _wcpdf_packing-slip_date
 - [ ] Revisar pedidos antiguos y forzar la creación del meta _wcpdf_packing-slip_date si falta
 
+## 🆕 Recientemente Completado (Julio 2025)
+- [x] **Entorno de Desarrollo Local**: Docker completo con sincronización PROD
+- [x] **Sincronización de Base de Datos**: Conversión automática de prefijo de tablas
+- [x] **Protección de Configuración**: Multi-capa (gitignore, hooks, GitHub Actions)
+- [x] **Documentación Actualizada**: CLAUDE.md y local-environment-status.md
+- [x] **Configuración Automática**: Scripts dev-local.sh para alternancia segura
+- [x] **CI/CD Mejorado**: Verificación automática de configuración en pipeline
+
 ---
-*Última actualización: 10 de Julio, 2025 - Cumplimiento total PHPCS, emails nativos, checkout y push documentado* 
+*Última actualización: 3 de Julio, 2025 - Entorno local completo, protección PROD automática* 

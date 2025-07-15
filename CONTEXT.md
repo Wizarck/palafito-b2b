@@ -15,8 +15,8 @@
 Siempre que se realice un push, primero se debe actualizar la documentación relevante (`README.md`, `CONTEXT.md`, etc.) y luego hacer el commit y push de código y documentación juntos. Así, la documentación en el repositorio reflejará siempre el estado real del código y se evitan confusiones.
 
 ## 🟢 Última Actualización
-**Fecha**: 10 de Julio, 2025
-**Sesión**: Corrección de metabox unificado que causaba conflictos con JavaScript del plugin PDF
+**Fecha**: 12 de Julio, 2025
+**Sesión**: Mejora de prompts para resolución de problemas, análisis de lógica de fecha de factura, y documentación de plugin Merge Orders
 
 ## 🚨 PROTOCOLO DE DESPEDIDA - OBLIGATORIO
 
@@ -38,6 +38,7 @@ Siempre que se realice un push, primero se debe actualizar la documentación rel
 - Los emails nativos de WooCommerce para "Entregado" y "Facturado" están implementados y documentados.
 - El flujo de push exige actualizar CONTEXT.md, TODO.md y documentación antes de cada commit/push.
 - Los únicos errores PHPCS restantes están en archivos generados (.l10n.php) o de ejemplo (hello.php), que pueden ignorarse.
+- **NUEVO**: Documentación completa de lógica del plugin Merge Orders y prompts mejorados para resolución de problemas.
 
 ---
 
@@ -51,6 +52,7 @@ Siempre que se realice un push, primero se debe actualizar la documentación rel
 - **Plugin B2B**: `wholesalex` (precios mayoristas) - YA IMPLEMENTADO
 - **Plugin Custom**: `palafito-wc-extensions` (funcionalidades específicas)
 - **Plugin PDF**: `woocommerce-pdf-ips-pro` (versión PRO limpia, white label)
+- **Plugin Merge**: `merge-orders` (lógica compleja de notas y CXXXXX)
 - **Hosting**: 1&1 IONOS (PHP 4.4.9)
 - **Control de Versiones**: GitHub (rama `master`)
 
@@ -64,7 +66,8 @@ Palafito-b2b/
 │   └── plugins/
 │       ├── wholesalex/        # Precios B2B (YA FUNCIONANDO)
 │       ├── palafito-wc-extensions/  # Plugin custom
-│       └── woocommerce-pdf-ips-pro/ # Plugin PDF PRO (white label)
+│       ├── woocommerce-pdf-ips-pro/ # Plugin PDF PRO (white label)
+│       └── merge-orders/      # Plugin merge con lógica CXXXXX
 ├── .github/workflows/         # CI/CD
 ├── CONTEXT.md                 # Este archivo (MI MEMORIA)
 ├── TODO.md                    # Lista de tareas (archivo separado)
@@ -114,10 +117,13 @@ Palafito-b2b/
 - **Columna de Notas de Factura**: Muestra las notas del metabox de PDF con truncado inteligente
 - **Compatibilidad HPOS**: Todas las funcionalidades funcionan en ambas interfaces (clásica y nueva HPOS)
 - **Metaboxes Separados**: Revertido a metaboxes separados para factura y albarán para evitar conflictos JavaScript
+- **Documentación de Lógica Merge**: Completamente documentada la lógica compleja del plugin Merge Orders con procesamiento de CXXXXX
+- **Prompts Mejorados**: Creados prompts específicos y detallados para resolución de problemas de fecha de entrega y factura
 
 ### 🔄 En Progreso
 - **Optimización de Performance**: Resolución de problemas de diseño (fuentes, botones)
 - **Debugging**: Monitoreo de logs de producción
+- **Análisis de Fecha de Factura**: Identificación de problemas en gestión de fecha de factura
 
 ### 📋 TO-DO List
 **IMPORTANTE:** El listado de tareas TO-DO se mantiene en archivos separados:
@@ -225,7 +231,7 @@ Palafito-b2b/
   - Mantenimiento simplificado
 - **Estado**: ✅ Resuelto
 
-### 10. Emails Duplicados en Estados Personalizados
+### 11. Emails Duplicados en Estados Personalizados
 - **Problema**: Emails se enviaban múltiples veces por triggers manuales duplicados
 - **Síntomas**:
   - Emails duplicados al cambiar estado
@@ -238,7 +244,7 @@ Palafito-b2b/
   - ✅ Templates de email optimizados y funcionales
 - **Estado**: ✅ Resuelto
 
-### 11. Plugin PDF PRO con Restricciones de Licencia
+### 12. Plugin PDF PRO con Restricciones de Licencia
 - **Problema**: Plugin PRO mostraba avisos de licencia y funcionalidad limitada
 - **Síntomas**:
   - Mensajes de "Manage License" en admin
@@ -253,7 +259,7 @@ Palafito-b2b/
   - ✅ Añadido filtro para remover enlaces de licencia dinámicamente
 - **Estado**: ✅ Resuelto
 
-### 12. Conflictos entre Plugin Palafito y Plugin PRO
+### 13. Conflictos entre Plugin Palafito y Plugin PRO
 - **Problema**: Funcionalidades duplicadas causando conflictos
 - **Síntomas**:
   - Archivos duplicados en plugin Palafito
@@ -272,7 +278,7 @@ Palafito-b2b/
   - `includes/class-palafito-packing-slip-meta-box.php`
 - **Estado**: ✅ Resuelto
 
-### 13. Template de Albarán con Campos Duplicados
+### 14. Template de Albarán con Campos Duplicados
 - **Problema**: Template mostraba información duplicada y mal ordenada
 - **Síntomas**:
   - "Número del albarán" y "Número de albarán" duplicados
@@ -287,7 +293,7 @@ Palafito-b2b/
   - ✅ Implementada lógica correcta para "Fecha de entrega"
 - **Estado**: ✅ Resuelto
 
-### 14. Lógica de Fecha de Entrega
+### 15. Lógica de Fecha de Entrega
 - **Problema**: Campo "Fecha de entrega" no seguía lógica de negocio
 - **Síntomas**:
   - Fecha siempre mostraba fecha actual
@@ -301,7 +307,7 @@ Palafito-b2b/
   - ✅ Lógica: si está entregado muestra fecha de entrega, si no fecha actual
 - **Estado**: ✅ Resuelto
 
-### 15. Acción "Completado" en Estado "on-hold"
+### 16. Acción "Completado" en Estado "on-hold"
 - **Problema**: Acción "Completado" aparecía en pedidos con estado "En espera"
 - **Síntomas**:
   - Acción "Complete" visible en pedidos on-hold
@@ -314,7 +320,7 @@ Palafito-b2b/
   - ✅ Acción "Complete" solo aparece en "processing" y "facturado"
 - **Estado**: ✅ Resuelto
 
-### 16. Template PDF sin Título de Dirección de Facturación
+### 17. Template PDF sin Título de Dirección de Facturación
 - **Problema**: Template de albarán no mostraba título para dirección de facturación
 - **Síntomas**:
   - Solo dirección de envío tenía título
@@ -326,7 +332,7 @@ Palafito-b2b/
   - ✅ Consistencia visual entre direcciones de facturación y envío
 - **Estado**: ✅ Resuelto
 
-### 17. Falta de Columnas Personalizadas en Tabla de Pedidos
+### 18. Falta de Columnas Personalizadas en Tabla de Pedidos
 - **Problema**: No había columnas para visualizar fecha de entrega y notas de factura
 - **Síntomas**:
   - Administradores no podían ver fecha de entrega fácilmente
@@ -343,7 +349,7 @@ Palafito-b2b/
   - ✅ Gestión automática de fecha de entrega
 - **Estado**: ✅ Resuelto
 
-### 18. Campo de Notas de Cliente Perdido en Checkout
+### 19. Campo de Notas de Cliente Perdido en Checkout
 - **Problema**: Campo de notas nativo de WooCommerce no estaba disponible en checkout
 - **Síntomas**:
   - Clientes no podían agregar notas a sus pedidos
@@ -357,7 +363,7 @@ Palafito-b2b/
   - ✅ Placeholder descriptivo para guiar al usuario
 - **Estado**: ✅ Resuelto
 
-### 19. Errores PHPCS en Templates de Email
+### 20. Errores PHPCS en Templates de Email
 - **Problema**: Templates de email no cumplían estándares de documentación PHPCS
 - **Síntomas**:
   - Errores de "Missing short description in doc comment"
@@ -393,6 +399,17 @@ Palafito-b2b/
   - Columnas personalizadas en tabla de pedidos
   - Campo de notas de cliente en checkout
 
+### Plugin Merge Orders
+- **Archivo**: `wp-content/plugins/merge-orders/`
+- **Estado**: Funcional con lógica compleja implementada
+- **Funcionalidades**:
+  - **Prioridad de notas**: Si existe `_wcpdf_invoice_notes` → usa esa, si no → usa `customer_note`
+  - **Procesamiento**: Extrae bloques Feria, Obrador y CXXXXX sueltos
+  - **Ordenamiento**: Todos los bloques ordenados ascendentemente por CXXXXX
+  - **Duplicados**: Se mantienen (si CXXXXX aparece varias veces, se muestra todas)
+  - **Resultado**: Se concatena en `_wcpdf_invoice_notes` del pedido final
+  - **Nota interna**: Si detecta CXXXXX duplicados, añade nota interna al admin
+
 ### Templates PDF
 - **Ubicación**: `wp-content/themes/kadence/woocommerce/pdf/mio/`
 - **Archivos**:
@@ -413,6 +430,7 @@ Palafito-b2b/
 - **Funcionalidades**:
   - Columna "Fecha de entrega" con sorting y gestión automática
   - Columna "Notas" mostrando notas de factura del metabox
+  - Columna "Fecha de factura" con sorting
   - Compatibilidad con interfaces clásica y HPOS
   - Meta queries optimizadas para sorting
 - **Estado**: Implementadas y funcionales
@@ -427,13 +445,15 @@ Palafito-b2b/
 - **Emails**: Envío automático con adjuntos según estado
 - **Admin**: Acciones y metaboxes funcionando correctamente
 - **Templates**: Optimizados y sin duplicaciones
-- **Columnas Personalizadas**: Fecha de entrega y Notas implementadas
+- **Columnas Personalizadas**: Fecha de entrega, Notas y Fecha de factura implementadas
 - **Checkout**: Campo de notas de cliente recuperado y funcional
+- **Plugin Merge**: Lógica compleja de CXXXXX funcionando correctamente
 - **Código**: 100% PHPCS compliant
 
 ### 🔧 Configuraciones Activas
 - **Plugin PDF PRO**: White label, sin restricciones
 - **Plugin Palafito**: Limpio, sin conflictos, con nuevas funcionalidades
+- **Plugin Merge**: Lógica compleja documentada y funcional
 - **Estados personalizados**: Registrados y funcionales
 - **Emails personalizados**: Integrados con WooCommerce nativo
 - **Columnas personalizadas**: Visibles por defecto con sorting
@@ -444,6 +464,7 @@ Palafito-b2b/
 - Optimización de performance si es necesario
 - Mantenimiento rutinario
 - Pruebas de las nuevas columnas en producción
+- **NUEVO**: Análisis y resolución de problemas de fecha de factura
 
 ---
 
@@ -480,8 +501,8 @@ git add . && git commit -m "descripción" && git push
 
 ---
 
-**Última actualización**: 10 de Julio, 2025
-**Estado**: Sistema estable y funcional con nuevas columnas personalizadas
+**Última actualización**: 12 de Julio, 2025
+**Estado**: Sistema estable y funcional con documentación completa de lógica Merge y prompts mejorados
 **Próxima revisión**: Según necesidades del usuario
 
 ---
@@ -533,6 +554,10 @@ git add . && git commit -m "descripción" && git push
   - Si una operación crítica falla (por ejemplo, un merge), dejar el sistema en estado consistente y documentar el error en una nota interna visible solo para admin.
 - **Actualización de lessons learned:**
   - Al final de cada sesión, revisar si hay nuevas lecciones, convenciones o edge cases y documentarlas aquí.
+- **Mejora de prompts:**
+  - Los prompts deben ser específicos, técnicos y estructurados para facilitar la resolución autónoma de problemas.
+  - Incluir contexto del proyecto, problemas específicos, análisis requerido y criterios de éxito.
+  - Documentar lógica compleja (como Merge Orders) para referencia futura.
 
 ## 🆕 11 de Julio, 2025 - Columna de Nota de Cliente en Pedidos (Mi Cuenta)
 
@@ -609,3 +634,59 @@ Nota original: Por favor entregar antes de las 12h.
 - Se eliminaron todas las referencias y sincronizaciones con `_entregado_date`.
 - Si la columna aparece vacía, es porque el pedido nunca ha generado el albarán y no existe el meta. Editar y guardar la fecha desde el metabox lo crea automáticamente.
 - Recomendación: revisar pedidos antiguos y forzar la creación del meta si es necesario.
+
+## 🖥️ Estado de Entornos y Configuración
+
+### Entorno de Producción (IONOS)
+- **Archivo activo**: `wp-config.php` (con datos de IONOS)
+- **Base de datos**: db5016482050.hosting-data.io
+- **Usuario**: dbu714034
+- **Contraseña**: cdef0705-6da3-40f2-a10b-a7967d444148
+- **Prefijo tablas**: pnsc_
+- **Backup**: `wp-config.php.backup` (idéntico al de producción)
+- **Notas**: No hay ninguna referencia a localhost, mysql, ni usuarios/contraseñas de desarrollo en la configuración activa.
+
+### Entorno de Desarrollo Local (Docker)
+- **Archivo de backup**: `wp-config-docker-clean.php`
+- **Base de datos**: mysql (servicio Docker)
+- **Usuario**: palafito_user
+- **Contraseña**: palafito_pass
+- **Base de datos**: palafito_dev
+- **Prefijo tablas**: wp_
+- **Cómo activar**: `cp wp-config-docker-clean.php wp-config.php`
+- **Cómo levantar entorno**: `docker-compose -f docker-compose.simple.yml up -d`
+
+### Alternar entre entornos
+- **Producción**: `cp wp-config.php.backup wp-config.php`
+- **Local**: `cp wp-config-docker-clean.php wp-config.php`
+
+---
+
+## 🔒 Seguridad y Buenas Prácticas
+- Nunca subir datos sensibles de producción a repositorios públicos.
+- Mantener los archivos de configuración de cada entorno bien diferenciados y versionados.
+- El pipeline CI/CD solo analiza código custom (plugin y tema hijo), no WordPress ni plugins de terceros.
+- El backup de configuración local está disponible y documentado.
+- Siempre usar bash en vez de PowerShell en Mac para evitar errores de entorno.
+
+---
+
+## ⚙️ Pipeline CI/CD (GitHub Actions)
+- **Semgrep**: Ahora excluye archivos de WordPress, plugins de terceros y archivos problemáticos mediante `.semgrepignore`.
+
+---
+
+## 🗂️ Backups y Documentación
+- **Backup de configuración local**: `wp-config-docker-clean.php`
+- **Backup de configuración de producción**: `wp-config.php.backup`
+- **Documentación de alternancia**: Instrucciones claras en este archivo y recomendación de dejar nota en README.md si se cambia el flujo.
+
+---
+
+## 🟢 Estado General
+- El sistema está estable y funcional en producción.
+- El pipeline CI/CD es robusto y seguro para código custom.
+- La alternancia entre entornos está documentada y respaldada.
+- No hay referencias a entornos locales en la configuración de producción.
+
+**Última revisión completa:** 12 de Julio, 2025

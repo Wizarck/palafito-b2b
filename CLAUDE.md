@@ -33,6 +33,25 @@ Palafito B2B is a WordPress WooCommerce site specialized in wholesale B2B commer
 
 ## Development Commands
 
+### Local Development Environment
+```bash
+# IMPORTANTE: Configurar entorno local
+./dev-local.sh local    # Cambiar a configuración local
+docker-compose -f docker-compose.simple.yml up -d
+
+# Acceder al sitio
+open http://localhost:8080        # WordPress
+open http://localhost:8081        # PhpMyAdmin
+open http://localhost:8025        # MailHog
+
+# IMPORTANTE: Antes de hacer push
+./dev-local.sh prod     # Restaurar configuración PROD
+./dev-local.sh check    # Verificar configuración actual
+
+# Parar entorno local
+docker-compose -f docker-compose.simple.yml down
+```
+
 ### Code Quality & Linting
 ```bash
 # Lint custom plugin only
@@ -59,10 +78,12 @@ composer prepush
 ## Important Business Logic
 
 ### PDF Document Date Management
-- **Delivery Date Source**: Uses ONLY `_wcpdf_packing-slip_date` meta field
-- **Synchronization**: Metabox, order table, and PDF all read/write to this single field
-- **No cross-field logic**: Eliminated `_entregado_date` to avoid sync conflicts
-- **Auto-generation**: If meta doesn't exist, current date is shown and saved automatically
+- **Delivery Date Source**: Uses ONLY `_wcpdf_packing-slip_date` meta field as single source of truth
+- **Centralized Logic**: All date management handled by PDF plugins (woocommerce-pdf-invoices-packing-slips, woocommerce-pdf-ips-pro)
+- **Date Format**: d-m-Y format standardized across metabox, order columns, and PDF documents
+- **Status Change Behavior**: When order status changes to "entregado", overwrites any previous date with current timestamp
+- **Eliminated Duplications**: Removed duplicate metabox save functions from palafito-wc-extensions to prevent conflicts
+- **No Synchronization**: Eliminated `_entregado_date` field and bidirectional sync to avoid complexity and conflicts
 
 ### Order Management Features
 - **Customer Notes Column**: Added to "My Account" orders table, truncated to 25 chars with tooltip
@@ -106,6 +127,14 @@ wp-content/
     └── palafito-child/             # Child theme - EDIT THIS
         ├── functions.php
         └── woocommerce/            # WooCommerce template overrides
+
+# Development files (local only)
+├── dev-local.sh                    # Configuration switching script
+├── wp-config-docker-clean.php     # Local development config
+├── wp-config.php.backup            # PROD configuration backup
+├── docker-compose.simple.yml       # Local Docker environment
+├── temp-sync-data/                 # PROD data extraction (gitignored)
+└── local-environment-status.md     # Development status tracking
 ```
 
 ## Security & WordPress Standards
@@ -135,10 +164,16 @@ wp-content/
 - **Solution**: Use `plugins_loaded` hook at priority 20+
 - **Location**: `palafito-wc-extensions.php:49`
 
-### Date Field Synchronization
-- **Problem**: Multiple date fields causing confusion
-- **Solution**: Single source of truth `_wcpdf_packing-slip_date`
-- **Location**: `class-palafito-packing-slip-settings.php`
+### Date Field Centralization & Security (UPDATED 15-Jul-2025)
+- **Original Problem**: Multiple date fields and duplicate save logic causing conflicts
+- **Root Cause Identified**: Plugin PDF Base (gratuito) INACTIVO, PDF Pro activo, hooks no disponibles
+- **Security Solution**: Eliminados TODOS los chequeos de integridad del plugin PDF gratuito
+- **Implementation**: 
+  - ❌ Conexiones externas WordPress.org/GitHub desactivadas
+  - ❌ Verificación de licencias desactivada
+  - ❌ Chequeos automáticos diarios desactivados
+  - ✅ Plugin funciona completamente local sin conexiones externas
+- **Status**: 🔄 **En progreso** - Investigando fuente adicional que crea fechas en 'processing'
 
 ### Code Standards Failures
 - **Problem**: PHPCS WordPress standards violations
@@ -159,6 +194,26 @@ wp-content/
 - **Problem**: Pro plugin showing license warnings
 - **Solution**: White-label modification removing all license checks
 - **Status**: Plugin operates without restrictions
+
+### 🆕 Local Development Issues
+- **Problem**: Local environment not matching PROD visually
+- **Solution**: Complete database synchronization with theme settings
+- **Status**: ✅ Resolved - Local now matches PROD appearance
+
+### 🆕 Database Synchronization
+- **Problem**: Table prefix mismatch (PROD: `pnsc_`, Local: `wp_`)
+- **Solution**: SQL conversion script via sed command
+- **Implementation**: `sed 's/`pnsc_/`wp_/g' prod.sql > local.sql`
+
+### 🆕 Plugin Compatibility in Local
+- **Problem**: Payment plugins causing 500 errors in local environment
+- **Solution**: Selective plugin activation (8/16 PROD plugins active)
+- **Status**: Core B2B functionality working, non-essential plugins disabled
+
+### 🆕 Configuration Protection
+- **Problem**: Risk of pushing local config to PROD
+- **Solution**: Multi-layer protection (gitignore, hooks, GitHub Actions)
+- **Status**: ✅ Fully automated protection implemented
 
 ## Mexican Market Specifics
 
@@ -189,6 +244,29 @@ Pending → Processing → Entregado (Delivered) → Facturado (Invoiced) → Co
 - **Security**: ABSPATH checks, nonce verification, input sanitization
 - **Documentation**: Proper DocBlock comments for all functions and classes
 
+### 🆕 Development Workflow (Updated)
+```
+1. Local Development:
+   ./dev-local.sh local
+   docker-compose -f docker-compose.simple.yml up -d
+   
+2. Make Changes:
+   Edit code, test functionality
+   
+3. Quality Checks:
+   composer fix:all
+   composer lint:all
+   
+4. Pre-Push:
+   ./dev-local.sh prod
+   ./dev-local.sh check
+   
+5. Push:
+   git add .
+   git commit -m "message"
+   git push  # Automated protection via GitHub Actions
+```
+
 ## Development Best Practices
 
 ### Before Each Commit
@@ -196,21 +274,38 @@ Pending → Processing → Entregado (Delivered) → Facturado (Invoiced) → Co
 2. Run `composer lint:all` to verify compliance
 3. Test critical B2B functionality (checkout, PDF generation, status changes)
 4. Update documentation if business logic changes
+5. **🆕 CRITICAL**: Always run `./dev-local.sh prod` before push
+
+### 🆕 Local Development Best Practices
+1. **Always start with**: `./dev-local.sh local`
+2. **Never push with local config**: Automated protection will block
+3. **Use local URLs**: `http://localhost:8080` (not HTTPS)
+4. **Database access**: PhpMyAdmin at `http://localhost:8081`
+5. **Email testing**: MailHog at `http://localhost:8025`
 
 ### Hosting Considerations
 - **Provider**: 1&1 IONOS with PHP 7.4.9
 - **CSP Restrictions**: Inline styles blocked, use external CSS files
 - **File Permissions**: Direct access to theme CSS files may be restricted
 
+### 🆕 Configuration Protection Layers
+1. **`.gitignore`**: Excludes `wp-config.php` and `temp-sync-data/`
+2. **Pre-push Hook**: Local validation before git push
+3. **GitHub Actions**: Automated verification in CI/CD pipeline
+4. **dev-local.sh**: Safe configuration switching script
+
 ## Current Status & Pending Tasks
 
 ### ✅ Completed Features
 - **Core B2B Functionality**: Custom order statuses, email automation, PDF generation
 - **Checkout Optimization**: Optional last names, 14-row order notes, payment method automation
-- **PDF Management**: White-label Pro plugin, automated attachments, delivery date tracking
+- **PDF Management**: White-label Pro plugin, automated attachments, centralized delivery date tracking
+- **Date Management Centralization**: Delivery date logic centralized in PDF plugins with d-m-Y format standardization
 - **Order Management**: Custom columns, note merging, CXXXXX code processing
 - **Code Quality**: 100% PHPCS compliance, automated testing via GitHub Actions
 - **Documentation**: README.md, CONTEXT.md (deprecated), and this CLAUDE.md file
+- **🆕 Local Development Environment**: Docker setup with PROD data synchronization
+- **🆕 Production Protection**: Automated safeguards against local config deployment
 
 ### 🔄 Pending Items (from TODO.md)
 - **Security Hardening**: File edit restrictions, XML-RPC disabling, environment variables
@@ -222,6 +317,14 @@ Pending → Processing → Entregado (Delivered) → Facturado (Invoiced) → Co
 - **Design Inconsistencies**: Fonts not matching Kadence theme
 - **Button Behavior**: Strange hover behavior
 - **Diagnosis Available**: TODO-DESIGN-DIAGNOSIS.md with 10 verification points
+
+### 🎯 Local Development Status
+- **Environment**: ✅ Fully functional Docker setup
+- **Database**: ✅ Complete PROD synchronization (6.5MB)
+- **Theme**: ✅ Kadence + palafito-child with 183 customizations
+- **Plugins**: ✅ 8/16 PROD plugins active (core B2B functionality)
+- **Access**: ✅ WordPress, PhpMyAdmin, MailHog all accessible
+- **Protection**: ✅ Multi-layer safeguards against config errors
 
 ### 🛡️ Production Environment
 - **PHP Version**: 7.4.9 (production) vs 7.4+ (development requirement)

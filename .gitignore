@@ -31,9 +31,11 @@ node_modules/
 vendor/
 
 # Archivos de desarrollo local
+wp-config.php
 wp-config-local.php
 .env.local
 wp-config-production.php.bak
+temp-sync-data/
 
 # Backups de desarrollo
 wp-content/backups/*.sql
