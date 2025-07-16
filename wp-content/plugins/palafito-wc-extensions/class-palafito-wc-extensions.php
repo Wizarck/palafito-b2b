@@ -67,7 +67,7 @@ final class Palafito_WC_Extensions {
 
 		// Permitir transiciones de estado personalizadas.
 		// Priority 20 to ensure it runs AFTER other plugins and forces the update.
-		add_filter( 'woocommerce_order_status_changed', array( __CLASS__, 'handle_custom_order_status_change' ), 20, 4 );
+		add_action( 'woocommerce_order_status_changed', array( __CLASS__, 'handle_custom_order_status_change' ), 20, 4 );
 
 		// Active prevention: Block any attempts to set delivery date in non-entregado states.
 		add_action( 'wpo_wcpdf_save_document', array( __CLASS__, 'prevent_premature_date_setting' ), 5, 2 );
