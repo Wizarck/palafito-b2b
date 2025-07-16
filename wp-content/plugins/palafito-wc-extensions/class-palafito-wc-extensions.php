@@ -344,34 +344,43 @@ final class Palafito_WC_Extensions {
 
 			// Check if the previous state should be excluded.
 			if ( ! in_array( $old_status, $excluded_previous_states, true ) ) {
-				$previous_value = $order->get_meta( '_wcpdf_packing-slip_date' );
+				// Get current values for both possible field names.
+				$previous_value_with_dash = $order->get_meta( '_wcpdf_packing-slip_date' );
+				$previous_value_without_dash = $order->get_meta( '_wcpdf_packing_slip_date' );
 
 				// Force update with current timestamp to ensure COMPLETE overwrite.
 				$current_timestamp = current_time( 'timestamp' );
 
-				// Multiple approaches to ensure the update sticks:
-				// 1. Delete existing meta first to force clean write.
+				// Update BOTH possible field variations to ensure compatibility.
+				// Field with dash (hyphen) - our current target.
 				$order->delete_meta_data( '_wcpdf_packing-slip_date' );
-				$order->save_meta_data();
-
-				// 2. Add fresh meta data
 				$order->update_meta_data( '_wcpdf_packing-slip_date', $current_timestamp );
+
+				// Field without dash (underscore) - what metabox shows.
+				$order->delete_meta_data( '_wcpdf_packing_slip_date' );
+				$order->update_meta_data( '_wcpdf_packing_slip_date', $current_timestamp );
+
+				// Save all meta changes.
 				$order->save_meta_data();
 
-				// 3. Direct database update as fallback
+				// Direct database updates as fallback for both fields.
 				update_post_meta( $order_id, '_wcpdf_packing-slip_date', $current_timestamp );
+				update_post_meta( $order_id, '_wcpdf_packing_slip_date', $current_timestamp );
 
-				// Verify the update was successful.
-				$verified_value = $order->get_meta( '_wcpdf_packing-slip_date' );
+				// Verify the updates were successful.
+				$verified_with_dash = $order->get_meta( '_wcpdf_packing-slip_date' );
+				$verified_without_dash = $order->get_meta( '_wcpdf_packing_slip_date' );
 
 				// Enhanced logging for debugging.
 				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 					error_log( '=== PALAFITO DELIVERY DATE UPDATE ===' );
 					error_log( "Order {$order_id}: {$old_status} → {$new_status}" );
-					error_log( 'Previous value: ' . ( $previous_value ? $previous_value : 'EMPTY' ) );
-					error_log( "New timestamp: {$current_timestamp}" );
-					error_log( 'Verified value: ' . ( $verified_value ? $verified_value : 'FAILED' ) );
-					error_log( 'Update successful: ' . ( $verified_value == $current_timestamp ? 'YES' : 'NO' ) );
+					error_log( 'Previous WITH dash: ' . ( $previous_value_with_dash ? gmdate( 'Y-m-d H:i:s', $previous_value_with_dash ) : 'EMPTY' ) );
+					error_log( 'Previous WITHOUT dash: ' . ( $previous_value_without_dash ? gmdate( 'Y-m-d H:i:s', $previous_value_without_dash ) : 'EMPTY' ) );
+					error_log( "New timestamp: {$current_timestamp} (" . gmdate( 'Y-m-d H:i:s', $current_timestamp ) . ')' );
+					error_log( 'Verified WITH dash: ' . ( $verified_with_dash ? gmdate( 'Y-m-d H:i:s', $verified_with_dash ) : 'FAILED' ) );
+					error_log( 'Verified WITHOUT dash: ' . ( $verified_without_dash ? gmdate( 'Y-m-d H:i:s', $verified_without_dash ) : 'FAILED' ) );
+					error_log( 'Update successful: ' . ( $verified_with_dash == $current_timestamp && $verified_without_dash == $current_timestamp ? 'YES' : 'NO' ) );
 					error_log( '=========================================' );
 				}
 			} elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
