@@ -28,14 +28,6 @@ test:
   behat: true
   phpunit: true
 
-# Configuración de paquetes recomendados
-require:
-  # - wp-cli/doctor-command
-  - wp-cli/profile-command
-  - wp-cli/search-replace-command
-  - wp-cli/db-command
-  - wp-cli/media-command
-
 # Configuración de desarrollo
 debug:
   enabled: true
