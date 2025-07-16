@@ -57,6 +57,7 @@
 <table class="order-data-addresses">
 	<tr>
 		<td class="address billing-address">
+			<h3><?php $this->billing_address_title(); ?></h3>
 			<?php do_action( 'wpo_wcpdf_before_billing_address', $this->get_type(), $this->order ); ?>
 			<?php
 				// Dirección de facturación personalizada
@@ -119,11 +120,11 @@
 					echo implode("<br>", array_filter($lines));
 				?>
 				</p>
-				
+
 				<?php if ( isset( $this->settings['display_phone'] ) ) : ?>
 					<div class="shipping-phone"><?php $this->shipping_phone(); ?></div>
 				<?php endif; ?>
-			<?php endif; ?>					
+			<?php endif; ?>
 		</td>
 		<td class="order-data">
 			<table>
@@ -171,7 +172,7 @@
 <table class="order-details">
 	<?php $headers = wpo_wcpdf_get_simple_template_default_table_headers( $this ); ?>
 	<thead>
-		
+
 		<tr>
 			<?php
 				$current_position = 0;
@@ -188,9 +189,9 @@
 					}
 					$current_position++;
 				}
-			?>	
+			?>
 		</tr>
-		
+
 	</thead>
 	<tbody>
 		<?php foreach ( $this->get_order_items() as $item_id => $item ) : ?>
