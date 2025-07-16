@@ -72,6 +72,17 @@ final class Palafito_WC_Extensions {
 		// Active prevention: Block any attempts to set delivery date in non-entregado states.
 		add_action( 'wpo_wcpdf_save_document', array( __CLASS__, 'prevent_premature_date_setting' ), 5, 2 );
 
+		// 🎯 PACKING SLIP PDF AUTO-GENERATION HOOKS
+		// 1. Manual metabox date setting
+		add_action( 'updated_post_meta', array( __CLASS__, 'maybe_generate_packing_slip_on_date_change' ), 10, 4 );
+
+		// 2. Manual PDF generation button (this is already handled by the PDF plugin itself)
+		// No additional hook needed as the plugin handles manual generation correctly
+
+		// 3. Status change to "entregado" (already handled in handle_custom_order_status_change)
+		// 4. Status change to "facturado" or "completed" without existing packing slip date
+		// Both handled in enhanced handle_custom_order_status_change method
+
 		// Disparar emails personalizados cuando cambien los estados.
 		add_action( 'woocommerce_order_status_entregado', array( __CLASS__, 'trigger_entregado_email' ), 10, 2 );
 		add_action( 'woocommerce_order_status_facturado', array( __CLASS__, 'trigger_facturado_email' ), 10, 2 );
@@ -85,24 +96,26 @@ final class Palafito_WC_Extensions {
 		// Hook para Kadence WooCommerce Email Designer.
 		add_action( 'kadence_woomail_designer_email_details', array( $this, 'kadence_email_main_content' ), 10, 4 );
 
-		// Columnas personalizadas para la tabla de pedidos.
-		add_filter( 'manage_edit-shop_order_columns', array( __CLASS__, 'add_custom_order_columns' ), 20 );
+		// Hook para añadir columnas personalizadas.
+		add_filter( 'manage_edit-shop_order_columns', array( __CLASS__, 'add_custom_order_columns' ) );
 		add_action( 'manage_shop_order_posts_custom_column', array( __CLASS__, 'custom_order_columns_data' ), 10, 2 );
-		add_filter( 'manage_edit-shop_order_sortable_columns', array( __CLASS__, 'add_custom_order_sortable_columns' ) );
+		add_filter( 'manage_edit-shop_order_sortable_columns', array( __CLASS__, 'make_custom_order_columns_sortable' ) );
+
+		// Hook para nueva interfaz HPOS.
+		add_filter( 'woocommerce_shop_order_list_table_columns', array( __CLASS__, 'add_custom_order_columns' ) );
+		add_action( 'woocommerce_shop_order_list_table_custom_column', array( __CLASS__, 'custom_order_columns_data' ), 10, 2 );
+		add_filter( 'woocommerce_shop_order_list_table_sortable_columns', array( __CLASS__, 'make_custom_order_columns_sortable' ) );
+
+		// Hook para manejar ordenación (interfaz clásica).
 		add_action( 'pre_get_posts', array( __CLASS__, 'sort_orders_by_custom_columns' ) );
 
-		// Columnas para nueva interfaz HPOS.
-		add_filter( 'manage_woocommerce_page_wc-orders_columns', array( __CLASS__, 'add_custom_order_columns' ), 20 );
-		add_action( 'manage_woocommerce_page_wc-orders_custom_column', array( __CLASS__, 'custom_order_columns_data' ), 10, 2 );
-		add_filter( 'manage_woocommerce_page_wc-orders_sortable_columns', array( __CLASS__, 'add_custom_order_sortable_columns' ) );
-		add_filter( 'woocommerce_shop_order_list_table_sortable_columns', array( __CLASS__, 'add_custom_order_sortable_columns' ) );
-		add_filter( 'woocommerce_order_list_table_prepare_items_query_args', array( __CLASS__, 'adjust_order_list_query_args' ) );
+		// Hook para manejar ordenación (nueva interfaz HPOS).
+		add_filter( 'woocommerce_order_list_table_prepare_items_query_args', array( __CLASS__, 'hpos_adjust_query_args_for_custom_columns' ) );
 
-		// Configurar columnas por defecto visibles.
+		// Hook para configurar columnas por defecto visibles.
 		add_filter( 'default_hidden_columns', array( __CLASS__, 'set_default_hidden_columns' ), 10, 2 );
 
-		// Recuperar campo de notas de cliente en checkout.
-		add_filter( 'woocommerce_enable_order_notes_field', '__return_true' );
+		// Hook para modificar campos de checkout.
 		add_filter( 'woocommerce_checkout_fields', array( __CLASS__, 'modify_checkout_order_notes_field' ) );
 	}
 
@@ -336,8 +349,7 @@ final class Palafito_WC_Extensions {
 			error_log( "Palafito WC Extensions: Order {$order_id} status changed from {$old_status} to {$new_status}" );
 		}
 
-		// Update delivery date when order status changes to "entregado".
-		// Only update if NOT coming from "facturado" or "completado" states.
+		// 🎯 SCENARIO 3: Status change to "entregado" - always update date and generate PDF.
 		if ( 'entregado' === $new_status ) {
 			// Define states that should NOT trigger date update.
 			$excluded_previous_states = array( 'facturado', 'completado', 'completed' );
@@ -376,6 +388,9 @@ final class Palafito_WC_Extensions {
 					}
 				}
 
+				// 🎯 AUTO-GENERATE PACKING SLIP PDF.
+				self::generate_packing_slip_pdf( $order );
+
 				// Verify the update was successful.
 				$verified_value = $order->get_meta( '_wcpdf_packing-slip_date' );
 
@@ -400,12 +415,53 @@ final class Palafito_WC_Extensions {
 						}
 					}
 
-					error_log( 'UPDATED: Meta field + PDF document' );
+					error_log( 'UPDATED: Meta field + PDF document + PDF generated' );
 					error_log( '=========================================' );
 				}
 			} elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 				// Log when update is skipped due to excluded previous state.
 				error_log( "Palafito WC Extensions: Skipped date update for Order {$order_id} - previous state '{$old_status}' is excluded" );
+			}
+		}
+
+		// 🎯 SCENARIO 4: Status change to "facturado" or "completed" - generate packing slip if no date exists.
+		if ( 'facturado' === $new_status || 'completed' === $new_status ) {
+			// Check if packing slip date already exists.
+			$existing_packing_date = $order->get_meta( '_wcpdf_packing-slip_date' );
+
+			// If no packing slip date exists, set it now and generate PDF.
+			if ( empty( $existing_packing_date ) ) {
+				// Set current timestamp as packing slip date.
+				$current_timestamp = current_time( 'timestamp' );
+
+				// Update meta field directly.
+				$order->delete_meta_data( '_wcpdf_packing-slip_date' );
+				$order->update_meta_data( '_wcpdf_packing-slip_date', $current_timestamp );
+				$order->delete_meta_data( '_wcpdf_packing_slip_date' );
+				$order->save_meta_data();
+
+				// Update via database as fallback.
+				update_post_meta( $order_id, '_wcpdf_packing-slip_date', $current_timestamp );
+				delete_post_meta( $order_id, '_wcpdf_packing_slip_date' );
+
+				// Update PDF document directly.
+				if ( function_exists( 'wcpdf_get_document' ) ) {
+					$packing_slip = wcpdf_get_document( 'packing-slip', $order );
+					if ( $packing_slip ) {
+						$wc_date = new WC_DateTime();
+						$wc_date->setTimestamp( $current_timestamp );
+						$packing_slip->set_date( $wc_date );
+						$packing_slip->save();
+					}
+				}
+
+				// 🎯 AUTO-GENERATE PACKING SLIP PDF.
+				self::generate_packing_slip_pdf( $order );
+
+				// Log the creation.
+				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					error_log( "[PALAFITO] Created missing packing slip date and PDF for order {$order_id} on status change to {$new_status}" );
+				}
 			}
 		}
 
@@ -515,6 +571,112 @@ final class Palafito_WC_Extensions {
 					error_log( "[PALAFITO] BLOCKED: Prevented date setting for order {$order->get_id()} in status '{$order_status}' (only 'entregado' allowed)" );
 				}
 			}
+		}
+	}
+
+	/**
+	 * 🎯 AUTO-GENERATE PACKING SLIP PDF when metabox date is manually changed.
+	 *
+	 * This function triggers when the packing slip date is manually set in the metabox.
+	 * It automatically generates the PDF to ensure the document exists.
+	 *
+	 * @param int    $meta_id    ID of updated metadata entry.
+	 * @param int    $post_id    Post ID.
+	 * @param string $meta_key   Meta key.
+	 * @param mixed  $meta_value Meta value.
+	 */
+	public static function maybe_generate_packing_slip_on_date_change( $meta_id, $post_id, $meta_key, $meta_value ) {
+		// Only process shop_order posts.
+		if ( 'shop_order' !== get_post_type( $post_id ) ) {
+			return;
+		}
+
+		// Only process packing slip date changes.
+		if ( '_wcpdf_packing-slip_date' !== $meta_key && '_wcpdf_packing_slip_date' !== $meta_key ) {
+			return;
+		}
+
+		// Only process when a valid date is being set (not empty).
+		if ( empty( $meta_value ) ) {
+			return;
+		}
+
+		// Get the order.
+		$order = wc_get_order( $post_id );
+		if ( ! $order ) {
+			return;
+		}
+
+		// Log the trigger for debugging.
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			error_log( "[PALAFITO] METABOX DATE CHANGE: Detected manual date change for order {$post_id}, generating packing slip PDF..." );
+		}
+
+		// Generate the packing slip PDF.
+		self::generate_packing_slip_pdf( $order );
+	}
+
+	/**
+	 * 🎯 CENTRAL FUNCTION: Generate packing slip PDF and ensure it's saved.
+	 *
+	 * This function creates the packing slip PDF document and forces it to be generated
+	 * and saved to ensure it exists for the user.
+	 *
+	 * @param WC_Order $order The WooCommerce order object.
+	 * @return bool True if generation was successful, false otherwise.
+	 */
+	public static function generate_packing_slip_pdf( $order ) {
+		// Verify PDF plugin is available.
+		if ( ! function_exists( 'wcpdf_get_document' ) ) {
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( "[PALAFITO] ERROR: PDF plugin not available for order {$order->get_id()}" );
+			}
+			return false;
+		}
+
+		try {
+			// Get the packing slip document (create if doesn't exist).
+			$packing_slip = wcpdf_get_document( 'packing-slip', $order, true );
+
+			if ( ! $packing_slip ) {
+				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					error_log( "[PALAFITO] ERROR: Could not create packing slip document for order {$order->get_id()}" );
+				}
+				return false;
+			}
+
+			// Force generation of the PDF file.
+			$pdf_file = $packing_slip->get_pdf();
+
+			if ( $pdf_file ) {
+				// Log successful generation.
+				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					$filename = $packing_slip->get_filename();
+					error_log( "[PALAFITO] SUCCESS: Generated packing slip PDF '{$filename}' for order {$order->get_id()}" );
+				}
+
+				// Add order note about automatic generation.
+				$order->add_order_note(
+					sprintf(
+						/* translators: 1: document name */
+						__( '%s automaticamente generado por Palafito WC Extensions.', 'palafito-wc-extensions' ),
+						'Albarán'
+					),
+					false
+				);
+
+				return true;
+			} else {
+				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					error_log( "[PALAFITO] ERROR: PDF generation failed for order {$order->get_id()}" );
+				}
+				return false;
+			}
+		} catch ( Exception $e ) {
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( "[PALAFITO] EXCEPTION: PDF generation failed for order {$order->get_id()}: " . $e->getMessage() );
+			}
+			return false;
 		}
 	}
 
@@ -815,7 +977,7 @@ final class Palafito_WC_Extensions {
 	 * @param array $columns Array de columnas ordenables.
 	 * @return array
 	 */
-	public static function add_custom_order_sortable_columns( $columns ) {
+	public static function make_custom_order_columns_sortable( $columns ) {
 		$columns['entregado_date'] = 'entregado_date';
 		$columns['notes']          = 'notes';
 
@@ -863,7 +1025,7 @@ final class Palafito_WC_Extensions {
 	 * @param array $args Argumentos de consulta.
 	 * @return array
 	 */
-	public static function adjust_order_list_query_args( $args ) {
+	public static function hpos_adjust_query_args_for_custom_columns( $args ) {
 		if ( 'entregado_date' === $args['orderby'] ) {
 			$args['meta_query'] = array(
 				'packing_slip_clause' => array(
