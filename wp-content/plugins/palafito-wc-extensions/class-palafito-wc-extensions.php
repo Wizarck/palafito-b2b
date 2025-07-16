@@ -1113,6 +1113,9 @@ final class Palafito_WC_Extensions {
 		// Force packing slip settings to show date.
 		add_filter( 'option_wpo_wcpdf_documents_settings_packing-slip', array( __CLASS__, 'force_packing_slip_display_settings' ) );
 
+		// 🎯 ADD CUSTOM TITLES TO PDF TEMPLATES
+		add_action( 'wpo_wcpdf_before_order_details', array( __CLASS__, 'add_custom_order_details_titles' ), 99, 2 );
+
 		// Log that settings have been enforced.
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 			error_log( '[PALAFITO] PDF display settings enforced for invoice and packing slip templates.' );
@@ -1159,5 +1162,31 @@ final class Palafito_WC_Extensions {
 		$settings['display_number'] = 'order_number';
 
 		return $settings;
+	}
+
+	/**
+	 * 🎯 ADD CUSTOM TITLES TO PDF TEMPLATES
+	 *
+	 * This function adds the custom titles for invoice and packing slip templates
+	 * that were missing due to plugin conflicts.
+	 *
+	 * @param string $document_type The document type (invoice, packing-slip, etc.).
+	 * @param object $order The WooCommerce order object.
+	 */
+	public static function add_custom_order_details_titles( $document_type, $order ) {
+		// Add title for invoice documents.
+		if ( 'invoice' === $document_type ) {
+			echo '<h3>Detalles de factura:</h3>';
+		}
+
+		// Add title for packing slip documents.
+		if ( 'packing-slip' === $document_type ) {
+			echo '<h3>Detalles de albarán:</h3>';
+		}
+
+		// Log the title addition for debugging.
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			error_log( "[PALAFITO] Added custom title for {$document_type} document in order {$order->get_id()}" );
+		}
 	}
 }
