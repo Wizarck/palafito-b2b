@@ -354,8 +354,8 @@ final class Palafito_WC_Extensions {
 				$current_timestamp = current_time( 'timestamp' );
 
 				// Update BOTH fields to ensure complete synchronization:
-				// 1. Standard field: _wcpdf_packing-slip_date (with dash) - our source of truth
-				// 2. Legacy field: _wcpdf_packing_slip_date (without dash) - for metabox compatibility
+				// 1. Standard field: _wcpdf_packing-slip_date (with dash) - our source of truth.
+				// 2. Legacy field: _wcpdf_packing_slip_date (without dash) - for metabox compatibility.
 				$order->delete_meta_data( '_wcpdf_packing-slip_date' );
 				$order->update_meta_data( '_wcpdf_packing-slip_date', $current_timestamp );
 
@@ -371,7 +371,7 @@ final class Palafito_WC_Extensions {
 
 				// Verify both updates were successful.
 				$verified_standard = $order->get_meta( '_wcpdf_packing-slip_date' );
-				$verified_legacy = $order->get_meta( '_wcpdf_packing_slip_date' );
+				$verified_legacy   = $order->get_meta( '_wcpdf_packing_slip_date' );
 
 				// Enhanced logging for debugging.
 				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
@@ -759,7 +759,7 @@ final class Palafito_WC_Extensions {
 					'compare' => 'EXISTS',
 				),
 			);
-			$args['orderby'] = array(
+			$args['orderby']    = array(
 				'packing_slip_clause' => 'DESC',
 			);
 		} elseif ( 'notes' === $args['orderby'] ) {
@@ -859,10 +859,10 @@ final class Palafito_WC_Extensions {
 
 		// Log para debugging.
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			error_log( "=== PALAFITO SYNC DELIVERY DATES ===" );
+			error_log( '=== PALAFITO SYNC DELIVERY DATES ===' );
 			error_log( "Order {$post_id}: Synced {$meta_key} → {$target_field}" );
-			error_log( "Value: " . ( is_numeric( $meta_value ) ? gmdate( 'Y-m-d H:i:s', $meta_value ) : $meta_value ) );
-			error_log( "=====================================" );
+			error_log( 'Value: ' . ( is_numeric( $meta_value ) ? gmdate( 'Y-m-d H:i:s', $meta_value ) : $meta_value ) );
+			error_log( '=====================================' );
 		}
 
 		$syncing = false;

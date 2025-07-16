@@ -688,6 +688,10 @@ Nota original: Por favor entregar antes de las 12h.
 
 ## ⚙️ Pipeline CI/CD (GitHub Actions)
 - **Semgrep**: Ahora excluye archivos de WordPress, plugins de terceros y archivos problemáticos mediante `.semgrepignore`.
+- **Deploy optimizado**: Git configurado en servidor para deploys limpios sin advertencias
+  - `pull.rebase = false` (merge strategy)
+  - `advice.detachedHead = false` (sin advertencias)
+  - Script mejorado con logging detallado y manejo robusto de errores
 
 ---
 
