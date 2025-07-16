@@ -636,7 +636,7 @@ Nota original: Por favor entregar antes de las 12h.
 
 ## 🆕 12 de Julio, 2025 - Fecha de entrega en albarán (packing slip)
 
-- La fecha de entrega que aparece en el PDF de albarán ahora se obtiene del meta personalizado `_wcpdf_packing_slip_date` del pedido.
+- La fecha de entrega que aparece en el PDF de albarán ahora se obtiene del meta personalizado `_wcpdf_packing-slip_date` del pedido.
 - Si el meta no existe, se muestra la fecha actual (formato d/m/Y) y se guarda automáticamente en el meta para futuras visualizaciones/ediciones.
 - Así, la fecha de entrega siempre queda sincronizada entre el PDF y el metabox de edición de pedido.
 - Lógica implementada y documentada el 12/07/2025.

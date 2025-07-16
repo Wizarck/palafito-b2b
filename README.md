@@ -75,10 +75,10 @@ Palafito-b2b/
    ```bash
    # Activar configuración local
    ./dev-local.sh local
-   
+
    # Levantar contenedores
    docker-compose -f docker-compose.simple.yml up -d
-   
+
    # Acceder
    open http://localhost:8080      # WordPress
    open http://localhost:8081      # PhpMyAdmin
@@ -246,9 +246,9 @@ woocommerce_after_shop_loop_item_title
 ### Nota de cliente tras merge de pedidos
 
 - **Nota de cliente tras merge de pedidos**: Cuando se realiza un merge, la nota de cliente del pedido resultante se reemplaza por la nota final generada (la misma que la nota de factura). Si existía una nota de cliente previa, se añade como postfijo, precedida por una línea en blanco y el texto:
-  
+
   Nota original: [NOTA VIEJA]
-  
+
   Si no había nota previa, solo se muestra la nota final generada. Las notas de cliente de los pedidos originales no se modifican.
 
 **Ejemplo visual:**
@@ -262,7 +262,7 @@ Nota original: Por favor entregar antes de las 12h.
 ```
 
 ### Fecha de entrega en albarán (packing slip)
-- **Fecha de entrega en albarán (packing slip)**: La fecha de entrega que aparece en el PDF de albarán se obtiene del meta personalizado `_wcpdf_packing_slip_date`. Si no existe, se muestra la fecha actual (d/m/Y) y se guarda automáticamente en el meta para futuras visualizaciones. Así, la fecha de entrega siempre queda sincronizada entre el PDF y el metabox de edición de pedido.
+- **Fecha de entrega en albarán (packing slip)**: La fecha de entrega que aparece en el PDF de albarán se obtiene del meta personalizado `_wcpdf_packing-slip_date`. Si no existe, se muestra la fecha actual (d/m/Y) y se guarda automáticamente en el meta para futuras visualizaciones. Así, la fecha de entrega siempre queda sincronizada entre el PDF y el metabox de edición de pedido.
 
 ## 🔧 Configuración de producción
 
