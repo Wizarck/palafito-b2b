@@ -63,7 +63,7 @@ composer fix
 # Lint all wp-content
 composer lint:all
 
-# Fix all wp-content code standards  
+# Fix all wp-content code standards
 composer fix:all
 
 # Pre-push validation (fix and lint all)
@@ -88,7 +88,7 @@ composer prepush
 ### Order Management Features
 - **Customer Notes Column**: Added to "My Account" orders table, truncated to 25 chars with tooltip
 - **Note Merging**: When orders are merged, customer notes are preserved with "Nota original:" prefix
-- **PDF Naming**: 
+- **PDF Naming**:
   - Packing slip: `[A-order_number] - [display_name].pdf`
   - Invoice: `[invoice_number] - [display_name].pdf`
 - **Custom Order Statuses**: "Entregado" (Delivered) and "Facturado" (Invoiced) for B2B workflow
@@ -164,11 +164,45 @@ wp-content/
 - **Solution**: Use `plugins_loaded` hook at priority 20+
 - **Location**: `palafito-wc-extensions.php:49`
 
+### 🆕 Deploy Conflicts with Diagnostic Files
+- **Problem**: Diagnostic files created in production conflict with git pull
+- **Symptoms**:
+  ```
+  error: The following untracked working tree files would be overwritten by merge:
+      prod-diagnostic-v2.php
+  ```
+- **Cause**: Temporary diagnostic files (like `prod-diagnostic-v2.php`) created directly on server
+- **Solution**:
+  ```bash
+  # On production server (IONOS)
+  cd /clickandbuilds/Palafito
+
+  # Backup the file if needed
+  cp prod-diagnostic-v2.php prod-diagnostic-v2.php.backup
+
+  # Remove/move the conflicting file
+  mv prod-diagnostic-v2.php temp-diagnostic-$(date +%Y%m%d).php
+
+  # Configure git pull strategy (one time)
+  git config pull.rebase false
+
+  # Retry deployment
+  ./web_update_from_repo.sh
+  ```
+- **Prevention**: Add diagnostic file patterns to `.gitignore`:
+  ```
+  # Temporary diagnostic files
+  prod-diagnostic*.php
+  temp-diagnostic*.php
+  *-diagnostic-v*.php
+  ```
+- **Status**: ✅ Documented solution available
+
 ### Date Field Centralization & Security (UPDATED 15-Jul-2025)
 - **Original Problem**: Multiple date fields and duplicate save logic causing conflicts
 - **Root Cause Identified**: Plugin PDF Base (gratuito) INACTIVO, PDF Pro activo, hooks no disponibles
 - **Security Solution**: Eliminados TODOS los chequeos de integridad del plugin PDF gratuito
-- **Implementation**: 
+- **Implementation**:
   - ❌ Conexiones externas WordPress.org/GitHub desactivadas
   - ❌ Verificación de licencias desactivada
   - ❌ Chequeos automáticos diarios desactivados
@@ -249,18 +283,18 @@ Pending → Processing → Entregado (Delivered) → Facturado (Invoiced) → Co
 1. Local Development:
    ./dev-local.sh local
    docker-compose -f docker-compose.simple.yml up -d
-   
+
 2. Make Changes:
    Edit code, test functionality
-   
+
 3. Quality Checks:
    composer fix:all
    composer lint:all
-   
+
 4. Pre-Push:
    ./dev-local.sh prod
    ./dev-local.sh check
-   
+
 5. Push:
    git add .
    git commit -m "message"

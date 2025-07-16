@@ -65,3 +65,62 @@ coverage.xml
 wp-content/wp-content/
 .DS_Store
 **/.DS_Store
+
+# WordPress Core files
+wp-config.php
+wp-config-local.php
+wp-config-sample.php
+
+# Environment and local development files
+/.env
+/wp-config-docker-clean.php
+/local-environment-status.md
+
+# Temporary synchronization data (gitignored for security)
+/temp-sync-data/
+*.sql
+*.tar.gz
+
+# Diagnostic and temporary files
+prod-diagnostic*.php
+temp-diagnostic*.php
+*-diagnostic-v*.php
+diagnostic-*.php
+
+# IDE and editor files
+/.vscode/
+/.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Node modules and build files
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs
+*.log
+/logs/
+/wp-content/debug.log
+
+# Vendor directory (if using Composer)
+/vendor/
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Temporary files
+*.tmp
+*.temp

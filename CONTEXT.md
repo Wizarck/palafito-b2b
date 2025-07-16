@@ -378,6 +378,21 @@ Palafito-b2b/
   - ✅ Templates customer-entregado.php y customer-facturado.php corregidos
 - **Estado**: ✅ Resuelto
 
+### 21. Fecha de Entrega Incorrecta al Cambiar Estado
+- **Problema**: La fecha de entrega se establecía incorrectamente al cambiar a estado "entregado"
+- **Síntomas**:
+  - Fecha de entrega mostraba fecha de creación del pedido en lugar de fecha actual
+  - Cambios desde estados "facturado" o "completado" sobrescribían fechas válidas
+- **Causa**: Lógica de actualización sin validación de estados previos
+- **Solución**: Lógica condicional para actualizar solo desde estados válidos
+- **Cambios Realizados**:
+  - ✅ Actualización solo si NO viene de "facturado" o "completado"
+  - ✅ Fecha actual (`current_time('timestamp')`) al cambiar a "entregado"
+  - ✅ Label cambiado de "Fecha de albarán" a "Fecha de entrega" en metabox
+  - ✅ Logs actualizados para consistencia terminológica
+  - ✅ Documentación actualizada
+- **Estado**: ✅ Resuelto
+
 ---
 
 ## 🔧 Configuraciones Técnicas
@@ -629,7 +644,7 @@ Nota original: Por favor entregar antes de las 12h.
 ## Fecha de entrega (albarán): fuente de verdad única
 
 - Desde julio 2025, la única fuente de verdad para la fecha de entrega de albarán es el meta `_wcpdf_packing-slip_date`.
-- El campo "Fecha de albarán" en el metabox de edición de pedido (modal y tradicional) lee y guarda directamente en este meta.
+- El campo "Fecha de entrega" en el metabox de edición de pedido (modal y tradicional) lee y guarda directamente en este meta.
 - La columna "Fecha de entrega" en la tabla de pedidos, el PDF del albarán y cualquier lógica personalizada usan solo este campo.
 - Se eliminaron todas las referencias y sincronizaciones con `_entregado_date`.
 - Si la columna aparece vacía, es porque el pedido nunca ha generado el albarán y no existe el meta. Editar y guardar la fecha desde el metabox lo crea automáticamente.

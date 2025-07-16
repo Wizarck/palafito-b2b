@@ -120,7 +120,7 @@
 					echo implode("<br>", array_filter($lines));
 				?>
 				</p>
-				
+
 
 			<?php endif; ?>
 		</td>
@@ -239,7 +239,7 @@
 <?php
 if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 	error_log( '[PALAFITO][packing-slip.php] Número de albarán: ' . print_r( $this->get_number(), true ) );
-	error_log( '[PALAFITO][packing-slip.php] Fecha de albarán: ' . print_r( $this->get_date(), true ) );
+			error_log( '[PALAFITO][packing-slip.php] Fecha de entrega: ' . print_r( $this->get_date(), true ) );
 }
 ?>
 

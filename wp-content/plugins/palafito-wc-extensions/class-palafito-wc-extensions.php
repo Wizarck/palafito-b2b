@@ -337,37 +337,46 @@ final class Palafito_WC_Extensions {
 		}
 
 		// Update delivery date when order status changes to "entregado".
-		// This ALWAYS overwrites any previous value, regardless of existing data.
+		// Only update if NOT coming from "facturado" or "completado" states.
 		if ( 'entregado' === $new_status ) {
-			$previous_value = $order->get_meta( '_wcpdf_packing-slip_date' );
+			// Define states that should NOT trigger date update.
+			$excluded_previous_states = array( 'facturado', 'completado', 'completed' );
 
-			// Force update with current timestamp to ensure COMPLETE overwrite.
-			$current_timestamp = current_time( 'timestamp' );
+			// Check if the previous state should be excluded.
+			if ( ! in_array( $old_status, $excluded_previous_states, true ) ) {
+				$previous_value = $order->get_meta( '_wcpdf_packing-slip_date' );
 
-			// Multiple approaches to ensure the update sticks:
-			// 1. Delete existing meta first to force clean write.
-			$order->delete_meta_data( '_wcpdf_packing-slip_date' );
-			$order->save_meta_data();
+				// Force update with current timestamp to ensure COMPLETE overwrite.
+				$current_timestamp = current_time( 'timestamp' );
 
-			// 2. Add fresh meta data
-			$order->update_meta_data( '_wcpdf_packing-slip_date', $current_timestamp );
-			$order->save_meta_data();
+				// Multiple approaches to ensure the update sticks:
+				// 1. Delete existing meta first to force clean write.
+				$order->delete_meta_data( '_wcpdf_packing-slip_date' );
+				$order->save_meta_data();
 
-			// 3. Direct database update as fallback
-			update_post_meta( $order_id, '_wcpdf_packing-slip_date', $current_timestamp );
+				// 2. Add fresh meta data
+				$order->update_meta_data( '_wcpdf_packing-slip_date', $current_timestamp );
+				$order->save_meta_data();
 
-			// Verify the update was successful.
-			$verified_value = $order->get_meta( '_wcpdf_packing-slip_date' );
+				// 3. Direct database update as fallback
+				update_post_meta( $order_id, '_wcpdf_packing-slip_date', $current_timestamp );
 
-			// Enhanced logging for debugging.
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				error_log( '=== PALAFITO DELIVERY DATE FORCE UPDATE ===' );
-				error_log( "Order {$order_id}: {$old_status} → {$new_status}" );
-				error_log( 'Previous value: ' . ( $previous_value ? $previous_value : 'EMPTY' ) );
-				error_log( "New timestamp: {$current_timestamp}" );
-				error_log( 'Verified value: ' . ( $verified_value ? $verified_value : 'FAILED' ) );
-				error_log( 'Update successful: ' . ( $verified_value == $current_timestamp ? 'YES' : 'NO' ) );
-				error_log( '=============================================' );
+				// Verify the update was successful.
+				$verified_value = $order->get_meta( '_wcpdf_packing-slip_date' );
+
+				// Enhanced logging for debugging.
+				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					error_log( '=== PALAFITO DELIVERY DATE UPDATE ===' );
+					error_log( "Order {$order_id}: {$old_status} → {$new_status}" );
+					error_log( 'Previous value: ' . ( $previous_value ? $previous_value : 'EMPTY' ) );
+					error_log( "New timestamp: {$current_timestamp}" );
+					error_log( 'Verified value: ' . ( $verified_value ? $verified_value : 'FAILED' ) );
+					error_log( 'Update successful: ' . ( $verified_value == $current_timestamp ? 'YES' : 'NO' ) );
+					error_log( '=========================================' );
+				}
+			} elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				// Log when update is skipped due to excluded previous state.
+				error_log( "Palafito WC Extensions: Skipped date update for Order {$order_id} - previous state '{$old_status}' is excluded" );
 			}
 		}
 	}

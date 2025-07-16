@@ -790,7 +790,7 @@ class Admin {
 		if ( $packing_slip ) {
 			$data = array(
 				'number' => array('label' => __( 'Número de albarán:', 'woocommerce-pdf-invoices-packing-slips' )),
-				'date'   => array('label' => __( 'Fecha de albarán:', 'woocommerce-pdf-invoices-packing-slips' )),
+				'date'   => array('label' => __( 'Fecha de entrega:', 'woocommerce-pdf-invoices-packing-slips' )),
 			);
 			$this->output_number_date_edit_fields( $packing_slip, $data );
 		}

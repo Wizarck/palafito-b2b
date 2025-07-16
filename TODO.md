@@ -1,5 +1,14 @@
 # TO-DO List - Palafito B2B
 
+## 🚨 URGENTE - Error de Deploy en Producción
+- [ ] **Resolver conflicto con archivo `prod-diagnostic-v2.php`:**
+  - [ ] Conectar al servidor de producción (IONOS)
+  - [ ] Respaldar el archivo: `cp prod-diagnostic-v2.php prod-diagnostic-v2.php.backup`
+  - [ ] Eliminar o mover el archivo: `mv prod-diagnostic-v2.php temp-diagnostic.php`
+  - [ ] Reintentar el deploy: `./web_update_from_repo.sh`
+  - [ ] Si el archivo es necesario, agregarlo al `.gitignore` para evitar futuros conflictos
+  - [ ] Documentar el incidente en CONTEXT.md
+
 ## 🚀 Próximas Implementaciones
 
 ### 1. Hardening / Seguridad básica
@@ -134,4 +143,4 @@
 - [x] **CI/CD Mejorado**: Verificación automática de configuración en pipeline
 
 ---
-*Última actualización: 3 de Julio, 2025 - Entorno local completo, protección PROD automática* 
+*Última actualización: 3 de Julio, 2025 - Entorno local completo, protección PROD automática*
