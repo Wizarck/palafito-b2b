@@ -83,6 +83,9 @@ final class Palafito_WC_Extensions {
 		// 4. Status change to "facturado" or "completed" without existing packing slip date
 		// Both handled in enhanced handle_custom_order_status_change method
 
+		// 🔧 ENSURE PDF PLUGIN SETTINGS ARE CONFIGURED CORRECTLY
+		add_action( 'init', array( __CLASS__, 'ensure_pdf_display_settings' ), 99 );
+
 		// Disparar emails personalizados cuando cambien los estados.
 		add_action( 'woocommerce_order_status_entregado', array( __CLASS__, 'trigger_entregado_email' ), 10, 2 );
 		add_action( 'woocommerce_order_status_facturado', array( __CLASS__, 'trigger_facturado_email' ), 10, 2 );
@@ -1089,5 +1092,72 @@ final class Palafito_WC_Extensions {
 			$fields['order']['order_comments']['placeholder'] = __( 'Notas sobre tu pedido, por ejemplo, notas especiales para la entrega.', 'palafito-wc-extensions' );
 		}
 		return $fields;
+	}
+
+	/**
+	 * 🔧 ENSURE PDF PLUGIN SETTINGS ARE CONFIGURED CORRECTLY
+	 *
+	 * This function ensures that the PDF plugin's display settings are configured
+	 * to show the invoice date and packing slip elements in templates.
+	 * It forces the correct settings for document display.
+	 */
+	public static function ensure_pdf_display_settings() {
+		// Only proceed if the PDF plugin is available.
+		if ( ! function_exists( 'wcpdf_get_document' ) ) {
+			return;
+		}
+
+		// Force invoice settings to show date and number.
+		add_filter( 'option_wpo_wcpdf_documents_settings_invoice', array( __CLASS__, 'force_invoice_display_settings' ) );
+
+		// Force packing slip settings to show date.
+		add_filter( 'option_wpo_wcpdf_documents_settings_packing-slip', array( __CLASS__, 'force_packing_slip_display_settings' ) );
+
+		// Log that settings have been enforced.
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			error_log( '[PALAFITO] PDF display settings enforced for invoice and packing slip templates.' );
+		}
+	}
+
+	/**
+	 * Force invoice display settings to show date and number.
+	 *
+	 * @param array $settings Current invoice settings.
+	 * @return array Modified settings with display options enabled.
+	 */
+	public static function force_invoice_display_settings( $settings ) {
+		// Ensure settings is an array.
+		if ( ! is_array( $settings ) ) {
+			$settings = array();
+		}
+
+		// Force display_date to 'document_date' (Invoice Date).
+		$settings['display_date'] = 'document_date';
+
+		// Force display_number to 'invoice_number'.
+		$settings['display_number'] = 'invoice_number';
+
+		return $settings;
+	}
+
+	/**
+	 * Force packing slip display settings to show date.
+	 *
+	 * @param array $settings Current packing slip settings.
+	 * @return array Modified settings with display options enabled.
+	 */
+	public static function force_packing_slip_display_settings( $settings ) {
+		// Ensure settings is an array.
+		if ( ! is_array( $settings ) ) {
+			$settings = array();
+		}
+
+		// Force display_date to be enabled (checkbox style).
+		$settings['display_date'] = 1;
+
+		// Force display_number to 'order_number' (as configured in sync function).
+		$settings['display_number'] = 'order_number';
+
+		return $settings;
 	}
 }
