@@ -344,28 +344,37 @@ final class Palafito_WC_Extensions {
 
 			// Check if the previous state should be excluded.
 			if ( ! in_array( $old_status, $excluded_previous_states, true ) ) {
-				// Get current value from the STANDARD field (with dash).
+				// Get current value for comparison.
 				$previous_value = $order->get_meta( '_wcpdf_packing-slip_date' );
 
 				// Force update with current timestamp to ensure COMPLETE overwrite.
 				$current_timestamp = current_time( 'timestamp' );
 
-				// Update ONLY the standard field: _wcpdf_packing-slip_date (with dash).
-				// This is our SINGLE source of truth. NO MORE LEGACY FIELDS.
+				// Method 1: Update meta field directly.
 				$order->delete_meta_data( '_wcpdf_packing-slip_date' );
 				$order->update_meta_data( '_wcpdf_packing-slip_date', $current_timestamp );
-
-				// ELIMINATE any legacy field without dash.
 				$order->delete_meta_data( '_wcpdf_packing_slip_date' );
-
-				// Save all meta changes.
 				$order->save_meta_data();
 
-				// Direct database update as fallback for the standard field.
+				// Method 2: Update via database as fallback.
 				update_post_meta( $order_id, '_wcpdf_packing-slip_date', $current_timestamp );
-
-				// ELIMINATE legacy field from database.
 				delete_post_meta( $order_id, '_wcpdf_packing_slip_date' );
+
+				// Method 3: Update PDF document directly (to sync with metabox).
+				if ( function_exists( 'wcpdf_get_document' ) ) {
+					$packing_slip = wcpdf_get_document( 'packing-slip', $order );
+					if ( $packing_slip ) {
+						// Create WC_DateTime object for the current timestamp.
+						$wc_date = new WC_DateTime();
+						$wc_date->setTimestamp( $current_timestamp );
+
+						// Set the date on the document.
+						$packing_slip->set_date( $wc_date );
+
+						// Save the document to persist the date.
+						$packing_slip->save();
+					}
+				}
 
 				// Verify the update was successful.
 				$verified_value = $order->get_meta( '_wcpdf_packing-slip_date' );
@@ -376,9 +385,22 @@ final class Palafito_WC_Extensions {
 					error_log( "Order {$order_id}: {$old_status} → {$new_status}" );
 					error_log( 'Previous value: ' . ( $previous_value ? gmdate( 'Y-m-d H:i:s', $previous_value ) : 'EMPTY' ) );
 					error_log( "New timestamp: {$current_timestamp} (" . gmdate( 'Y-m-d H:i:s', $current_timestamp ) . ')' );
-					error_log( 'Verified value: ' . ( $verified_value ? gmdate( 'Y-m-d H:i:s', $verified_value ) : 'FAILED' ) );
-					error_log( 'Update successful: ' . ( $verified_value == $current_timestamp ? 'YES' : 'NO' ) );
-					error_log( 'ONLY STANDARD FIELD: _wcpdf_packing-slip_date' );
+					error_log( 'Meta field verified: ' . ( $verified_value ? gmdate( 'Y-m-d H:i:s', $verified_value ) : 'FAILED' ) );
+					error_log( 'Meta update successful: ' . ( $verified_value == $current_timestamp ? 'YES' : 'NO' ) );
+
+					// Check PDF document update.
+					if ( function_exists( 'wcpdf_get_document' ) ) {
+						$check_packing_slip = wcpdf_get_document( 'packing-slip', $order );
+						if ( $check_packing_slip && $check_packing_slip->get_date() ) {
+							$doc_timestamp = $check_packing_slip->get_date()->getTimestamp();
+							error_log( 'PDF document date: ' . gmdate( 'Y-m-d H:i:s', $doc_timestamp ) );
+							error_log( 'PDF update successful: ' . ( $doc_timestamp == $current_timestamp ? 'YES' : 'NO' ) );
+						} else {
+							error_log( 'PDF document date: FAILED' );
+						}
+					}
+
+					error_log( 'UPDATED: Meta field + PDF document' );
 					error_log( '=========================================' );
 				}
 			} elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
@@ -631,17 +653,36 @@ final class Palafito_WC_Extensions {
 
 		switch ( $column ) {
 			case 'entregado_date':
-				// Show delivery date if it exists, regardless of order status.
-				// Use only _wcpdf_packing-slip_date as single source of truth.
-				$entregado_date = $order->get_meta( '_wcpdf_packing-slip_date' );
+				// Show delivery date: check multiple sources to match what metabox shows.
 
-				if ( $entregado_date ) {
-					$date = is_numeric( $entregado_date ) ? $entregado_date : strtotime( $entregado_date );
-					// Format as d-m-Y as specified in requirements.
-					echo esc_html( date_i18n( 'd-m-Y', $date ) );
-				} else {
-					echo '&mdash;';
+				// First try: get from PDF document (what metabox displays).
+				$display_date = '';
+				if ( function_exists( 'wcpdf_get_document' ) ) {
+					$packing_slip = wcpdf_get_document( 'packing-slip', $order );
+					if ( $packing_slip && $packing_slip->exists() && $packing_slip->get_date() ) {
+						$display_date = $packing_slip->get_date()->date_i18n( 'd-m-Y' );
+					}
 				}
+
+				// Fallback: check standard meta field.
+				if ( empty( $display_date ) ) {
+					$entregado_date = $order->get_meta( '_wcpdf_packing-slip_date' );
+					if ( $entregado_date ) {
+						$date         = is_numeric( $entregado_date ) ? $entregado_date : strtotime( $entregado_date );
+						$display_date = date_i18n( 'd-m-Y', $date );
+					}
+				}
+
+				// Final fallback: check legacy field (without dash).
+				if ( empty( $display_date ) ) {
+					$legacy_date = $order->get_meta( '_wcpdf_packing_slip_date' );
+					if ( $legacy_date ) {
+						$date         = is_numeric( $legacy_date ) ? $legacy_date : strtotime( $legacy_date );
+						$display_date = date_i18n( 'd-m-Y', $date );
+					}
+				}
+
+				echo ! empty( $display_date ) ? esc_html( $display_date ) : '&mdash;';
 				break;
 
 			case 'notes':
