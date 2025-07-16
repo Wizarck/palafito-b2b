@@ -631,7 +631,7 @@ final class Palafito_WC_Extensions {
 
 		switch ( $column ) {
 			case 'entregado_date':
-				// Show delivery date if it exists, regardless of status.
+				// Show delivery date if it exists, regardless of order status.
 				// Use only _wcpdf_packing-slip_date as single source of truth.
 				$entregado_date = $order->get_meta( '_wcpdf_packing-slip_date' );
 
