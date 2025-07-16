@@ -119,6 +119,9 @@
 
 <?php do_action( 'wpo_wcpdf_before_order_details', $this->get_type(), $this->order ); ?>
 
+<!-- TÍTULO HARDCODEADO - DETALLES DE FACTURA -->
+<h3 style="margin-bottom: 10px; color: #333; font-size: 14px;">Detalles de factura:</h3>
+
 <table class="order-details">
 	<?php $headers = wpo_wcpdf_get_simple_template_default_table_headers( $this ); ?>
 	<thead>

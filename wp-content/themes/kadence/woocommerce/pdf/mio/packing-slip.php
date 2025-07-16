@@ -145,6 +145,9 @@
 
 <?php do_action( 'wpo_wcpdf_before_order_details', $this->get_type(), $this->order ); ?>
 
+<!-- TÍTULO HARDCODEADO - DETALLES DE ALBARÁN -->
+<h3 style="margin-bottom: 10px; color: #333; font-size: 14px;">Detalles de albarán:</h3>
+
 <table class="order-details">
 	<thead>
 		<tr>
