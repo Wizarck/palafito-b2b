@@ -408,6 +408,77 @@ final class Palafito_WC_Extensions {
 				error_log( "Palafito WC Extensions: Skipped date update for Order {$order_id} - previous state '{$old_status}' is excluded" );
 			}
 		}
+
+		// Update invoice date when order status changes to "facturado" or "completed".
+		// Only update if NOT coming from "facturado" or "completed" states.
+		if ( 'facturado' === $new_status || 'completed' === $new_status ) {
+			// Define states that should NOT trigger date update.
+			$excluded_previous_states = array( 'facturado', 'completed' );
+
+			// Check if the previous state should be excluded.
+			if ( ! in_array( $old_status, $excluded_previous_states, true ) ) {
+				// Get current value for comparison.
+				$previous_value = $order->get_meta( '_wcpdf_invoice_date' );
+
+				// Force update with current timestamp to ensure COMPLETE overwrite.
+				$current_timestamp = current_time( 'timestamp' );
+
+				// Method 1: Update meta field directly.
+				$order->delete_meta_data( '_wcpdf_invoice_date' );
+				$order->update_meta_data( '_wcpdf_invoice_date', $current_timestamp );
+				$order->save_meta_data();
+
+				// Method 2: Update via database as fallback.
+				update_post_meta( $order_id, '_wcpdf_invoice_date', $current_timestamp );
+
+				// Method 3: Update PDF document directly (to sync with metabox).
+				if ( function_exists( 'wcpdf_get_document' ) ) {
+					$invoice = wcpdf_get_document( 'invoice', $order );
+					if ( $invoice ) {
+						// Create WC_DateTime object for the current timestamp.
+						$wc_date = new WC_DateTime();
+						$wc_date->setTimestamp( $current_timestamp );
+
+						// Set the date on the document.
+						$invoice->set_date( $wc_date );
+
+						// Save the document to persist the date.
+						$invoice->save();
+					}
+				}
+
+				// Verify the update was successful.
+				$verified_value = $order->get_meta( '_wcpdf_invoice_date' );
+
+				// Enhanced logging for debugging.
+				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					error_log( '=== PALAFITO INVOICE DATE UPDATE ===' );
+					error_log( "Order {$order_id}: {$old_status} → {$new_status}" );
+					error_log( 'Previous value: ' . ( $previous_value ? gmdate( 'Y-m-d H:i:s', $previous_value ) : 'EMPTY' ) );
+					error_log( "New timestamp: {$current_timestamp} (" . gmdate( 'Y-m-d H:i:s', $current_timestamp ) . ')' );
+					error_log( 'Meta field verified: ' . ( $verified_value ? gmdate( 'Y-m-d H:i:s', $verified_value ) : 'FAILED' ) );
+					error_log( 'Meta update successful: ' . ( $verified_value == $current_timestamp ? 'YES' : 'NO' ) );
+
+					// Check PDF document update.
+					if ( function_exists( 'wcpdf_get_document' ) ) {
+						$check_invoice = wcpdf_get_document( 'invoice', $order );
+						if ( $check_invoice && $check_invoice->get_date() ) {
+							$doc_timestamp = $check_invoice->get_date()->getTimestamp();
+							error_log( 'PDF document date: ' . gmdate( 'Y-m-d H:i:s', $doc_timestamp ) );
+							error_log( 'PDF update successful: ' . ( $doc_timestamp == $current_timestamp ? 'YES' : 'NO' ) );
+						} else {
+							error_log( 'PDF document date: FAILED' );
+						}
+					}
+
+					error_log( 'UPDATED: Meta field + PDF document' );
+					error_log( '=========================================' );
+				}
+			} elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				// Log when update is skipped due to excluded previous state.
+				error_log( "Palafito WC Extensions: Skipped invoice date update for Order {$order_id} - previous state '{$old_status}' is excluded" );
+			}
+		}
 	}
 
 	/**
@@ -708,14 +779,27 @@ final class Palafito_WC_Extensions {
 				break;
 
 			case 'invoice_date':
-				// Mostrar fecha de factura del plugin PDF (solo si no es columna PRO).
-				$invoice_date = $order->get_meta( '_wcpdf_invoice_date' );
-				if ( $invoice_date ) {
-					$date = is_numeric( $invoice_date ) ? $invoice_date : strtotime( $invoice_date );
-					echo esc_html( date_i18n( 'd/m/Y', $date ) );
-				} else {
-					echo '&mdash;';
+				// Show invoice date: check multiple sources to match what metabox shows.
+
+				// First try: get from PDF document (what metabox displays).
+				$display_date = '';
+				if ( function_exists( 'wcpdf_get_document' ) ) {
+					$invoice = wcpdf_get_document( 'invoice', $order );
+					if ( $invoice && $invoice->exists() && $invoice->get_date() ) {
+						$display_date = $invoice->get_date()->date_i18n( 'd-m-Y' );
+					}
 				}
+
+				// Fallback: check standard meta field.
+				if ( empty( $display_date ) ) {
+					$invoice_date = $order->get_meta( '_wcpdf_invoice_date' );
+					if ( $invoice_date ) {
+						$date         = is_numeric( $invoice_date ) ? $invoice_date : strtotime( $invoice_date );
+						$display_date = date_i18n( 'd-m-Y', $date );
+					}
+				}
+
+				echo ! empty( $display_date ) ? esc_html( $display_date ) : '&mdash;';
 				break;
 
 			case 'invoice_number_column':
