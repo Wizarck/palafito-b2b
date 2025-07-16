@@ -1113,8 +1113,8 @@ final class Palafito_WC_Extensions {
 		// Force packing slip settings to show date.
 		add_filter( 'option_wpo_wcpdf_documents_settings_packing-slip', array( __CLASS__, 'force_packing_slip_display_settings' ) );
 
-		// 🎯 ADD CUSTOM TITLES TO PDF TEMPLATES
-		add_action( 'wpo_wcpdf_before_order_details', array( __CLASS__, 'add_custom_order_details_titles' ), 99, 2 );
+		// 🎯 ADD CUSTOM TITLES TO PDF TEMPLATES - CORRECTED POSITION
+		add_action( 'wpo_wcpdf_before_order_data', array( __CLASS__, 'add_custom_order_details_titles' ), 99, 2 );
 
 		// Log that settings have been enforced.
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
