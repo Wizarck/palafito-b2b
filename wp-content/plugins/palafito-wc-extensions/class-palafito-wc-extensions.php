@@ -105,8 +105,7 @@ final class Palafito_WC_Extensions {
 		add_filter( 'woocommerce_enable_order_notes_field', '__return_true' );
 		add_filter( 'woocommerce_checkout_fields', array( __CLASS__, 'modify_checkout_order_notes_field' ) );
 
-		// Sincronización bidireccional de campos de fecha de entrega.
-		add_action( 'updated_post_meta', array( __CLASS__, 'sync_delivery_date_fields' ), 10, 4 );
+
 	}
 
 	/**
@@ -353,25 +352,25 @@ final class Palafito_WC_Extensions {
 				// Force update with current timestamp to ensure COMPLETE overwrite.
 				$current_timestamp = current_time( 'timestamp' );
 
-				// Update BOTH fields to ensure complete synchronization:
-				// 1. Standard field: _wcpdf_packing-slip_date (with dash) - our source of truth.
-				// 2. Legacy field: _wcpdf_packing_slip_date (without dash) - for metabox compatibility.
+				// Update ONLY the standard field: _wcpdf_packing-slip_date (with dash).
+				// This is our SINGLE source of truth. NO MORE LEGACY FIELDS.
 				$order->delete_meta_data( '_wcpdf_packing-slip_date' );
 				$order->update_meta_data( '_wcpdf_packing-slip_date', $current_timestamp );
 
+				// ELIMINATE any legacy field without dash.
 				$order->delete_meta_data( '_wcpdf_packing_slip_date' );
-				$order->update_meta_data( '_wcpdf_packing_slip_date', $current_timestamp );
 
 				// Save all meta changes.
 				$order->save_meta_data();
 
-				// Direct database updates as fallback for both fields.
+				// Direct database update as fallback for the standard field.
 				update_post_meta( $order_id, '_wcpdf_packing-slip_date', $current_timestamp );
-				update_post_meta( $order_id, '_wcpdf_packing_slip_date', $current_timestamp );
 
-				// Verify both updates were successful.
-				$verified_standard = $order->get_meta( '_wcpdf_packing-slip_date' );
-				$verified_legacy   = $order->get_meta( '_wcpdf_packing_slip_date' );
+				// ELIMINATE legacy field from database.
+				delete_post_meta( $order_id, '_wcpdf_packing_slip_date' );
+
+				// Verify the update was successful.
+				$verified_value = $order->get_meta( '_wcpdf_packing-slip_date' );
 
 				// Enhanced logging for debugging.
 				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
@@ -379,10 +378,9 @@ final class Palafito_WC_Extensions {
 					error_log( "Order {$order_id}: {$old_status} → {$new_status}" );
 					error_log( 'Previous value: ' . ( $previous_value ? gmdate( 'Y-m-d H:i:s', $previous_value ) : 'EMPTY' ) );
 					error_log( "New timestamp: {$current_timestamp} (" . gmdate( 'Y-m-d H:i:s', $current_timestamp ) . ')' );
-					error_log( 'Verified standard: ' . ( $verified_standard ? gmdate( 'Y-m-d H:i:s', $verified_standard ) : 'FAILED' ) );
-					error_log( 'Verified legacy: ' . ( $verified_legacy ? gmdate( 'Y-m-d H:i:s', $verified_legacy ) : 'FAILED' ) );
-					error_log( 'Both fields synced: ' . ( $verified_standard == $current_timestamp && $verified_legacy == $current_timestamp ? 'YES' : 'NO' ) );
-					error_log( 'Ensuring metabox and column show same date' );
+					error_log( 'Verified value: ' . ( $verified_value ? gmdate( 'Y-m-d H:i:s', $verified_value ) : 'FAILED' ) );
+					error_log( 'Update successful: ' . ( $verified_value == $current_timestamp ? 'YES' : 'NO' ) );
+					error_log( 'ONLY STANDARD FIELD: _wcpdf_packing-slip_date' );
 					error_log( '=========================================' );
 				}
 			} elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
@@ -413,11 +411,12 @@ final class Palafito_WC_Extensions {
 					$document->set_date( null );
 				}
 
-				// Also ensure both meta fields stay empty.
+				// Also ensure standard meta field stays empty.
 				$order->delete_meta_data( '_wcpdf_packing-slip_date' );
-				$order->delete_meta_data( '_wcpdf_packing_slip_date' );
 				$order->save_meta_data();
 				delete_post_meta( $order->get_id(), '_wcpdf_packing-slip_date' );
+
+				// ELIMINATE any legacy field.
 				delete_post_meta( $order->get_id(), '_wcpdf_packing_slip_date' );
 
 				// Log the prevention for debugging.
@@ -817,54 +816,5 @@ final class Palafito_WC_Extensions {
 		return $fields;
 	}
 
-	/**
-	 * Sincronización bidireccional de campos de fecha de entrega.
-	 * Mantiene ambos campos (_wcpdf_packing-slip_date y _wcpdf_packing_slip_date) sincronizados.
-	 *
-	 * @param int    $meta_id   ID del meta.
-	 * @param int    $post_id   ID del pedido.
-	 * @param string $meta_key  Clave del meta.
-	 * @param mixed  $meta_value Valor del meta.
-	 */
-	public static function sync_delivery_date_fields( $meta_id, $post_id, $meta_key, $meta_value ) {
-		// Solo actuar en pedidos.
-		if ( 'shop_order' !== get_post_type( $post_id ) ) {
-			return;
-		}
 
-		// Solo sincronizar campos de fecha de entrega.
-		if ( ! in_array( $meta_key, array( '_wcpdf_packing-slip_date', '_wcpdf_packing_slip_date' ), true ) ) {
-			return;
-		}
-
-		// Evitar loops infinitos.
-		static $syncing = false;
-		if ( $syncing ) {
-			return;
-		}
-
-		$syncing = true;
-
-		// Determinar qué campo sincronizar.
-		if ( '_wcpdf_packing-slip_date' === $meta_key ) {
-			// Campo estándar actualizado, sincronizar al legacy.
-			$target_field = '_wcpdf_packing_slip_date';
-		} else {
-			// Campo legacy actualizado, sincronizar al estándar.
-			$target_field = '_wcpdf_packing-slip_date';
-		}
-
-		// Actualizar el campo complementario.
-		update_post_meta( $post_id, $target_field, $meta_value );
-
-		// Log para debugging.
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			error_log( '=== PALAFITO SYNC DELIVERY DATES ===' );
-			error_log( "Order {$post_id}: Synced {$meta_key} → {$target_field}" );
-			error_log( 'Value: ' . ( is_numeric( $meta_value ) ? gmdate( 'Y-m-d H:i:s', $meta_value ) : $meta_value ) );
-			error_log( '=====================================' );
-		}
-
-		$syncing = false;
-	}
 }

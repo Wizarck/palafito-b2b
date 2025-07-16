@@ -33,14 +33,21 @@ add_filter('wpo_wcpdf_filename', function($filename, $document_type, $order_ids,
     return $filename;
 }, 20, 5);
 
-// Forzar que la fecha del albarán (packing slip) sea siempre la de entrega (_wcpdf_packing-slip_date)
+// FORZAR al plugin PDF a usar SOLO _wcpdf_packing-slip_date (CON guión)
 add_filter('wpo_wcpdf_packing-slip_date', function($date, $document_type, $order, $context, $formatted, $document) {
     if ($order && is_object($order)) {
         $order_id = is_callable([$order, 'get_id']) ? $order->get_id() : $order->ID;
+
+        // SOLO usar el campo estándar CON guión
         $meta_date = get_post_meta($order_id, '_wcpdf_packing-slip_date', true);
+
+        // ELIMINAR cualquier campo legacy SIN guión
+        delete_post_meta($order_id, '_wcpdf_packing_slip_date');
+
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('[PALAFITO][packing-slip-date] order_id: ' . $order_id . ' | meta_date: ' . print_r($meta_date, true) . ' | formatted: ' . print_r($formatted, true));
+            error_log('[PALAFITO][SINGLE-FIELD] order_id: ' . $order_id . ' | ONLY _wcpdf_packing-slip_date: ' . print_r($meta_date, true));
         }
+
         if ($meta_date) {
             $timestamp = is_numeric($meta_date) ? $meta_date : strtotime($meta_date);
             if (class_exists('WC_DateTime')) {
@@ -49,12 +56,12 @@ add_filter('wpo_wcpdf_packing-slip_date', function($date, $document_type, $order
                     $date_obj->setTimestamp($timestamp);
                     $result = $formatted ? $date_obj->date_i18n(wc_date_format()) : $date_obj;
                     if (defined('WP_DEBUG') && WP_DEBUG) {
-                        error_log('[PALAFITO][packing-slip-date] returning: ' . print_r($result, true));
+                        error_log('[PALAFITO][SINGLE-FIELD] returning: ' . print_r($result, true));
                     }
                     return $result;
                 } catch (Exception $e) {
                     if (defined('WP_DEBUG') && WP_DEBUG) {
-                        error_log('[PALAFITO][packing-slip-date] Exception: ' . $e->getMessage());
+                        error_log('[PALAFITO][SINGLE-FIELD] Exception: ' . $e->getMessage());
                     }
                     return $meta_date;
                 }
@@ -64,6 +71,26 @@ add_filter('wpo_wcpdf_packing-slip_date', function($date, $document_type, $order
     }
     return $date;
 }, 10, 6);
+
+// INTERCEPTAR cuando el plugin PDF intente escribir en campo legacy
+add_action('updated_post_meta', function($meta_id, $post_id, $meta_key, $meta_value) {
+    if ('shop_order' !== get_post_type($post_id)) {
+        return;
+    }
+
+    // Si intenta escribir en campo SIN guión, moverlo al campo CON guión
+    if ($meta_key === '_wcpdf_packing_slip_date') {
+        // Escribir en el campo correcto
+        update_post_meta($post_id, '_wcpdf_packing-slip_date', $meta_value);
+
+        // ELIMINAR el campo incorrecto
+        delete_post_meta($post_id, '_wcpdf_packing_slip_date');
+
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('[PALAFITO][REDIRECT] Moved legacy field to standard: ' . $post_id . ' -> ' . $meta_value);
+        }
+    }
+}, 20, 4);
 
 // DISABLED: Sincronización automática de fecha del albarán
 // Esta funcionalidad ha sido COMPLETAMENTE DESACTIVADA para evitar conflictos.
@@ -88,7 +115,7 @@ add_action('wpo_wcpdf_save_document', function($document, $order) {
             if ($date_obj instanceof WC_DateTime) {
                 $timestamp = $date_obj->getTimestamp();
                 update_post_meta($order->get_id(), '_wcpdf_packing-slip_date', $timestamp);
-                
+
                 if (defined('WP_DEBUG') && WP_DEBUG) {
                     error_log('[PALAFITO][template-functions] Syncing date for entregado order: ' . $order->get_id() . ' timestamp: ' . $timestamp);
                 }
