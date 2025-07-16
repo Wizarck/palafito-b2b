@@ -91,6 +91,7 @@
 			<?php endif; ?>
 		</td>
 		<td class="order-data">
+			<h3>Detalles de factura:</h3>
 			<table>
 				<?php do_action( 'wpo_wcpdf_before_order_data', $this->get_type(), $this->order ); ?>
 				<?php if ( isset( $this->settings['display_number'] ) ) : ?>

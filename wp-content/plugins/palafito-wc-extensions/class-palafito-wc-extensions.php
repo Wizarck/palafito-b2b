@@ -1113,11 +1113,8 @@ final class Palafito_WC_Extensions {
 		// Force packing slip settings to show date.
 		add_filter( 'option_wpo_wcpdf_documents_settings_packing-slip', array( __CLASS__, 'force_packing_slip_display_settings' ) );
 
-		// 🎯 ADD CUSTOM TITLES TO PDF TEMPLATES - DIFFERENT POSITIONS PER DOCUMENT TYPE.
-		// For invoices: before order data (works correctly).
-		add_action( 'wpo_wcpdf_before_order_data', array( __CLASS__, 'add_invoice_title_only' ), 99, 2 );
-		// For packing slips: before the entire order data table.
-		add_action( 'wpo_wcpdf_after_shop_address', array( __CLASS__, 'add_packing_slip_title_only' ), 99, 2 );
+		// 🎯 TITLES NOW HARDCODED IN TEMPLATES AT CORRECT POSITIONS.
+		// Removed hooks as they were causing positioning issues.
 
 		// Log that settings have been enforced.
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {

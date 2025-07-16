@@ -125,6 +125,7 @@
 			<?php endif; ?>
 		</td>
 		<td class="order-data">
+			<h3>Detalles de albarán:</h3>
 			<table>
 				<?php do_action( 'wpo_wcpdf_before_order_data', $this->get_type(), $this->order ); ?>
 				<?php if ( $this->get_shipping_method() ) : ?>
