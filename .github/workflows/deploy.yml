@@ -14,26 +14,26 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.1'
         extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, iconv, json, mbstring, pdo
         coverage: none
-        
+
     - name: Validate composer.json
       run: composer validate --strict
-      
+
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
-      
+
     - name: Run PHPCS
       run: composer lint
-      
+
     - name: Check PHP syntax
       run: find wp-content/plugins/palafito-wc-extensions -name "*.php" -exec php -l {} \;
-      
+
     - name: Security check
       run: composer audit --format=json --no-interaction || true
 
@@ -42,11 +42,11 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: SSH to IONOS and deploy
       uses: appleboy/ssh-action@v1.0.3
       with:
@@ -63,7 +63,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     environment: production
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -74,5 +74,25 @@ jobs:
         username: a1559522
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd /clickandbuilds/Palafito
+          echo "🔍 Verificando directorio de trabajo..."
+          pwd
+          ls -la
+          echo "📁 Buscando directorio del proyecto..."
+          cd ~/clickandbuilds/Palafito || cd clickandbuilds/Palafito || cd /clickandbuilds/Palafito || {
+            echo "❌ Error: No se pudo encontrar el directorio del proyecto"
+            echo "🔍 Listando directorios disponibles:"
+            find ~ -maxdepth 3 -type d -name "*Palafito*" 2>/dev/null || echo "No se encontró directorio Palafito"
+            ls -la ~ | grep -i palafito || echo "No hay directorio Palafito en ~"
+            ls -la ~/clickandbuilds/ | grep -i palafito || echo "No hay directorio Palafito en ~/clickandbuilds/"
+            exit 1
+          }
+          echo "✅ Directorio encontrado: $(pwd)"
+          echo "🚀 Verificando que el script existe..."
+          ls -la web_update_from_repo.sh || {
+            echo "❌ Script web_update_from_repo.sh no encontrado"
+            echo "🔍 Listando archivos en directorio actual:"
+            ls -la
+            exit 1
+          }
+          echo "🚀 Ejecutando script de actualización..."
           ./web_update_from_repo.sh

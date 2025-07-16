@@ -51,7 +51,7 @@ jobs:
     - name: 🛡️ Verify Production Configuration
       run: |
         echo "🔍 Verificando configuración de producción..."
-        
+
         # Verificar que wp-config.php no contenga configuración local
         if [ -f "wp-config.php" ]; then
           if grep -q "localhost:8080" wp-config.php || grep -q "palafito_dev" wp-config.php; then
@@ -60,7 +60,7 @@ jobs:
             echo "🔧 Solución: Ejecutar './dev-local.sh prod' antes del push"
             exit 1
           fi
-          
+
           # Verificar que es configuración de PROD
           if grep -q "db5016482050.hosting-data.io" wp-config.php; then
             echo "✅ Configuración de PROD verificada correctamente"
@@ -209,15 +209,30 @@ jobs:
           echo "🔍 Verificando directorio de trabajo..."
           pwd
           ls -la
-          echo "📁 Cambiando a directorio del proyecto..."
-          cd ~/clickandbuilds/Palafito || cd clickandbuilds/Palafito || {
+          echo "📁 Buscando directorio del proyecto..."
+          cd ~/clickandbuilds/Palafito || cd clickandbuilds/Palafito || cd /clickandbuilds/Palafito || {
             echo "❌ Error: No se pudo encontrar el directorio del proyecto"
             echo "🔍 Listando directorios disponibles:"
             find ~ -maxdepth 3 -type d -name "*Palafito*" 2>/dev/null || echo "No se encontró directorio Palafito"
+            ls -la ~ | grep -i palafito || echo "No hay directorio Palafito en ~"
+            ls -la ~/clickandbuilds/ 2>/dev/null | grep -i palafito || echo "No hay directorio Palafito en ~/clickandbuilds/"
+            ls -la /clickandbuilds/ 2>/dev/null | grep -i palafito || echo "No hay directorio Palafito en /clickandbuilds/"
+            echo "🔍 Buscando en todo el sistema..."
+            find / -maxdepth 4 -type d -name "*alafito*" 2>/dev/null | head -10 || echo "Búsqueda global sin resultados"
             exit 1
           }
           echo "✅ Directorio encontrado: $(pwd)"
+          echo "🚀 Verificando que el script existe..."
+          ls -la web_update_from_repo.sh || {
+            echo "❌ Script web_update_from_repo.sh no encontrado"
+            echo "🔍 Listando archivos en directorio actual:"
+            ls -la
+            echo "🔍 Buscando el script en subdirectorios:"
+            find . -name "web_update_from_repo.sh" -type f 2>/dev/null || echo "Script no encontrado"
+            exit 1
+          }
           echo "🚀 Ejecutando script de actualización..."
+          chmod +x web_update_from_repo.sh
           ./web_update_from_repo.sh
 
     - name: 🏷️ Create release tag
