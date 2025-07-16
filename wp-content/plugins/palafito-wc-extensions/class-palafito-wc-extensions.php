@@ -751,18 +751,12 @@ final class Palafito_WC_Extensions {
 	public static function adjust_order_list_query_args( $args ) {
 		if ( 'entregado_date' === $args['orderby'] ) {
 			$args['meta_query'] = array(
-				'relation'            => 'OR',
-				'entregado_clause'    => array(
-					'key'     => '_entregado_date',
-					'compare' => 'EXISTS',
-				),
 				'packing_slip_clause' => array(
 					'key'     => '_wcpdf_packing-slip_date',
 					'compare' => 'EXISTS',
 				),
 			);
-			$args['orderby']    = array(
-				'entregado_clause'    => 'DESC',
+			$args['orderby'] = array(
 				'packing_slip_clause' => 'DESC',
 			);
 		} elseif ( 'notes' === $args['orderby'] ) {
