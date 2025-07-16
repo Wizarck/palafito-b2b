@@ -145,6 +145,7 @@
 
 <?php do_action( 'wpo_wcpdf_before_order_details', $this->get_type(), $this->order ); ?>
 
+<h3>Detalles de albarán:</h3>
 <table class="order-details">
 	<thead>
 		<tr>

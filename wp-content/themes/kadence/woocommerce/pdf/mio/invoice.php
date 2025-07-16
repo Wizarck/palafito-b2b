@@ -90,42 +90,6 @@
 				<div class="billing-email"><?php $this->billing_email(); ?></div>
 			<?php endif; ?>
 		</td>
-		<td class="address shipping-address">
-			<?php if ( $this->show_shipping_address() ) : ?>
-				<h3><?php $this->shipping_address_title(); ?></h3>
-				<?php do_action( 'wpo_wcpdf_before_shipping_address', $this->get_type(), $this->order ); ?>
-				<p>
-				<?php
-					// Dirección de envío personalizada
-					$user_id = $this->order->get_customer_id();
-					$display_name = '';
-					if ($user_id) {
-						$user = get_userdata($user_id);
-						if ($user) {
-							$display_name = $user->display_name;
-						}
-					}
-					$address = $this->order->get_shipping_address_1();
-					$address2 = $this->order->get_shipping_address_2();
-					$cp = $this->order->get_shipping_postcode();
-					$city = $this->order->get_shipping_city();
-					$country = $this->order->get_shipping_country();
-					$country_name = WC()->countries->countries[$country] ?? $country;
-					$phone = $this->order->get_billing_phone();
-					$lines = [];
-					if ($display_name) $lines[] = $display_name;
-					if ($address) $lines[] = $address . ($address2 ? ', ' . $address2 : '');
-					$lines[] = trim($cp . ' ' . $city . ' - ' . $country_name);
-					if ($phone) $lines[] = 'Teléfono: ' . $phone;
-					echo implode("<br>", array_filter($lines));
-				?>
-				</p>
-
-				<?php if ( isset( $this->settings['display_phone'] ) ) : ?>
-					<div class="shipping-phone"><?php $this->shipping_phone(); ?></div>
-				<?php endif; ?>
-			<?php endif; ?>
-		</td>
 		<td class="order-data">
 			<table>
 				<?php do_action( 'wpo_wcpdf_before_order_data', $this->get_type(), $this->order ); ?>
@@ -141,20 +105,6 @@
 						<td><?php $this->date( $this->get_type() ); ?></td>
 					</tr>
 				<?php endif; ?>
-				<?php if ( $this->show_due_date() ) : ?>
-					<tr class="due-date">
-						<th><?php $this->due_date_title(); ?></th>
-						<td><?php $this->due_date(); ?></td>
-					</tr>
-				<?php endif; ?>
-				<tr class="order-number">
-					<th><?php $this->order_number_title(); ?></th>
-					<td><?php $this->order_number(); ?></td>
-				</tr>
-				<tr class="order-date">
-					<th><?php $this->order_date_title(); ?></th>
-					<td><?php $this->order_date(); ?></td>
-				</tr>
 				<?php if ( $this->get_payment_method() ) : ?>
 					<tr class="payment-method">
 						<th><?php $this->payment_method_title(); ?></th>
@@ -169,6 +119,7 @@
 
 <?php do_action( 'wpo_wcpdf_before_order_details', $this->get_type(), $this->order ); ?>
 
+<h3>Detalles de factura:</h3>
 <table class="order-details">
 	<?php $headers = wpo_wcpdf_get_simple_template_default_table_headers( $this ); ?>
 	<thead>
