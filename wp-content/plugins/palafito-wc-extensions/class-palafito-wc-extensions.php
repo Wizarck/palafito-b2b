@@ -104,8 +104,6 @@ final class Palafito_WC_Extensions {
 		// Recuperar campo de notas de cliente en checkout.
 		add_filter( 'woocommerce_enable_order_notes_field', '__return_true' );
 		add_filter( 'woocommerce_checkout_fields', array( __CLASS__, 'modify_checkout_order_notes_field' ) );
-
-
 	}
 
 	/**
@@ -815,6 +813,4 @@ final class Palafito_WC_Extensions {
 		}
 		return $fields;
 	}
-
-
 }
