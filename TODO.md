@@ -1,146 +1,266 @@
 # TO-DO List - Palafito B2B
 
-## 🚨 URGENTE - Error de Deploy en Producción
-- [ ] **Resolver conflicto con archivo `prod-diagnostic-v2.php`:**
-  - [ ] Conectar al servidor de producción (IONOS)
-  - [ ] Respaldar el archivo: `cp prod-diagnostic-v2.php prod-diagnostic-v2.php.backup`
-  - [ ] Eliminar o mover el archivo: `mv prod-diagnostic-v2.php temp-diagnostic.php`
-  - [ ] Reintentar el deploy: `./web_update_from_repo.sh`
-  - [ ] Si el archivo es necesario, agregarlo al `.gitignore` para evitar futuros conflictos
-  - [ ] Documentar el incidente en CONTEXT.md
+**Última actualización:** 17 Julio 2025
+**Versión:** v2.2.0 - ROADMAP EXTENDIDO
 
-## 🚀 Próximas Implementaciones
-
-### 1. Hardening / Seguridad básica
-- [ ] Restringir edición de archivos vía wp-admin (`DISALLOW_FILE_EDIT`)
-- [ ] Desactivar XML-RPC si no se necesita
-- [ ] Asegurar claves y secrets (mover a `.env` o variables de entorno)
-- [ ] Revisar permisos de archivos y carpetas sensibles
-
-### 2. 🧪 Testing y control de calidad
-- [x] Configurar PHPUnit (tests unitarios para tu plugin o funciones)
-- [x] Automatizar tests con GitHub Actions
-- [x] Validar calidad de código continuo (PHPCS, PHPStan, etc.)
-- [ ] Cobertura de tests (coverage report)
-- [ ] Tests de integración/end-to-end (opcional)
-- [ ] **Investigar y documentar la posibilidad de que varios AI (agentes) se comuniquen entre sí para tareas colaborativas.**
-- [ ] **Crear scripts automáticos (pre-push hook o npm/composer script) que ejecuten todos los checks y fixes de linting antes de cada push.**
-- [ ] **Implementar pre-push hook para Composer:**
-    - Usar el script `prepush` de composer para ejecutar automáticamente `composer fix:all && composer lint:all` antes de cada push.
-    - Ejemplo de hook:
-      ```bash
-      # .git/hooks/pre-push
-      #!/bin/bash
-      composer prepush
-      RESULT=$?
-      if [ $RESULT -ne 0 ]; then
-        echo "Pre-push hook: Lint or fix failed. Push aborted."
-        exit 1
-      fi
-      ```
-    - Dar permisos: `chmod +x .git/hooks/pre-push`
-    - Así ningún push pasará si hay errores de linting.
-
-- [ ] **AI colaborativo:**
-    - Investigar frameworks como AutoGen, CrewAI, LangChain Agents, etc. para orquestar varios agentes AI colaborando en tareas de desarrollo, QA o documentación.
-    - Probar flujos de comunicación entre agentes usando archivos de coordinación, mensajes en GitHub, o APIs.
-    - Documentar casos de uso y posibles integraciones para el equipo.
-
-### 3. 🔁 Flujo completo de desarrollo
-- [ ] Definir branch strategy (main, develop, feature/*, release/*, hotfix/*)
-- [ ] Configurar reglas de PR y revisión obligatoria
-- [ ] Documentar el flujo de push y CI/CD
-
-### 4. 🤖 Mejorar el deploy
-- [ ] Añadir logs detallados a los scripts de deploy
-- [ ] Notificar vía email o Slack en cada deploy (éxito/fallo)
-- [ ] Hacer rollback automático en caso de error en el deploy
-- [ ] Deploy automatizado a staging y producción (con aprobación manual)
-
-### 5. 🚦 Flujo de estados y pagos en pedidos WooCommerce
-- [x] **5.1. Crear/ajustar estados personalizados necesarios**
-  - [x] Registrar los estados "Entregado" y "Facturado" solo si son imprescindibles.
-  - [x] Asegurar el orden correcto de los estados en el admin.
-- [x] **5.2. Lógica de transición automática tras checkout**
-  - [x] Todos los pedidos nuevos se crean en "Pendiente de pago" (`pending`).
-  - [x] Si el cliente elige "Pago por tarjeta" y el cobro es exitoso, pasar a "Procesando" (`processing`).
-  - [x] Si el cliente elige "Pago mensual", pasar a "En espera" (`on-hold`).
-  - [x] Si el pago por tarjeta falla, pasar a "Fallido" (`failed`).
-- [x] **5.3. Flujo manual del administrador**
-  - [x] Permitir al admin pasar manualmente de "En espera" a "Procesando" tras validar la orden y el stock.
-- [x] **5.4. Albarán**
-  - [x] Permitir descarga del albarán solo en "Procesando" (solo admin).
-  - [x] Al pasar a "Entregado", enviar el albarán al cliente por email y permitir su descarga en el portal.
-  - [x] Guardar la fecha de entrega del albarán al cambiar a "Entregado".
-  - [x] **CENTRALIZACIÓN DE FECHAS DE ENTREGA**: Lógica centralizada en plugins PDF usando `_wcpdf_packing-slip_date` como única fuente de verdad, formato d-m-Y estandarizado, eliminadas duplicaciones.
-- [x] **5.5. Facturación**
-  - [x] Al pasar a "Facturado", generar la factura.
-  - [x] Permitir descarga de la factura tanto al admin como al cliente.
-- [x] **5.6. Estado final**
-  - [x] El pedido pasa a "Completado" (`completed`) como estado final.
-- [x] **5.7. Documentación**
-  - [x] Documentar el flujo y las transiciones en el README/CONTEXT.md.
-
-### 6. Checkout y experiencia de usuario
-- [x] Checkout minimalista B2B (solo dirección de envío y métodos de pago en dos columnas)
-- [x] Restaurar dinámica de métodos de pago (Stripe, Apple Pay, Google Pay, etc.)
-- [x] Teléfono de envío obligatorio
-- [x] Unificar bloque de pedido y métodos de pago
-- [x] Automatización de transición de estado tras checkout:
-    - Si el método de pago es "Pago mensual" (`cod`), el pedido pasa automáticamente a "on-hold".
-    - Si es cualquier otro método de pago, el pedido pasa automáticamente a "processing".
-- [x] Implementar transiciones manuales desde el admin:
-    - [x] De "procesando" a "entregado" (con registro de fecha y envío de albarán).
-    - [x] De "entregado" a "facturado" (con generación de factura).
-    - [x] De "facturado" a "completado".
-- [x] Quitar método de pago Trustly
-- [x] Quitar "& Free Shipping" y "Añadir a la lista de deseos" en producto
-- [x] Quitar PayPal como método de pago
-- [ ] Forzar que el icono del carrito lleve siempre a /carrito/
-- [ ] Personalizar color del hero/banner en Tienda, Mi cuenta, Carrito y Checkout, incluyendo el fondo, el título y el breadcrumb para mantener coherencia visual
-
-## ✅ Completado
-- [x] Estructura base del plugin
-- [x] Checkout customizations básicas y cumplimiento PHPCS
-- [x] Tests unitarios con PHPUnit
-- [x] Limpieza de funcionalidades innecesarias (RFC, B2B pricing)
-- [x] Modificar campos de apellidos en checkout (no mandatory)
-- [x] Checkout visual B2B minimalista (solo dirección de envío y métodos de pago en dos columnas)
-- [x] Restauración de la dinámica de métodos de pago (Stripe, Apple Pay, Google Pay, Pago mensual, etc.)
-- [x] Uso de mensajes de commit solo en ASCII para evitar problemas de codificación
-- [x] Este archivo TODO.md ahora está en la raíz del proyecto
-- [x] **Estados de Pedido Personalizados**: Implementados "Entregado" y "Facturado"
-- [x] **Automatización de Estados**: Transiciones automáticas basadas en método de pago
-- [x] **Plugin PDF Mejorado**: Replicadas todas las funcionalidades de la versión Pro
-- [x] **Adjuntos Automáticos**: Albarán en "Entregado", factura en "Facturado"
-- [x] **Numeración de Packing Slip**: Sistema completo con prefix, suffix, padding
-- [x] **Botones de Descarga**: Acceso directo a PDFs desde lista de pedidos
-- [x] **Eliminación de Avisos Pro**: Plugin gratuito sin restricciones
-- [x] **Refactor Albarán PRO**: Meta box editable con estructura nativa de la PRO
-- [x] **Meta Keys Estándar**: Uso de `_wcpdf_packing-slip_*` en lugar de custom
-- [x] **UI Consistente**: Meta box de albarán idéntico al de factura
-- [x] **Generación Automática PRO**: Número y fecha usando métodos nativos
-- [x] **Columna Fecha Ordenable**: Usando meta keys PRO
-- [x] **Template Integration PRO**: Campos en PDF usando métodos nativos
-- [x] **PHPCS**: Todo el código relevante cumple los estándares WordPress/WooCommerce
-- [x] **Emails nativos**: Implementados y documentados para "Entregado" y "Facturado"
-- [x] **Push/documentación**: Flujo de push actualizado y documentado
-- [x] Columna de nota de cliente en tabla de pedidos de Mi Cuenta (WooCommerce), truncada a 25 caracteres, tooltip nativo, celda vacía si no hay nota. Ejemplo visual y decisión documentados en CONTEXT.md y README.md (11/07/2025)
-
-## 🔄 En Progreso
-- [ ] Próxima funcionalidad a implementar
-- [x] Migrar toda la lógica de fecha de entrega a _wcpdf_packing-slip_date
-- [x] Eliminar referencias y sincronización con _entregado_date
-- [x] Validar que el metabox, tabla y PDF usan solo _wcpdf_packing-slip_date
-- [ ] Revisar pedidos antiguos y forzar la creación del meta _wcpdf_packing-slip_date si falta
-
-## 🆕 Recientemente Completado (Julio 2025)
-- [x] **Entorno de Desarrollo Local**: Docker completo con sincronización PROD
-- [x] **Sincronización de Base de Datos**: Conversión automática de prefijo de tablas
-- [x] **Protección de Configuración**: Multi-capa (gitignore, hooks, GitHub Actions)
-- [x] **Documentación Actualizada**: CLAUDE.md y local-environment-status.md
-- [x] **Configuración Automática**: Scripts dev-local.sh para alternancia segura
-- [x] **CI/CD Mejorado**: Verificación automática de configuración en pipeline
+## 🎯 ESTADO ACTUAL DEL SISTEMA
+✅ **PRODUCCIÓN ESTABLE**: Todos los sistemas core están 100% operativos
+- PDF Generation (4 triggers automáticos)
+- Triple-Sync Date Management
+- Custom Order States (entregado/facturado)
+- Email Personalization con códigos cliente
+- Ultra Aggressive Control System
+- GitHub Actions CI/CD Pipeline
 
 ---
-*Última actualización: 3 de Julio, 2025 - Entorno local completo, protección PROD automática*
+
+## 🚀 ROADMAP DE NUEVAS FUNCIONALIDADES
+
+### 📋 Phase 1: Sistema de Notas de Pedido (2-3 semanas)
+**Objetivo:** PDFs de confirmación para nuevos pedidos (sin fecha de entrega)
+
+- [ ] **1.1. Research PDF Plugin Extensibility**
+  - [ ] Investigar cómo extender WooCommerce PDF Invoices & Packing Slips
+  - [ ] Analizar estructura de clases existentes (WPO_WCPDF_Document)
+  - [ ] Documentar hooks y filtros disponibles
+
+- [ ] **1.2. Create Order Notes Document Class**
+  - [ ] Crear `class WPO_WCPDF_Order_Note extends WPO_WCPDF_Document`
+  - [ ] Implementar métodos requeridos: `get_type()`, `get_title()`, etc.
+  - [ ] Registrar nuevo tipo de documento via `wpo_wcpdf_document_classes`
+
+- [ ] **1.3. Implement Template System**
+  - [ ] Crear template `order-notes.php` en `/wp-content/themes/kadence/woocommerce/pdf/mio/`
+  - [ ] Estructura similar a packing slip pero SIN fecha de entrega
+  - [ ] Incluir: número pedido, fecha, método pago, productos, contacto
+  - [ ] Validar positioning perfecto con estructura existente
+
+- [ ] **1.4. Auto-generation Integration**
+  - [ ] Hook `woocommerce_order_status_processing` para auto-generación
+  - [ ] Hook `woocommerce_order_status_changed` para control inteligente
+  - [ ] Función `generate_order_note_pdf($order)` siguiendo patrón existente
+  - [ ] Logging con prefijo `[PALAFITO]` para trazabilidad
+
+- [ ] **1.5. Email Integration**
+  - [ ] Filtro `woocommerce_email_attachments` para adjuntar nota automáticamente
+  - [ ] Integrar con emails: `new_order`, `customer_processing_order`
+  - [ ] Validar que funciona con personalización de códigos cliente existente
+
+- [ ] **1.6. Auto-print Functionality**
+  - [ ] Investigar opciones de impresión automática (browser API, servidor)
+  - [ ] Implementar configuración opcional en admin
+  - [ ] Hook `wpo_wcpdf_after_pdf_generation` para trigger impresión
+  - [ ] Testing en entorno local antes de producción
+
+- [ ] **1.7. Testing & Validation**
+  - [ ] Crear tests unitarios para nueva funcionalidad
+  - [ ] Validar integración con sistema ultra aggressive control
+  - [ ] Testing completo: processing → nota PDF → email → (optional print)
+  - [ ] Documentar en CLAUDE.md y CONTEXT.md
+
+### 🧪 Phase 2: E2E Testing Framework (3-4 semanas)
+**Objetivo:** Testing automatizado end-to-end con Playwright
+
+- [ ] **2.1. Setup Playwright Framework**
+  - [ ] Instalar Playwright: `npm install @playwright/test`
+  - [ ] Configurar `playwright.config.js` con proyectos Chrome/Firefox
+  - [ ] Setup test environment con base URL local/staging
+  - [ ] Configurar screenshots y videos en fallos
+
+- [ ] **2.2. Core Test Scenarios**
+  - [ ] **Test: Complete Order Lifecycle**
+    - [ ] Crear pedido via frontend → Verificar en admin
+    - [ ] Cambio a processing → Verificar nota pedido PDF
+    - [ ] Cambio a entregado → Verificar packing slip + fecha
+    - [ ] Cambio a facturado → Verificar factura + email
+    - [ ] Validar códigos cliente en emails
+
+  - [ ] **Test: PDF Generation Control**
+    - [ ] Verificar bloqueo auto-generación en processing
+    - [ ] Validar generación manual desde admin
+    - [ ] Test sistema ultra aggressive blocking
+    - [ ] Verificar 4 triggers automáticos existentes
+
+  - [ ] **Test: Email Personalization**
+    - [ ] Crear pedido con nota cliente conteniendo códigos CXXXXX
+    - [ ] Cambiar a entregado y verificar email personalizado
+    - [ ] Test múltiples formatos: "Feria: C00303", "Obrador: C02388"
+
+- [ ] **2.3. Integration with CI/CD**
+  - [ ] Actualizar `.github/workflows/deploy.yml` con step E2E
+  - [ ] Configurar Node.js 18+ en GitHub Actions
+  - [ ] E2E tests como prerequisito para deploy a producción
+  - [ ] Artifact collection: screenshots, videos, reports
+
+- [ ] **2.4. Visual Regression Testing**
+  - [ ] Screenshots de páginas clave: checkout, admin orders, emails
+  - [ ] Comparación automática con baseline images
+  - [ ] Alertas en caso de cambios visuales no esperados
+
+- [ ] **2.5. Automated Reporting**
+  - [ ] HTML reports con resultados detallados
+  - [ ] Integration con GitHub para comentarios automáticos en PRs
+  - [ ] Slack/email notifications en fallos críticos
+
+### 🤖 Phase 3: WhatsApp Integration (4-6 semanas)
+**Objetivo:** Sistema completo de pedidos vía WhatsApp
+
+- [ ] **3.1. WhatsApp Business API Research**
+  - [ ] Investigar WhatsApp Business API requirements
+  - [ ] Configurar webhook endpoint en WordPress
+  - [ ] Implementar verificación de webhook con VERIFY_TOKEN
+  - [ ] Testing inicial con Meta Developer Console
+
+- [ ] **3.2. Message Parser Implementation**
+  - [ ] Crear `class Palafito_WhatsApp_Parser`
+  - [ ] Regex patterns para extraer productos y cantidades
+  - [ ] Validación contra catálogo WooCommerce
+  - [ ] Support múltiples formatos: "2x Producto A, 1x Producto B"
+
+- [ ] **3.3. Order Creation System**
+  - [ ] Crear `class Palafito_WhatsApp_Order_Creator`
+  - [ ] Customer lookup/creation basado en número de teléfono
+  - [ ] Aplicar pricing B2B y términos específicos
+  - [ ] Generar draft order para confirmación
+
+- [ ] **3.4. Bidirectional Communication**
+  - [ ] Crear `class Palafito_WhatsApp_API`
+  - [ ] Métodos: `send_message()`, `receive_webhook()`, `verify_webhook()`
+  - [ ] Template messages para confirmaciones y errores
+  - [ ] Queue system para reliable message delivery
+
+- [ ] **3.5. Integration with Order Notes**
+  - [ ] WhatsApp order confirmation → auto-generate order note PDF
+  - [ ] Send order note back to customer via WhatsApp
+  - [ ] Link con sistema de estados existente
+
+- [ ] **3.6. Comprehensive Testing**
+  - [ ] Unit tests para parser y order creation
+  - [ ] E2E tests para workflow completo WhatsApp
+  - [ ] Mock WhatsApp API para testing sin costos
+  - [ ] Load testing para múltiples pedidos simultáneos
+
+### 📊 Phase 4: Monitoring Dashboard (2-3 semanas)
+**Objetivo:** Dashboard de métricas y monitoreo en tiempo real
+
+- [ ] **4.1. Dashboard Interface**
+  - [ ] Crear página admin: `WooCommerce > Palafito Dashboard`
+  - [ ] Widgets: orders processed, PDFs generated, WhatsApp activity
+  - [ ] Charts con Chart.js o similar librería
+  - [ ] Responsive design para móvil/tablet
+
+- [ ] **4.2. Metrics Collection**
+  - [ ] Tracking de PDFs generados por tipo y trigger
+  - [ ] Métricas de emails enviados y códigos cliente extraídos
+  - [ ] WhatsApp message volume y success rate
+  - [ ] Order conversion rates por canal (web vs WhatsApp)
+
+- [ ] **4.3. Real-time Monitoring**
+  - [ ] WebSocket o polling para updates en tiempo real
+  - [ ] Health checks automáticos de todos los componentes
+  - [ ] Status indicators: sistema PDF, email, WhatsApp API
+  - [ ] Performance metrics: response times, error rates
+
+- [ ] **4.4. Alert System**
+  - [ ] Email/Slack alerts para errores críticos
+  - [ ] Thresholds configurables para métricas clave
+  - [ ] Dashboard de incidents y resolution tracking
+  - [ ] Integration con logging existente [PALAFITO]
+
+- [ ] **4.5. Reporting Features**
+  - [ ] Export reports: CSV, PDF, Excel
+  - [ ] Scheduled reports (diario, semanal, mensual)
+  - [ ] Custom date ranges y filtering options
+  - [ ] Revenue analytics por canal y customer segment
+
+---
+
+## 🔧 TAREAS DE MANTENIMIENTO Y MEJORA
+
+### Seguridad y Performance
+- [ ] **Security Hardening**
+  - [ ] Implementar rate limiting para WhatsApp webhook
+  - [ ] Encrypt sensitive data en database
+  - [ ] Regular security audit de código custom
+  - [ ] Update dependencies y plugins regularmente
+
+- [ ] **Performance Optimization**
+  - [ ] Database query optimization para dashboard
+  - [ ] Caching layer para WhatsApp responses
+  - [ ] Image optimization para PDFs
+  - [ ] CDN setup para assets estáticos
+
+### Documentation & Training
+- [ ] **API Documentation**
+  - [ ] Swagger/OpenAPI docs para WhatsApp endpoints
+  - [ ] Developer guide para extending functionality
+  - [ ] Troubleshooting guide para common issues
+
+- [ ] **User Training**
+  - [ ] Video tutorials para nuevas funcionalidades
+  - [ ] Admin manual para WhatsApp management
+  - [ ] Customer guide para WhatsApp ordering
+
+---
+
+## ✅ COMPLETADO - SISTEMA CORE
+
+### Sistema PDF Avanzado ✅
+- [x] 4 triggers automáticos: metabox, botón, entregado, facturado
+- [x] Templates optimizados con positioning perfecto
+- [x] Triple-sync date management completamente resuelto
+- [x] Ultra aggressive control system implementado
+
+### Email Personalization ✅
+- [x] Extracción automática códigos cliente (CXXXXX)
+- [x] Personalización títulos email entregado
+- [x] Support múltiples formatos: Feria, Obrador, directo
+
+### Custom Order States ✅
+- [x] Estados "entregado" y "facturado" implementados
+- [x] Transiciones automáticas basadas en método pago
+- [x] Bulk actions para cambios masivos de estado
+- [x] Emails automáticos por cambio de estado
+
+### CI/CD Pipeline ✅
+- [x] GitHub Actions completamente automatizado
+- [x] PHPCS validation automática
+- [x] Deploy seguro con backup automático
+- [x] Rollback en caso de error
+
+### Admin Interface ✅
+- [x] Columnas personalizadas con enhanced logic
+- [x] Sorting por fechas de entrega y factura
+- [x] Colores de estado personalizados
+- [x] Meta boxes integrados con PDF plugin Pro
+
+---
+
+## 📈 MÉTRICAS DE PROGRESO
+
+### Current Sprint (Phase 1 - Order Notes)
+**Timeline:** 2-3 semanas
+**Progress:** 0% - Research phase
+
+### Overall Roadmap
+- **Phase 1**: Order Notes System (2-3 weeks)
+- **Phase 2**: E2E Testing Framework (3-4 weeks)
+- **Phase 3**: WhatsApp Integration (4-6 weeks)
+- **Phase 4**: Monitoring Dashboard (2-3 weeks)
+
+**Total Timeline:** ~4-6 meses para roadmap completo
+**Current System Status:** ✅ 100% operational, ready for expansion
+
+---
+
+## 🎯 PRÓXIMOS PASOS INMEDIATOS
+
+1. **Esta semana**: Research Order Notes system y PDF plugin extensibility
+2. **Próxima semana**: Implementar document class y template básico
+3. **Siguientes 2 semanas**: Completar integración con emails y testing
+
+**Ready para comenzar Phase 1 - Order Notes System**
+
+---
+
+*Este TODO.md se actualiza semanalmente para reflejar el progreso real del roadmap extendido.*
