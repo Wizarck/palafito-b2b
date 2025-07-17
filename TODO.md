@@ -175,6 +175,38 @@
 
 ---
 
+## 🎨 MEJORAS DE EXPERIENCIA DE USUARIO (UX/UI)
+
+### Checkout & Formularios B2B
+- [ ] **Campo Compañía Obligatorio en Checkout**
+  - [ ] Hacer que el campo "Compañía" sea realmente mandatory (no solo visual con asterisco)
+  - [ ] Validar en frontend: bloquear submit si está vacío
+  - [ ] Validar en backend: error message específico si falta
+  - [ ] Testing: intentar completar checkout sin compañía y verificar bloqueo
+  - [ ] Mantener coherencia visual con otros campos obligatorios
+
+### Experiencia de Compra en Tienda
+- [ ] **Selector de Cantidad en Hover de Productos**
+  - [ ] Implementar cantidad selector (+ / - / número) en hover de productos de tienda
+  - [ ] Diseño armonioso: selector encima del botón "Añadir al carrito"
+  - [ ] Ambos elementos (selector + botón) más pequeños para mejor integración visual
+  - [ ] Funcionalidad similar a página individual de producto (ej: /product/pp-carne/)
+  - [ ] Estados hover/focus/active para mejor UX
+  - [ ] Responsive design: adaptar para móvil/tablet
+  - [ ] Testing cross-browser: Chrome, Firefox, Safari
+  - [ ] Validación: no permitir cantidades <= 0 o no numéricas
+  - [ ] Animaciones sutiles para transiciones suaves
+  - [ ] Integration con JavaScript existente de WooCommerce
+
+### Optimizaciones Visuales
+- [ ] **Consistency Check**
+  - [ ] Revisar que todos los elementos hover mantengan coherencia visual
+  - [ ] Validar que colores/fonts sigan design system existente
+  - [ ] Mobile-first approach para todos los cambios
+  - [ ] Accessibility compliance (WCAG guidelines)
+
+---
+
 ## 🔧 TAREAS DE MANTENIMIENTO Y MEJORA
 
 ### Seguridad y Performance
@@ -255,11 +287,16 @@
 
 ## 🎯 PRÓXIMOS PASOS INMEDIATOS
 
+### Roadmap Principal
 1. **Esta semana**: Research Order Notes system y PDF plugin extensibility
 2. **Próxima semana**: Implementar document class y template básico
 3. **Siguientes 2 semanas**: Completar integración con emails y testing
 
-**Ready para comenzar Phase 1 - Order Notes System**
+### Mejoras UX/UI (Paralelo)
+1. **Campo Compañía Obligatorio**: Implementación rápida (1-2 días)
+2. **Selector Cantidad Hover**: Diseño + implementación (3-5 días)
+
+**Ready para comenzar Phase 1 - Order Notes System + UX Improvements**
 
 ---
 
