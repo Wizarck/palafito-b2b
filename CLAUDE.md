@@ -610,7 +610,7 @@ class TestPalafitoFunctionality extends WP_UnitTestCase {
 
 # Documentación del Proyecto Palafito B2B
 
-## Última actualización: 16 julio 2025
+## Última actualización: 17 julio 2025
 
 ---
 
