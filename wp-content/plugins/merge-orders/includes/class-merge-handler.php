@@ -490,6 +490,9 @@ class Merge_Handler {
 
 	/**
 	 * Procesa las notas de cliente de los pedidos originales y las concatena en la nota de factura del pedido final.
+	 * Soporta dos formatos:
+	 * 1. Formato clásico: "Feria: C00303 - Valencia", "Obrador: C02388"
+	 * 2. Formato nuevo: "Número de pedido: C02429 - Pastelitos\nObrador"
 	 */
 	private function process_invoice_notes() {
 		$feria = [];
@@ -511,11 +514,47 @@ class Merge_Handler {
 			$last_c = null;
 			for ($i = 0; $i < count($lines); $i++) {
 				$line = trim($lines[$i]);
+
+				// NUEVO: Detectar formato "Número de pedido: CXXXXX - descripción"
+				if (preg_match('/^Número\s+de\s+pedido:\s*(C\d{5})/i', $line, $match)) {
+					$last_c = strtoupper($match[1]);
+					$c_all[] = $last_c;
+
+					// Buscar la siguiente línea no vacía para determinar tipo
+					$type_line = '';
+					for ($j = $i + 1; $j < count($lines); $j++) {
+						$next_line = trim($lines[$j]);
+						if ($next_line !== '') {
+							$type_line = $next_line;
+							break;
+						}
+					}
+
+					// Clasificar según el tipo encontrado
+					if ($this->is_feria($this->normalize_note($type_line))) {
+						// Formato: "Feria - Benidorm RBF"
+						if (preg_match('/^Feria\s*-\s*(.+)$/i', $type_line, $feria_match)) {
+							$feria_name = trim($feria_match[1]);
+							$feria[] = $last_c . ' - ' . $feria_name;
+						} else {
+							// Solo "Feria" sin nombre
+							$feria[] = $last_c;
+						}
+					} else {
+						// Si no es Feria o es "Obrador" o línea vacía → Obrador por defecto
+						$obrador[] = $last_c;
+					}
+					$last_c = null;
+					continue;
+				}
+
+				// FORMATO CLÁSICO: Detectar CXXXXX en cualquier línea
 				if (preg_match('/C\d{5}/i', $line, $match)) {
 					$last_c = strtoupper($match[0]);
 					$c_all[] = $last_c;
 				}
-				// Detectar bloque Feria
+
+				// FORMATO CLÁSICO: Detectar bloque Feria
 				if ($this->is_feria($this->normalize_note($line)) && $last_c) {
 					// Buscar la primera línea no vacía después de "Feria"
 					$feria_name = '';
@@ -533,7 +572,8 @@ class Merge_Handler {
 					}
 					$last_c = null;
 				}
-				// Detectar bloque Obrador
+
+				// FORMATO CLÁSICO: Detectar bloque Obrador
 				if ($this->is_obrador($this->normalize_note($line)) && $last_c) {
 					$obrador[] = $last_c;
 					$last_c = null;
