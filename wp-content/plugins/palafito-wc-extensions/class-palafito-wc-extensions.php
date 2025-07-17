@@ -81,6 +81,9 @@ final class Palafito_WC_Extensions {
 		// Clean packing slip auto-generation configuration.
 		add_filter( 'option_wpo_wcpdf_documents_settings_packing-slip', array( __CLASS__, 'clean_packing_slip_auto_generation_option' ), 10, 1 );
 
+		// AGGRESSIVE: Block auto-generation at the source.
+		add_filter( 'wpo_wcpdf_document_auto_generate', array( __CLASS__, 'block_auto_generation_aggressively' ), 5, 3 );
+
 		// Permitir transiciones de estado personalizadas.
 		// Priority 20 to ensure it runs AFTER other plugins and forces the update.
 		add_action( 'woocommerce_order_status_changed', array( __CLASS__, 'handle_custom_order_status_change' ), 20, 4 );
@@ -1330,29 +1333,31 @@ final class Palafito_WC_Extensions {
 	 * 🎯 Filter PRO plugin auto-generation configuration for packing slips.
 	 *
 	 * This function modifies the PRO plugin's configuration to ensure that
-	 * packing slips are only generated automatically for 'entregado' status.
+	 * packing slips are NEVER generated automatically for non-allowed statuses.
+	 * Only 'entregado' always, and 'facturado'/'completed' conditionally.
 	 *
 	 * @param array $status Array of statuses that trigger PDF generation.
 	 * @param array $documents Array of document objects.
 	 * @return array Modified array with filtered statuses.
 	 */
 	public static function filter_pro_auto_generation_statuses( $status, $documents ) {
-		// Allow packing slips for 'entregado', 'facturado', and 'completed' states only.
+		// Define ONLY allowed statuses for automatic packing slip generation.
 		$allowed_statuses = array( 'wc-entregado', 'wc-facturado', 'wc-completed' );
 
+		// COMPLETELY remove packing-slip from ALL non-allowed statuses.
 		foreach ( $status as $order_status => $document_types ) {
 			if ( ! in_array( $order_status, $allowed_statuses, true ) ) {
-				// Remove 'packing-slip' from the list of documents to generate for other statuses.
+				// Remove 'packing-slip' from document types for this status.
 				$key = array_search( 'packing-slip', $document_types, true );
 				if ( false !== $key ) {
 					unset( $status[ $order_status ][ $key ] );
 
+					// Re-index the array.
+					$status[ $order_status ] = array_values( $status[ $order_status ] );
+
 					// If no documents left for this status, remove the status entirely.
 					if ( empty( $status[ $order_status ] ) ) {
 						unset( $status[ $order_status ] );
-					} else {
-						// Re-index the array.
-						$status[ $order_status ] = array_values( $status[ $order_status ] );
 					}
 				}
 			}
@@ -1360,7 +1365,7 @@ final class Palafito_WC_Extensions {
 
 		// Log the filtering for debugging.
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			error_log( '[PALAFITO] Filtered PRO auto-generation statuses for allowed states (entregado, facturado, completed): ' . print_r( $status, true ) );
+			error_log( '[PALAFITO] AGGRESSIVE FILTER: Removed packing-slip auto-generation from non-allowed statuses. Remaining: ' . print_r( $status, true ) );
 		}
 
 		return $status;
@@ -1385,7 +1390,8 @@ final class Palafito_WC_Extensions {
 	 * Clean packing slip auto-generation configuration.
 	 *
 	 * This function ensures that the 'auto_generate_for_statuses' option for packing slips
-	 * is only set to allowed statuses: 'entregado', 'facturado', and 'completed'.
+	 * is ONLY set for allowed statuses: 'entregado', 'facturado', and 'completed'.
+	 * It removes any non-allowed statuses but DOES NOT force-enable allowed ones.
 	 *
 	 * @param array $options The current options array.
 	 * @return array Modified options array.
@@ -1399,17 +1405,15 @@ final class Palafito_WC_Extensions {
 		// Define allowed statuses for auto-generation.
 		$allowed_statuses = array( 'wc-entregado', 'wc-facturado', 'wc-completed' );
 
-		// Remove any non-allowed statuses.
+		// Remove any non-allowed statuses (especially wc-processing, wc-on-hold).
 		foreach ( $options['auto_generate_for_statuses'] as $status => $enabled ) {
 			if ( ! in_array( $status, $allowed_statuses, true ) ) {
 				unset( $options['auto_generate_for_statuses'][ $status ] );
 			}
 		}
 
-		// Ensure allowed statuses are explicitly set to 1.
-		foreach ( $allowed_statuses as $status ) {
-			$options['auto_generate_for_statuses'][ $status ] = 1;
-		}
+		// DO NOT force-enable any status - let admin control this manually.
+		// This prevents unwanted automatic generation.
 
 		return $options;
 	}
@@ -1476,5 +1480,56 @@ final class Palafito_WC_Extensions {
 			error_log( "[PALAFITO] BLOCKED: Prevented packing slip creation for order {$order->get_id()} in status '{$order_status}' (status not in allowed list)" );
 		}
 		return false;
+	}
+
+	/**
+	 * Block auto-generation at the source.
+	 *
+	 * This function blocks the WooCommerce PDF PRO plugin from automatically
+	 * generating packing slips for orders in non-allowed statuses.
+	 * It runs with priority 5 to intercept early.
+	 *
+	 * @param bool   $auto_generate Whether auto-generation is enabled.
+	 * @param string $document_type The document type (invoice, packing-slip, etc.).
+	 * @param object $order The WooCommerce order object.
+	 * @return bool Modified auto-generation status.
+	 */
+	public static function block_auto_generation_aggressively( $auto_generate, $document_type, $order ) {
+		// Only apply to packing slip documents.
+		if ( 'packing-slip' !== $document_type ) {
+			return $auto_generate;
+		}
+
+		// Define allowed statuses for automatic packing slip generation.
+		$allowed_statuses = array( 'entregado', 'facturado', 'completed' );
+		$order_status = $order->get_status();
+
+		// Block auto-generation for non-allowed statuses.
+		if ( ! in_array( $order_status, $allowed_statuses, true ) ) {
+			// Log the prevention for debugging.
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( "[PALAFITO] AGGRESSIVE BLOCK: Prevented automatic packing slip generation for order {$order->get_id()} in status '{$order_status}' (not in allowed list)" );
+			}
+			return false;
+		}
+
+		// For 'facturado' and 'completed', check if packing slip date already exists.
+		if ( in_array( $order_status, array( 'facturado', 'completed' ), true ) ) {
+			$existing_date = $order->get_meta( '_wcpdf_packing-slip_date' );
+			if ( ! empty( $existing_date ) ) {
+				// Block generation if date already exists.
+				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					error_log( "[PALAFITO] AGGRESSIVE BLOCK: Prevented automatic packing slip generation for order {$order->get_id()} in status '{$order_status}' (date already exists)" );
+				}
+				return false;
+			}
+		}
+
+		// Allow generation for 'entregado' always, and for 'facturado'/'completed' when no date exists.
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			error_log( "[PALAFITO] AGGRESSIVE ALLOW: Automatic packing slip generation for order {$order->get_id()} in status '{$order_status}'" );
+		}
+
+		return $auto_generate;
 	}
 }
