@@ -112,6 +112,9 @@ final class Palafito_WC_Extensions {
 		// Registrar emails personalizados.
 		add_filter( 'woocommerce_email_classes', array( __CLASS__, 'add_custom_email_classes' ) );
 
+		// Personalizar título de email "entregado" con códigos de cliente.
+		add_filter( 'woocommerce_email_subject_customer_entregado', array( __CLASS__, 'customize_entregado_email_subject' ), 10, 2 );
+
 		// Cargar estilos personalizados para colores de estados.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
 
@@ -1502,7 +1505,7 @@ final class Palafito_WC_Extensions {
 
 		// Define allowed statuses for automatic packing slip generation.
 		$allowed_statuses = array( 'entregado', 'facturado', 'completed' );
-		$order_status = $order->get_status();
+		$order_status     = $order->get_status();
 
 		// Block auto-generation for non-allowed statuses.
 		if ( ! in_array( $order_status, $allowed_statuses, true ) ) {
@@ -1531,5 +1534,62 @@ final class Palafito_WC_Extensions {
 		}
 
 		return $auto_generate;
+	}
+
+	/**
+	 * Personalizar título de email "entregado" con códigos de cliente.
+	 *
+	 * @param string   $subject Email subject.
+	 * @param WC_Order $order Order object.
+	 * @return string Modified email subject.
+	 */
+	public static function customize_entregado_email_subject( $subject, $order ) {
+		// Get customer notes from the order.
+		$customer_note = $order->get_customer_note();
+
+		if ( empty( $customer_note ) ) {
+			return $subject;
+		}
+
+		// Extract customer codes (C + exactly 5 numbers) from notes.
+		$codes = self::extract_customer_codes_from_notes( $customer_note );
+
+		if ( ! empty( $codes ) ) {
+			// Modify subject: "Tu pedido #2514 ha sido entregado" → "Tu pedido #2514 / C00303 ha sido entregado".
+			$codes_string = implode( ' ', $codes );
+			$subject      = str_replace(
+				'ha sido entregado',
+				'/ ' . $codes_string . ' ha sido entregado',
+				$subject
+			);
+		}
+
+		return $subject;
+	}
+
+	/**
+	 * Extract customer codes (CXXXXX format) from order notes.
+	 *
+	 * Supports patterns:
+	 * - "Feria: C00303 - RBF - Benidorm" → C00303
+	 * - "Obrador: C02388" → C02388
+	 * - "C12345" → C12345
+	 *
+	 * @param string $notes Order notes text.
+	 * @return array Array of found customer codes.
+	 */
+	public static function extract_customer_codes_from_notes( $notes ) {
+		$codes = array();
+
+		// Regex pattern: C followed by exactly 5 digits.
+		$pattern = '/C\d{5}/';
+
+		// Find all matches.
+		if ( preg_match_all( $pattern, $notes, $matches ) ) {
+			$codes = $matches[0]; // Get the full matches (C12345).
+		}
+
+		// Remove duplicates and return.
+		return array_unique( $codes );
 	}
 }
