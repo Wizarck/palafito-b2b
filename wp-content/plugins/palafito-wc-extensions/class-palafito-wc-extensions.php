@@ -84,6 +84,9 @@ final class Palafito_WC_Extensions {
 		// AGGRESSIVE: Block auto-generation at the source.
 		add_filter( 'wpo_wcpdf_document_auto_generate', array( __CLASS__, 'block_auto_generation_aggressively' ), 5, 3 );
 
+		// ULTRA AGGRESSIVE: Completely disable PRO hooks for packing slips in non-allowed statuses.
+		add_action( 'init', array( __CLASS__, 'ultra_aggressive_pro_packing_slip_block' ), 1 );
+
 		// Permitir transiciones de estado personalizadas.
 		// Priority 20 to ensure it runs AFTER other plugins and forces the update.
 		add_action( 'woocommerce_order_status_changed', array( __CLASS__, 'handle_custom_order_status_change' ), 20, 4 );
@@ -1591,5 +1594,72 @@ final class Palafito_WC_Extensions {
 
 		// Remove duplicates and return.
 		return array_unique( $codes );
+	}
+
+	/**
+	 * ULTRA AGGRESSIVE: Completely disable PRO hooks for packing slips in non-allowed statuses.
+	 *
+	 * This function completely removes the PRO plugin's document generation hook
+	 * to prevent ANY automatic packing slip generation in non-allowed statuses.
+	 */
+	public static function ultra_aggressive_pro_packing_slip_block() {
+		// Only proceed if PRO plugin is active.
+		if ( ! class_exists( 'WPO_WCPDF_Pro_Functions' ) || ! WPO_WCPDF_Pro()->functions ) {
+			return;
+		}
+
+		// COMPLETELY remove the PRO plugin's main document generation hook.
+		remove_action( 'woocommerce_order_status_changed', array( WPO_WCPDF_Pro()->functions, 'generate_documents_on_order_status' ), 7 );
+
+		// Add our own custom hook that will ONLY generate documents for allowed statuses.
+		add_action( 'woocommerce_order_status_changed', array( __CLASS__, 'custom_pro_document_generation' ), 7, 4 );
+
+		// Log the replacement for debugging.
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			error_log( '[PALAFITO] ULTRA AGGRESSIVE: Replaced PRO document generation hook with custom controlled version.' );
+		}
+	}
+
+	/**
+	 * Custom PRO document generation that ONLY allows packing slips for allowed statuses.
+	 *
+	 * @param int      $order_id Order ID.
+	 * @param string   $old_status Old status.
+	 * @param string   $new_status New status.
+	 * @param WC_Order $order Order object.
+	 */
+	public static function custom_pro_document_generation( $order_id, $old_status, $new_status, $order ) {
+		// Define allowed statuses for automatic packing slip generation.
+		$allowed_statuses = array( 'entregado', 'facturado', 'completed' );
+
+		// For packing slips, ONLY allow generation in allowed statuses.
+		if ( ! in_array( $new_status, $allowed_statuses, true ) ) {
+			// Log the blocking for debugging.
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( "[PALAFITO] ULTRA BLOCK: Completely blocked PRO document generation for order {$order_id} status change to '{$new_status}'" );
+			}
+			return; // Exit early, don't generate ANY documents.
+		}
+
+		// For facturado/completed, check if packing slip already exists.
+		if ( in_array( $new_status, array( 'facturado', 'completed' ), true ) ) {
+			$existing_date = $order->get_meta( '_wcpdf_packing-slip_date' );
+			if ( ! empty( $existing_date ) ) {
+				// Log the blocking for debugging.
+				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					error_log( "[PALAFITO] ULTRA BLOCK: Blocked PRO packing slip generation for order {$order_id} in '{$new_status}' (date already exists)" );
+				}
+				return; // Exit early, don't generate packing slip.
+			}
+		}
+
+		// Only if we reach here, call the original PRO function manually.
+		if ( method_exists( WPO_WCPDF_Pro()->functions, 'generate_documents_on_order_status' ) ) {
+			// Log the allowing for debugging.
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( "[PALAFITO] ULTRA ALLOW: Allowing PRO document generation for order {$order_id} status change to '{$new_status}'" );
+			}
+			WPO_WCPDF_Pro()->functions->generate_documents_on_order_status( $order_id, $old_status, $new_status, $order );
+		}
 	}
 }
